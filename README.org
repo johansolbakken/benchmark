@@ -1,76 +1,83 @@
-#+title: JOB for Optimistic Order-Preserving Hash Join
+#+title: JOB for Optimistic Order-Preserving Hash Join (OOHJ)
 
-As a part of our journey to create a new operator called OOHJ, we need to benchmark it using Join Order Benchmark.
+This repository is part of our Master's thesis, focused on benchmarking modifications made to MySQL. The project specifically evaluates the performance of our newly developed operator, Optimistic Order-Preserving Hash Join (OOHJ), using the Join Order Benchmark (JOB).
 
-* Getting started
+* Getting Started
 
-** Clone the repository
+** Clone the Repository
+
+Begin by cloning the repository to your local machine:
 
 #+begin_src shell
 git clone https://github.com/johansolbakken/benchmark
+cd benchmark
 #+end_src
 
-** Download the data
+** Download the Dataset
+
+Use the provided script to download the dataset required for benchmarking:
 
 #+begin_src shell
 ruby download.rb
-#+END_SRC
+#+end_src
 
-This will create a dataset folder.
-
+This will create a `dataset` folder containing the necessary data.
 
 ** Start MySQL
 
-First download the repo and build MySQL. Then you need to run MySQL. We use MTR which is mysqls testing script.
+1. Download and build the MySQL source code.
+2. Start MySQL using MySQL Test Run (MTR), MySQL's testing script:
+
+First-time setup:
 
 #+begin_src shell
-cd build # build folder in root of mysql for example
+cd build # Navigate to the MySQL build folder
 ./mysql-test/mtr --start
 #+end_src
 
-Then from the build folder we need build/bin/mysql in the config.yaml file.
-
-After first time, use:
+For subsequent runs, use:
 
 #+begin_src shell
-cd build # build folder in root of mysql for example
 ./mysql-test/mtr --start-dirty
 #+end_src
 
-** Setup the database
+3. Configure the path to the MySQL binary in `config.yaml` (e.g., `build/bin/mysql`).
 
-Copy the config.yaml.example and fill in mysql path.
+** Setup the Database
+
+Copy the `config.yaml.example` file to `config.yaml` and update it with the path to your MySQL binary. Then, initialize the database by creating tables and indexes:
 
 #+begin_src shell
 ruby run_queries.rb --setup
 #+end_src
 
-This creates tables and indexes.
+** Load the Data
 
-** Feed the data
+Feed the downloaded dataset into the database:
 
 #+begin_src shell
 ruby run_queries.rb --feed
 #+end_src
 
-** Run SQL files
+** Run SQL Queries
 
-Run a query
+To run SQL queries, use the following commands:
 
+- Execute a query:
 #+begin_src shell
 ruby run_queries.rb --run ./job/1a.sql
 #+end_src
 
-Run a query with explain/analyze.
-
+- Execute a query with EXPLAIN/ANALYZE:
 #+begin_src shell
 ruby run_queries.rb --run ./job/1a.sql --explain
 #+end_src
 
-
-
 * Cleanup
+
+To clean up the database and remove generated artifacts, run:
 
 #+begin_src shell
 ruby cleanup.rb
 #+end_src
++end_src
