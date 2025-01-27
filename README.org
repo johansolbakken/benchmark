@@ -1,0 +1,17 @@
+#+title: JOB for Optimistic Order-Preserving Hash Join
+
+As a part of our journey to create a new operator called OOHJ, we need to benchmark it using Join Order Benchmark.
+
+* Getting started
+
+** Clone the repository
+
+#+begin_src shell
+git clone
+#+end_src
+
+** Download the data
+
+#+begin_src shell
+ruby ftp_download.rb
+#+END_SRC
