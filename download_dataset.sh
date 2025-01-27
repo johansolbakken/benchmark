@@ -2,7 +2,7 @@
 
 # Variables
 TAR_URL="https://event.cwi.nl/da/job/imdb.tgz"
-DEST_DIR="./downloads"
+DEST_DIR="./dataset"
 TAR_FILE="$DEST_DIR/imdb.tgz"
 
 # Check if the destination directory exists
