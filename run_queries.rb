@@ -9,11 +9,10 @@ config = YAML.load_file('config.yaml')
 mysql_config = config['mysql']
 MYSQL_CLIENT_PATH = mysql_config['path']
 DB_USER = 'root'
-DB_PASSWORD = ''
 DB_PORT = '13000'
 DB_HOST = '127.0.0.1'
-DB_NAME = 'test'
-SQL_PATH = '3rdparty/job'
+DB_NAME = 'imdbload'
+SQL_PATH = './job'
 DOWNLOADS_PATH = './downloads'
 
 # This method now uses popen3 to stream output as the command runs.
@@ -57,7 +56,7 @@ end
 
 options = {}
 OptionParser.new do |opts|
-  opts.banner = "Usage: mysql_client.rb [options]"
+  opts.banner = "Usage: run_queries.rb [options]"
 
   opts.on("--setup", "Setup the database with schema and foreign key indexes") do
     options[:setup] = true
@@ -76,15 +75,25 @@ if options[:setup]
   begin
     puts "Setting up the database..."
 
-    run_command_stream("#{MYSQL_CLIENT_PATH} -u#{DB_USER} --password=#{DB_PASSWORD} --port=#{DB_PORT} --host=#{DB_HOST} -e 'CREATE DATABASE IF NOT EXISTS #{DB_NAME};'")
+    # Inspiration from this repo: https://github.com/noraej/JOB/blob/main/csv_files/imdb-create-tables.sql
+    setup_commands = [
+      "SET GLOBAL local_infile=1;",
+      "DROP DATABASE IF EXISTS imdbload;",
+      "CREATE DATABASE imdbload;",
+      "USE imdbload;",
+    ]
+
+    setup_commands.each do |command|
+      run_command_stream("#{MYSQL_CLIENT_PATH} -u#{DB_USER} --port=#{DB_PORT} --host=#{DB_HOST} -e '#{command}'")
+    end
 
     schema_file = File.join(SQL_PATH, 'schema.sql')
     puts "Importing schema: #{schema_file}"
-    run_command_stream("#{MYSQL_CLIENT_PATH} -u#{DB_USER} --password=#{DB_PASSWORD} --port=#{DB_PORT} --host=#{DB_HOST} #{DB_NAME} < #{schema_file}")
+    run_command_stream("#{MYSQL_CLIENT_PATH} -u#{DB_USER}  --port=#{DB_PORT} --host=#{DB_HOST} #{DB_NAME} < #{schema_file}")
 
     fkindexes_file = File.join(SQL_PATH, 'fkindexes.sql')
     puts "Importing foreign key indexes: #{fkindexes_file}"
-    run_command_stream("#{MYSQL_CLIENT_PATH} -u#{DB_USER} --password=#{DB_PASSWORD} --port=#{DB_PORT} --host=#{DB_HOST} #{DB_NAME} < #{fkindexes_file}")
+    run_command_stream("#{MYSQL_CLIENT_PATH} -u#{DB_USER}  --port=#{DB_PORT} --host=#{DB_HOST} #{DB_NAME} < #{fkindexes_file}")
 
     puts "Database setup completed."
   rescue StandardError => e
@@ -96,7 +105,7 @@ elsif options[:query]
     query = options[:query]
     puts "Running query: #{query}"
 
-    run_command_stream("#{MYSQL_CLIENT_PATH} -u#{DB_USER} --password=#{DB_PASSWORD} --port=#{DB_PORT} --host=#{DB_HOST} #{DB_NAME} -e \"#{query}\"")
+    run_command_stream("#{MYSQL_CLIENT_PATH} -u#{DB_USER}  --port=#{DB_PORT} --host=#{DB_HOST} #{DB_NAME} -e \"#{query}\"")
   rescue StandardError => e
     puts "An error occurred while running the query: #{e.message}"
     exit 1
@@ -108,7 +117,7 @@ elsif options[:feed]
     imdbpy_command = "python ./3rdparty/cinemagoer/bin/imdbpy2sql.py " \
                      "--mysql-innodb "\
                      "-d #{DOWNLOADS_PATH} " \
-                     "-u mysql://#{DB_USER}:#{DB_PASSWORD}@#{DB_HOST}:#{DB_PORT}/#{DB_NAME}"
+                     "-u mysql://#{DB_USER}:@#{DB_HOST}:#{DB_PORT}/#{DB_NAME}"
     run_command_stream(imdbpy_command)
 
     puts "Data feeding completed."
