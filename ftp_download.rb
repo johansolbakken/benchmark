@@ -2,7 +2,7 @@ require 'fileutils'
 
 # Variables
 tar_url = 'https://event.cwi.nl/da/job/imdb.tgz'
-destination_dir = './downloads'
+destination_dir = './dataset'
 tar_file = File.join(destination_dir, 'imdb.tgz')
 
 # Check if the destination directory exists
