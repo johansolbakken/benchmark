@@ -27,13 +27,19 @@ def run_command_stream(command)
     threads = []
     threads << Thread.new do
       stdout.each_line do |line|
-        puts line
+        # Replace literal \n with actual newlines, then print each line
+        line.gsub("\\n", "\n").each_line do |sub_line|
+          puts sub_line
+        end
       end
     end
 
     threads << Thread.new do
       stderr.each_line do |line|
-        warn line
+        # Replace literal \n with actual newlines, then print each line
+        line.gsub("\\n", "\n").each_line do |sub_line|
+          warn sub_line
+        end
       end
     end
 
@@ -62,12 +68,16 @@ OptionParser.new do |opts|
     options[:setup] = true
   end
 
-  opts.on("--run QUERY", "Run a specific query") do |query|
+  opts.on("--run FILE", "Run a specific sql file") do |query|
     options[:query] = query
   end
 
   opts.on("--feed", "Feed all .gz files in the downloads folder to the database") do
     options[:feed] = true
+  end
+
+  opts.on("--explain", "Explain analyze") do
+    options[:explain] = true
   end
 end.parse!
 
@@ -103,10 +113,19 @@ if options[:setup]
   end
 elsif options[:query]
   begin
-    query = options[:query]
-    puts "Running query: #{query}"
-
-    run_command_stream("#{MYSQL_CLIENT_PATH} -u#{DB_USER}  --port=#{DB_PORT} --host=#{DB_HOST} #{DB_NAME} -e \"#{query}\"")
+    file = options[:query]
+    explain = ""
+    if options[:explain]
+      explain = "EXPLAIN ANALYZE "
+    end
+    query = ""
+    begin
+      query = File.read(file)
+    rescue StandardError => e
+      puts e
+      exit 1
+    end
+    run_command_stream("#{MYSQL_CLIENT_PATH} -u#{DB_USER}  --port=#{DB_PORT} --host=#{DB_HOST} #{DB_NAME} -e \"#{explain}#{query}\"")
   rescue StandardError => e
     puts "An error occurred while running the query: #{e.message}"
     exit 1
@@ -129,5 +148,5 @@ elsif options[:feed]
     exit 1
   end
 else
-  puts "No valid subcommand provided. Use --setup to setup the database, --run to run queries, or --feed to feed data."
+  puts "No valid subcommand provided. Use --setup to setup the database, --run to run files, or --feed to feed data."
 end
