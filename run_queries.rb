@@ -106,6 +106,7 @@ elsif options[:feed]
     puts "Feeding .gz files to the database using imdbpy2sql.py..."
 
     imdbpy_command = "python ./3rdparty/cinemagoer/bin/imdbpy2sql.py " \
+                     "--mysql-innodb "\
                      "-d #{DOWNLOADS_PATH} " \
                      "-u mysql://#{DB_USER}:#{DB_PASSWORD}@#{DB_HOST}:#{DB_PORT}/#{DB_NAME}"
     run_command_stream(imdbpy_command)
