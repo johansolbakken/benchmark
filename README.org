@@ -53,6 +53,22 @@ This creates tables and indexes.
 ruby run_queries.rb --feed
 #+end_src
 
+** Run SQL files
+
+Run a query
+
+#+begin_src shell
+ruby run_queries.rb --run ./job/1a.sql
+#+end_src
+
+Run a query with explain/analyze.
+
+#+begin_src shell
+ruby run_queries.rb --run ./job/1a.sql --explain
+#+end_src
+
+
+
 * Cleanup
 
 #+begin_src shell
