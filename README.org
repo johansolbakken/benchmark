@@ -7,7 +7,7 @@ As a part of our journey to create a new operator called OOHJ, we need to benchm
 ** Clone the repository
 
 #+begin_src shell
-git clone
+git clone --recursive https://github.com/johansolbakken/benchmark
 #+end_src
 
 ** Download the data
