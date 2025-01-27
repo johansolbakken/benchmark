@@ -27,6 +27,16 @@ ruby ftp_download.rb
 
 This will create a downloads folder.
 
+** Setup the database
+
+Copy the config.yaml.example and fill in mysql path.
+
+#+begin_src shell
+ruby run_queries.rb --setup
+#+end_src
+
+This creates tables and indexes.
+
 * Cleanup
 
 #+begin_src shell
