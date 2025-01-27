@@ -27,8 +27,7 @@ ruby ftp_download.rb
 
 This will create a downloads folder.
 
-** Setup database
-
+** Build MySQL
 
 First download the repo and build MySQL. Then you need to run MySQL. We use MTR which is mysqls testing script.
 
@@ -48,6 +47,25 @@ ruby run_queries.rb --setup
 #+end_src
 
 This creates tables and indexes.
+
+** Feed the data
+
+*** Requirements.txt
+
+We need to ensure that MySQL is installed on machine first.
+
+To run cinemagoer, we need the packages in the requirements.txt file.
+
+#+begin_src shell
+brew install mysql
+pip install -r requirements.txt
+#+end_src
+
+*** Feed the data
+
+#+begin_src shell
+ruby run_queries.rb --feed
+#+end_src
 
 * Cleanup
 

@@ -1,3 +1,6 @@
 [submodule "3rdparty/job"]
 	path = 3rdparty/job
 	url = https://github.com/viktorleis/job
+[submodule "3rdparty/cinemagoer"]
+	path = 3rdparty/cinemagoer
+	url = https://github.com/cinemagoer/cinemagoer
