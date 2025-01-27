@@ -1,5 +1,4 @@
 require 'fileutils'
-require 'open-uri'
 
 # Variables
 tar_url = 'https://event.cwi.nl/da/job/imdb.tgz'
@@ -16,14 +15,10 @@ else
   puts "Created directory: #{destination_dir}"
 end
 
-# Download the tar file
-puts "Downloading #{tar_url} into #{tar_file}..."
-open(tar_url) do |file|
-  File.open(tar_file, 'wb') do |output|
-    output.write(file.read)
-  end
-end
-puts "Download completed."
+# Use wget to download the tar file and pipe the output to stdout
+puts "Downloading #{tar_url}..."
+wget_command = "wget -O #{tar_file} #{tar_url}"
+system(wget_command)
 
 # Extract the tar file
 puts "Extracting #{tar_file} into #{destination_dir}..."

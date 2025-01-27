@@ -17,7 +17,7 @@ fi
 
 # Use wget to download the tar file and pipe the output to stdout
 echo "Downloading $TAR_URL..."
-wget -O "$TAR_FILE" "$TAR_URL" --progress=dot | tee
+wget -O "$TAR_FILE" "$TAR_URL"
 if [ $? -ne 0 ]; then
   echo "Error: Failed to download $TAR_URL."
   exit 1
