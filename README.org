@@ -80,4 +80,4 @@ To clean up the database and remove generated artifacts, run:
 #+begin_src shell
 ruby cleanup.rb
 #+end_src
-+end_src
+
