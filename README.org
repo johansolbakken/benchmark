@@ -10,8 +10,19 @@ As a part of our journey to create a new operator called OOHJ, we need to benchm
 git clone --recursive https://github.com/johansolbakken/benchmark
 #+end_src
 
+*** Downloading 3rdparty dependencies
+
+If you have cloned the repo without --recursive, you can download 3rdparty dependenceis by:
+
+#+begin_src shell
+git submodule init
+git submodule update
+#+end_src
+
 ** Download the data
 
 #+begin_src shell
 ruby ftp_download.rb
 #+END_SRC
+
+This will create a downloads folder.
