@@ -48,7 +48,7 @@ For subsequent runs, use:
 Copy the `config.yaml.example` file to `config.yaml` and update it with the path to your MySQL binary. Then, initialize the database by creating tables and indexes:
 
 #+begin_src shell
-ruby run_queries.rb --setup
+ruby oohj_benchmark.rb --setup
 #+end_src
 
 ** Load the Data
@@ -56,7 +56,7 @@ ruby run_queries.rb --setup
 Feed the downloaded dataset into the database:
 
 #+begin_src shell
-ruby run_queries.rb --feed
+ruby oohj_benchmark.rb --feed
 #+end_src
 
 ** Run SQL Queries
@@ -65,12 +65,12 @@ To run SQL queries, use the following commands:
 
 - Execute a query:
 #+begin_src shell
-ruby run_queries.rb --run ./job/1a.sql
+ruby oohj_benchmark.rb --run ./job/1a.sql
 #+end_src
 
 - Execute a query with EXPLAIN/ANALYZE:
 #+begin_src shell
-ruby run_queries.rb --run ./job/1a.sql --explain
+ruby oohj_benchmark.rb --run ./job/1a.sql --explain
 #+end_src
 
 * Cleanup
