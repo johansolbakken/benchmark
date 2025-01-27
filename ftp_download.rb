@@ -1,38 +1,32 @@
-require 'net/ftp'
+require 'fileutils'
+require 'open-uri'
 
-# FTP server details
-ftp_host = 'ftp.fu-berlin.de'
-ftp_path = '/misc/movies/database/frozendata/'
+# Variables
+tar_url = 'https://event.cwi.nl/da/job/imdb.tgz'
 destination_dir = './downloads'
+tar_file = File.join(destination_dir, 'imdb.tgz')
 
-# Ensure the destination directory exists
-Dir.mkdir(destination_dir) unless Dir.exist?(destination_dir)
-
-begin
-  # Connect to the FTP server
-  ftp = Net::FTP.new
-  ftp.connect(ftp_host)
-  ftp.login
-  ftp.chdir(ftp_path)
-
-  # List and filter .gz files
-  files = ftp.nlst.select { |file| file.end_with?('.gz') }
-
-  puts "Found #{files.size} .gz files to download."
-
-  # Download each .gz file
-  files.each do |file|
-    local_file = File.join(destination_dir, file)
-    puts "Downloading #{file}..."
-    ftp.getbinaryfile(file, local_file)
-    puts "Downloaded #{file} to #{local_file}"
-  end
-
-  # Close the FTP connection
-  ftp.close
-  puts 'All files downloaded successfully.'
-rescue StandardError => e
-  puts "An error occurred: #{e.message}"
-ensure
-  ftp.close if ftp && !ftp.closed?
+# Check if the destination directory exists
+if Dir.exist?(destination_dir)
+  puts "Aborting: #{destination_dir} already exists. Run `rm -rf #{destination_dir}` to redownload."
+  exit
+else
+  # Create the destination directory
+  Dir.mkdir(destination_dir)
+  puts "Created directory: #{destination_dir}"
 end
+
+# Download the tar file
+puts "Downloading #{tar_url} into #{tar_file}..."
+open(tar_url) do |file|
+  File.open(tar_file, 'wb') do |output|
+    output.write(file.read)
+  end
+end
+puts "Download completed."
+
+# Extract the tar file
+puts "Extracting #{tar_file} into #{destination_dir}..."
+system("tar -xvzf #{tar_file} -C #{destination_dir}")
+
+puts "Extraction completed."
