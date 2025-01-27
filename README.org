@@ -27,6 +27,18 @@ ruby ftp_download.rb
 
 This will create a downloads folder.
 
+** Setup database
+
+
+First download the repo and build MySQL. Then you need to run MySQL. We use MTR which is mysqls testing script.
+
+#+begin_src shell
+cd build # build folder in root of mysql for example
+./mysql-test/mtr --start
+#+end_src
+
+Then from the build folder we need build/bin/mysql in the config.yaml file.
+
 ** Setup the database
 
 Copy the config.yaml.example and fill in mysql path.
