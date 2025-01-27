@@ -26,3 +26,9 @@ ruby ftp_download.rb
 #+END_SRC
 
 This will create a downloads folder.
+
+* Cleanup
+
+#+begin_src shell
+ruby cleanup.rb
+#+end_src
