@@ -22,12 +22,13 @@ git submodule update
 ** Download the data
 
 #+begin_src shell
-ruby ftp_download.rb
+ruby download.rb
 #+END_SRC
 
-This will create a downloads folder.
+This will create a dataset folder.
 
-** Build MySQL
+
+** Start MySQL
 
 First download the repo and build MySQL. Then you need to run MySQL. We use MTR which is mysqls testing script.
 
@@ -37,6 +38,13 @@ cd build # build folder in root of mysql for example
 #+end_src
 
 Then from the build folder we need build/bin/mysql in the config.yaml file.
+
+After first time, use:
+
+#+begin_src shell
+cd build # build folder in root of mysql for example
+./mysql-test/mtr --start-dirty
+#+end_src
 
 ** Setup the database
 
@@ -49,19 +57,6 @@ ruby run_queries.rb --setup
 This creates tables and indexes.
 
 ** Feed the data
-
-*** Requirements.txt
-
-We need to ensure that MySQL is installed on machine first.
-
-To run cinemagoer, we need the packages in the requirements.txt file.
-
-#+begin_src shell
-brew install mysql
-pip install -r requirements.txt
-#+end_src
-
-*** Feed the data
 
 #+begin_src shell
 ruby run_queries.rb --feed

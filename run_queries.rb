@@ -22,44 +22,38 @@ def run_command_stream(command)
   puts "Executing: #{command}"
 
   Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
-    # We won't be sending any input
     stdin.close
 
-    # Create threads to read each stream line-by-line
     threads = []
-
     threads << Thread.new do
       stdout.each_line do |line|
-        # Print lines from stdout immediately
         puts line
       end
     end
 
     threads << Thread.new do
       stderr.each_line do |line|
-        # Print lines from stderr immediately
         warn line
       end
     end
 
-    # Wait for the process to finish, then get its exit status
     exit_status = wait_thr.value
-
-    # Make sure we've read everything
     threads.each(&:join)
 
     unless exit_status.success?
-      # If the command failed, exit
       puts "Error: Command exited with status #{exit_status.exitstatus}"
       exit 1
     end
   end
 end
 
+# TODO(Johan): this is probably not needed. investigate in future.
+# Takes a long time to run this script, so will postpone investigation.
 def enable_local_inline()
   run_command_stream("#{MYSQL_CLIENT_PATH} -u#{DB_USER} --port=#{DB_PORT} --host=#{DB_HOST} -e 'SET GLOBAL local_infile=1;'")
 end
 
+# Parsing arguments
 options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: run_queries.rb [options]"
@@ -77,6 +71,7 @@ OptionParser.new do |opts|
   end
 end.parse!
 
+# Main
 if options[:setup]
   begin
     puts "Setting up the database..."
