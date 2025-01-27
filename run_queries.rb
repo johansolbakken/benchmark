@@ -4,6 +4,8 @@ require 'optparse'
 require 'open3'
 require 'yaml'
 
+require_relative 'lib/sql_table_topological_sort'
+
 config = YAML.load_file('config.yaml')
 
 mysql_config = config['mysql']
@@ -13,7 +15,7 @@ DB_PORT = '13000'
 DB_HOST = '127.0.0.1'
 DB_NAME = 'imdbload'
 SQL_PATH = './job'
-DOWNLOADS_PATH = './downloads'
+DOWNLOADS_PATH = './dataset'
 
 # This method now uses popen3 to stream output as the command runs.
 def run_command_stream(command)
@@ -52,6 +54,10 @@ def run_command_stream(command)
       exit 1
     end
   end
+end
+
+def enable_local_inline()
+  run_command_stream("#{MYSQL_CLIENT_PATH} -u#{DB_USER} --port=#{DB_PORT} --host=#{DB_HOST} -e 'SET GLOBAL local_infile=1;'")
 end
 
 options = {}
@@ -112,15 +118,17 @@ elsif options[:query]
   end
 elsif options[:feed]
   begin
-    puts "Feeding .gz files to the database using imdbpy2sql.py..."
+    enable_local_inline
 
-    imdbpy_command = "python ./3rdparty/cinemagoer/bin/imdbpy2sql.py " \
-                     "--mysql-innodb "\
-                     "-d #{DOWNLOADS_PATH} " \
-                     "-u mysql://#{DB_USER}:@#{DB_HOST}:#{DB_PORT}/#{DB_NAME}"
-    run_command_stream(imdbpy_command)
+    sql = File.read("job/schema.sql")
+    sorted_tables = Sql_Table_Topological_Sort.sort_tables(sql)
+    sorted_tables.each do |name|
+      file = File.expand_path("#{DOWNLOADS_PATH}/#{name}.csv")
+      query = "LOAD DATA LOCAL INFILE '#{file}' INTO TABLE #{name} FIELDS TERMINATED BY ',';"
+      run_command_stream("#{MYSQL_CLIENT_PATH} --local-infile=1 -u#{DB_USER}  --port=#{DB_PORT} --host=#{DB_HOST} #{DB_NAME} -e \"#{query}\"")
+    end
 
-    puts "Data feeding completed."
+    puts "Loaded all sql files into MySQL!"
   rescue StandardError => e
     puts "An error occurred during feeding: #{e.message}"
     exit 1
