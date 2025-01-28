@@ -83,6 +83,11 @@ OptionParser.new do |opts|
   opts.on("--tree", "EXPLAIN FORMAT=TREE") do
     options[:tree] = true
   end
+
+  opts.on("--json", "EXPLAIN FORMAT=JSON") do
+    options[:json] = true
+  end
+
 end.parse!
 
 # Main
@@ -117,7 +122,11 @@ if options[:setup]
   end
 elsif options[:query]
   begin
-    if options[:explain] && options[:tree]
+    explain_mode_options = [:explain, :tree, :json]
+    all_false = explain_mode_options.all? { |option| !options[option] }
+    only_one_true = explain_mode_options.count { |option| options[option] } == 1
+
+    if !all_false && !only_one_true
       puts "Error: cannot provide --analyze && --tree together."
       exit 1
     end
@@ -125,6 +134,10 @@ elsif options[:query]
     if options[:explain]
       begin
         explain = "EXPLAIN ANALYZE "
+      end
+    elsif options[:json]
+      begin
+        explain = "EXPLAIN FORMAT=JSON "
       end
     elsif options[:tree]
       begin
