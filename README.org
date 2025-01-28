@@ -68,9 +68,14 @@ To run SQL queries, use the following commands:
 ruby benchmark.rb --run ./job/1a.sql
 #+end_src
 
-- Execute a query with EXPLAIN/ANALYZE:
+- Execute a query with EXPLAIN ANALYZE to analyze execution:
 #+begin_src shell
-ruby benchmark.rb --run ./job/1a.sql --explain
+ruby benchmark.rb --run ./job/1a.sql --analyze
+#+end_src
+
+- Execute a query with EXPLAIN FORMAT=TREE to analyze plan:
+#+begin_src shell
+ruby benchmark.rb --run ./job/1a.sql --tree
 #+end_src
 
 * Cleanup

@@ -76,8 +76,12 @@ OptionParser.new do |opts|
     options[:feed] = true
   end
 
-  opts.on("--explain", "Explain analyze") do
+  opts.on("--analyze", "EXPLAIN ANALYZE") do
     options[:explain] = true
+  end
+
+  opts.on("--tree", "EXPLAIN FORMAT=TREE") do
+    options[:tree] = true
   end
 end.parse!
 
@@ -113,11 +117,22 @@ if options[:setup]
   end
 elsif options[:query]
   begin
-    file = options[:query]
+    if options[:explain] && options[:tree]
+      puts "Error: cannot provide --analyze && --tree together."
+      exit 1
+    end
     explain = ""
     if options[:explain]
-      explain = "EXPLAIN ANALYZE "
+      begin
+        explain = "EXPLAIN ANALYZE "
+      end
+    elsif options[:tree]
+      begin
+        explain = "EXPLAIN FORMAT=TREE "
+      end
     end
+
+    file = options[:query]
     query = ""
     begin
       query = File.read(file)
