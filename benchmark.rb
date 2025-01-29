@@ -5,6 +5,7 @@ require 'open3'
 require 'yaml'
 
 require_relative 'lib/sql_table_topological_sort'
+require_relative 'lib/color'
 
 ##
 # Configuration
@@ -23,7 +24,7 @@ DOWNLOADS_PATH = './dataset'
 # Runs a command and streams STDOUT / STDERR in real-time.
 #
 def run_command_stream(command)
-  puts "Executing: #{command}"
+  puts "#{Color.bold("Executing")}: #{command}"
 
   Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
     stdin.close
@@ -48,10 +49,22 @@ def run_command_stream(command)
     threads.each(&:join)
 
     unless exit_status.success?
-      puts "Error: Command exited with status #{exit_status.exitstatus}"
+      Color.red(puts "#{Color.red("Error")}: Command exited with status #{exit_status.exitstatus}")
       exit 1
     end
   end
+end
+
+def run_query(query)
+  run_command_stream(
+    "#{MYSQL_CLIENT_PATH} -u#{DB_USER} --port=#{DB_PORT} --host=#{DB_HOST} " "-e '#{query}'"
+  )
+end
+
+def run_file(file)
+  run_command_stream(
+    "#{MYSQL_CLIENT_PATH} -u#{DB_USER} --port=#{DB_PORT} --host=#{DB_HOST} #{DB_NAME} < #{file}"
+  )
 end
 
 ##
@@ -74,35 +87,25 @@ def setup_database
     "SET GLOBAL local_infile=1;",
     "DROP DATABASE IF EXISTS #{DB_NAME};",
     "CREATE DATABASE #{DB_NAME};",
-    "USE #{DB_NAME};"
   ]
 
   commands.each do |cmd|
-    run_command_stream(
-      "#{MYSQL_CLIENT_PATH} -u#{DB_USER} --port=#{DB_PORT} --host=#{DB_HOST} " \
-      "-e '#{cmd}'"
-    )
+   run_query(cmd)
   end
 
-  # Import schema
-  schema_file = File.join(SQL_PATH, 'schema.sql')
-  puts "Importing schema: #{schema_file}"
-  run_command_stream(
-    "#{MYSQL_CLIENT_PATH} -u#{DB_USER} --port=#{DB_PORT} " \
-    "--host=#{DB_HOST} #{DB_NAME} < #{schema_file}"
-  )
+  setup_files = [
+    File.join(SQL_PATH, 'schema.sql'),
+    File.join(SQL_PATH, 'fkindexes.sql'),
+    "sql/experimental_setup.sql"
+  ]
 
-  # Import foreign key indexes
-  fkindexes_file = File.join(SQL_PATH, 'fkindexes.sql')
-  puts "Importing foreign key indexes: #{fkindexes_file}"
-  run_command_stream(
-    "#{MYSQL_CLIENT_PATH} -u#{DB_USER} --port=#{DB_PORT} " \
-    "--host=#{DB_HOST} #{DB_NAME} < #{fkindexes_file}"
-  )
+  setup_files.each do |file|
+    run_file(file)
+  end
 
-  puts "Database setup completed."
+  puts Color.green("\nDatabase setup completed.")
 rescue StandardError => e
-  puts "An error occurred during setup: #{e.message}"
+  puts Color.red("An error occurred during setup: #{e.message}")
   exit 1
 end
 
@@ -115,7 +118,7 @@ def build_explain_prefix(options)
   active_explains = explain_options.select { |opt| options[opt] }
 
   if active_explains.size > 1
-    puts "Error: cannot use more than one EXPLAIN option at a time."
+    puts Color.red("Error: cannot use more than one EXPLAIN option at a time.")
     exit 1
   end
 
@@ -139,7 +142,7 @@ def run_query_file(query_file, options)
     "--host=#{DB_HOST} #{DB_NAME} -e \"#{explain_prefix}#{query_contents}\""
   )
 rescue StandardError => e
-  puts "An error occurred while running the query: #{e.message}"
+  puts Color.red("An error occurred while running the query: #{e.message}")
   exit 1
 end
 
@@ -162,9 +165,9 @@ def feed_data
     )
   end
 
-  puts "Loaded all CSV files into MySQL!"
+  puts Color.green("\nLoaded all CSV files into MySQL!")
 rescue StandardError => e
-  puts "An error occurred during feeding: #{e.message}"
+  puts Color.red("An error occurred during feeding: #{e.message}")
   exit 1
 end
 
@@ -216,8 +219,8 @@ def run
   elsif options[:feed]
     feed_data
   else
-    puts "No valid option provided."
-    puts "Use --setup to create schema, --run FILE to run a file, or --feed to load CSV data."
+    puts Color.red("No valid option provided.")
+puts "Use #{Color.bold("--setup")} to create schema, #{Color.bold("--run FILE")} to run a file, or #{Color.bold("--feed")} to load CSV data."
   end
 end
 
