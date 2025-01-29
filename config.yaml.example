@@ -1,2 +1,6 @@
 mysql:
     path: ".../mysql"
+    user: "root"
+    port: "13000"
+    host: "127.0.0.1"
+    name: "imdbload"
