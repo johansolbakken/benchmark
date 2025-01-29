@@ -10,7 +10,20 @@ gem install pq_query
 brew install hyperfine
 #+END_SRC
 
-* Getting Started
+* Quick start
+
+- Requires MySQL running and config.yaml set up pointing at a mysql executable and server.
+
+#+begin_src
+ruby download.rb                                          # downloads csv files with JOB dataset
+ruby benchmark.rb --setup                                 # loads schema and creates indexes
+ruby benchmark.rb --feed                                  # feeds the downloaded dataset folder into MySQL
+ruby benchmark.rb --prepare-mysql                         # sets up a consistent environment in MySQL for testing
+ruby benchmark.rb --run ./job/6a.sql --analyze            # EXPLAIN ANALYZE on query 6a
+#+end_src
+
+
+* Commands
 
 ** Clone the Repository
 
@@ -51,9 +64,15 @@ For subsequent runs, use:
 
 3. Configure the path to the MySQL binary in `config.yaml` (e.g., `build/bin/mysql`).
 
+** config.yaml
+
+Copy the `config.yaml.example` file to `config.yaml` and update it with the path to your MySQL binary.
+
+It is important that /path/ points to a mysql client executable.
+
 ** Setup the Database
 
-Copy the `config.yaml.example` file to `config.yaml` and update it with the path to your MySQL binary. Then, initialize the database by creating tables and indexes:
+Then, initialize the database by creating tables and indexes:
 
 #+begin_src shell
 ruby benchmark.rb --setup
