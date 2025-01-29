@@ -2,17 +2,18 @@
 
 require 'fileutils'
 
-# Path to the downloads directory
-downloads_dir = './downloads'
+require_relative 'lib/color'
+
+DATASET_DIR = './dataset'
 
 begin
-  if Dir.exist?(downloads_dir)
+  if Dir.exist?(DATASET_DIR)
     puts "Deleting downloads folder and its contents..."
-    FileUtils.rm_rf(downloads_dir)
-    puts "Downloads folder removed successfully."
+    FileUtils.rm_rf(DATASET_DIR)
+    puts Color.green("\nDownloads folder removed successfully.")
   else
     puts "Downloads folder does not exist, nothing to clean up."
   end
 rescue StandardError => e
-  puts "An error occurred while cleaning up: #{e.message}"
+  puts Color.red("An error occurred while cleaning up: #{e.message}")
 end
