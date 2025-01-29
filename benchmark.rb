@@ -102,6 +102,7 @@ def setup_database
   setup_files = [
     File.join(JOB_PATH, 'schema.sql'),
     File.join(JOB_PATH, 'fkindexes.sql'),
+    File.join(SQL_PATH, "experimental_setup.sql")
   ]
   setup_files.each do |file|
     run_file(file)
@@ -162,7 +163,7 @@ def feed_data
     run_query("LOAD DATA LOCAL INFILE '#{csv_file}' INTO TABLE #{table_name} FIELDS TERMINATED BY ',';")
   end
 
-  run_file(File.join(SQL_PATH, "experimental_setup.sql"))
+  run_file(File.join(SQL_PATH, "analyze_tables.sql"))
 
   puts Color.green("\nLoaded all CSV files into MySQL!")
 rescue StandardError => e
