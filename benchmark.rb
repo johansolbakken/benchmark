@@ -55,15 +55,21 @@ def run_command_stream(command)
   end
 end
 
+def run_query_without_db(query)
+  run_command_stream(
+    "#{MYSQL_CLIENT_PATH} -u#{DB_USER} --local-infile=1 --port=#{DB_PORT} --host=#{DB_HOST} -e \"#{query}\""
+  )
+end
+
 def run_query(query)
   run_command_stream(
-    "#{MYSQL_CLIENT_PATH} -u#{DB_USER} --port=#{DB_PORT} --host=#{DB_HOST} " "-e '#{query}'"
+    "#{MYSQL_CLIENT_PATH} -u#{DB_USER} --local-infile=1 --port=#{DB_PORT} --host=#{DB_HOST} #{DB_NAME} -e \"#{query}\""
   )
 end
 
 def run_file(file)
   run_command_stream(
-    "#{MYSQL_CLIENT_PATH} -u#{DB_USER} --port=#{DB_PORT} --host=#{DB_HOST} #{DB_NAME} < #{file}"
+    "#{MYSQL_CLIENT_PATH} -u#{DB_USER} --local-infile=1 --port=#{DB_PORT} --host=#{DB_HOST} #{DB_NAME} < #{file}"
   )
 end
 
@@ -88,9 +94,8 @@ def setup_database
     "DROP DATABASE IF EXISTS #{DB_NAME};",
     "CREATE DATABASE #{DB_NAME};",
   ]
-
   commands.each do |cmd|
-   run_query(cmd)
+   run_query_without_db(cmd)
   end
 
   setup_files = [
@@ -98,7 +103,6 @@ def setup_database
     File.join(SQL_PATH, 'fkindexes.sql'),
     "sql/experimental_setup.sql"
   ]
-
   setup_files.each do |file|
     run_file(file)
   end
@@ -137,10 +141,7 @@ def run_query_file(query_file, options)
   explain_prefix = build_explain_prefix(options)
   query_contents = File.read(query_file)
 
-  run_command_stream(
-    "#{MYSQL_CLIENT_PATH} -u#{DB_USER} --port=#{DB_PORT} " \
-    "--host=#{DB_HOST} #{DB_NAME} -e \"#{explain_prefix}#{query_contents}\""
-  )
+  run_query("#{explain_prefix}#{query_contents}")
 rescue StandardError => e
   puts Color.red("An error occurred while running the query: #{e.message}")
   exit 1
@@ -158,11 +159,7 @@ def feed_data
 
   sorted_tables.each do |table_name|
     csv_file = File.expand_path("#{DOWNLOADS_PATH}/#{table_name}.csv")
-    load_query = "LOAD DATA LOCAL INFILE '#{csv_file}' INTO TABLE #{table_name} FIELDS TERMINATED BY ',';"
-    run_command_stream(
-      "#{MYSQL_CLIENT_PATH} --local-infile=1 " \
-      "-u#{DB_USER} --port=#{DB_PORT} --host=#{DB_HOST} #{DB_NAME} -e \"#{load_query}\""
-    )
+    run_query("LOAD DATA LOCAL INFILE '#{csv_file}' INTO TABLE #{table_name} FIELDS TERMINATED BY ',';")
   end
 
   puts Color.green("\nLoaded all CSV files into MySQL!")
@@ -220,7 +217,7 @@ def run
     feed_data
   else
     puts Color.red("No valid option provided.")
-puts "Use #{Color.bold("--setup")} to create schema, #{Color.bold("--run FILE")} to run a file, or #{Color.bold("--feed")} to load CSV data."
+    puts "Use #{Color.bold("--setup")} to create schema, #{Color.bold("--run FILE")} to run a file, or #{Color.bold("--feed")} to load CSV data."
   end
 end
 
