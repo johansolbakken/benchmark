@@ -1,4 +1,4 @@
--- Obtained from: "Using Re-Optimization in MySQL to Improve Query Plans"
+-- Obtained from: 'Using Re-Optimization in MySQL to Improve Query Plans'
 -- NTNU Master Thesis, 2024 (Elton & Rosendahl) - https://hdl.handle.net/11250/3153611
 
 UPDATE mysql.engine_cost SET cost_value = 0.25 WHERE cost_name = 'io_block_read_cost';
