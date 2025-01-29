@@ -1,27 +1,27 @@
 require 'fileutils'
 
-# Variables
-tar_url = 'https://event.cwi.nl/da/job/imdb.tgz'
-destination_dir = './dataset'
-tar_file = File.join(destination_dir, 'imdb.tgz')
+require_relative 'lib/color'
 
-# Check if the destination directory exists
-if Dir.exist?(destination_dir)
-  puts "Aborting: #{destination_dir} already exists. Run `rm -rf #{destination_dir}` to redownload."
+TAR_URL = 'https://event.cwi.nl/da/job/imdb.tgz'
+DESTINATION_DIR = './dataset'
+TAR_FILE = File.join(DESTINATION_DIR, 'imdb.tgz')
+
+if Dir.exist?(DESTINATION_DIR)
+  delete_message = Color.bold("rm -rf #{destination_dir}")
+  puts "#{Color.yellow("Aborting")}: #{DESTINATION_DIR} already exists. Run `#{delete_message}` to redownload."
   exit
 else
-  # Create the destination directory
-  Dir.mkdir(destination_dir)
-  puts "Created directory: #{destination_dir}"
+  Dir.mkdir(DESTINATION_DIR)
+  puts "Created directory: #{DESTINATION_DIR}"
 end
 
 # Use wget to download the tar file and pipe the output to stdout
-puts "Downloading #{tar_url}..."
-wget_command = "wget -O #{tar_file} #{tar_url}"
+puts "Downloading #{TAR_URL}..."
+wget_command = "wget -O #{TAR_FILE} #{TAR_URL}"
 system(wget_command)
 
 # Extract the tar file
-puts "Extracting #{tar_file} into #{destination_dir}..."
-system("tar -xvzf #{tar_file} -C #{destination_dir}")
+puts "Extracting #{TAR_FILE} into #{DESTINATION_DIR}..."
+system("tar -xvzf #{TAR_FILE} -C #{DESTINATION_DIR}")
 
 puts "Extraction completed."
