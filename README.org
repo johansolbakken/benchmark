@@ -67,6 +67,14 @@ Feed the downloaded dataset into the database:
 ruby benchmark.rb --feed
 #+end_src
 
+** Prepare MySQL environment
+
+This command sets the environment to ensure the environment is the same for every test.
+
+#+begin_src shell
+ruby benchmark.rb --prepare-mysql
+#+end_src
+
 ** Run SQL Queries
 
 To run SQL queries, use the following commands:
