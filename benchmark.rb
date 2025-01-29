@@ -163,12 +163,19 @@ def feed_data
     run_query("LOAD DATA LOCAL INFILE '#{csv_file}' INTO TABLE #{table_name} FIELDS TERMINATED BY ',';")
   end
 
-  run_file(File.join(SQL_PATH, "analyze_tables.sql"))
+  run_file(File.join(SQL_PATH, "experimental_setup.sql"))
 
   puts Color.green("\nLoaded all CSV files into MySQL!")
 rescue StandardError => e
   puts Color.red("An error occurred during feeding: #{e.message}")
   exit 1
+end
+
+def prepare_mysql
+  run_file(File.join(SQL_PATH, "experimental_setup.sql"))
+  run_file(File.join(SQL_PATH, "analyze_tables.sql"))
+
+  puts Color.green("\nPrepared MySQL environment")
 end
 
 ##
@@ -189,6 +196,10 @@ def parse_options
 
     opts.on("--feed", "Feed all CSV files in the downloads folder into the database") do
       options[:feed] = true
+    end
+
+    opts.on("--prepare-mysql", "Sets costs and hypergraph optimizer use and analyzes tables") do
+      options[:prepare] = true
     end
 
     opts.on("--analyze", "Use EXPLAIN ANALYZE") do
@@ -218,6 +229,8 @@ def run
     run_query_file(options[:query], options)
   elsif options[:feed]
     feed_data
+  elsif options[:prepare]
+    prepare_mysql
   else
     puts Color.red("No valid option provided.")
     puts "Use #{Color.bold("--setup")} to create schema, #{Color.bold("--run FILE")} to run a file, or #{Color.bold("--feed")} to load CSV data."
