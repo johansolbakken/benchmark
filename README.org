@@ -2,6 +2,14 @@
 
 This repository is part of our Master's thesis, focused on benchmarking modifications made to MySQL. The project specifically evaluates the performance of our newly developed operator, Optimistic Order-Preserving Hash Join (OOHJ), using the Join Order Benchmark (JOB).
 
+* Requirements
+
+#+begin_src
+brew install ruby
+gem install pq_query
+brew install hyperfine
+#+END_SRC
+
 * Getting Started
 
 ** Clone the Repository
