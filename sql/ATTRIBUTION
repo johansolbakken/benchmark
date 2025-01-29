@@ -1,0 +1,14 @@
+Attribution
+
+This work references concepts and implementations from the following sources:
+
+1. Title: "Using Re-Optimization in MySQL to Improve the Handling of Sub-optimal
+   Query Plans". Authors: Hermann O. Elton, Olaf Rosendahl. Institution:
+   Norwegian University of Science and Technology (NTNU) Degree: Master Thesis,
+   2024 Permanent Link: https://hdl.handle.net/11250/3153611
+
+[Additional sources can be added here]
+
+Our thesis used this material when we conducted research, development, and
+experiments using MySQL. The referenced works provide insights into various
+optimization techniques that enhance database efficiency.
