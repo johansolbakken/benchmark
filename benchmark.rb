@@ -17,8 +17,9 @@ DB_USER  = MYSQL_CONFIG['user']
 DB_PORT  = MYSQL_CONFIG['port']
 DB_HOST  = MYSQL_CONFIG['host']
 DB_NAME  = MYSQL_CONFIG['name']
-SQL_PATH = './job'
-DOWNLOADS_PATH = './dataset'
+JOB_PATH = './job'
+SQL_PATH = './sql'
+DATASET_PATH = './dataset'
 
 ##
 # Runs a command and streams STDOUT / STDERR in real-time.
@@ -99,9 +100,9 @@ def setup_database
   end
 
   setup_files = [
-    File.join(SQL_PATH, 'schema.sql'),
-    File.join(SQL_PATH, 'fkindexes.sql'),
-    "sql/experimental_setup.sql"
+    File.join(JOB_PATH, 'schema.sql'),
+    File.join(JOB_PATH, 'fkindexes.sql'),
+    File.join(SQL_PATH, "experimental_setup.sql")
   ]
   setup_files.each do |file|
     run_file(file)
@@ -154,11 +155,11 @@ def feed_data
   enable_local_infile
 
   # Sort tables in topological order based on schema
-  schema_sql = File.read(File.join(SQL_PATH, "schema.sql"))
+  schema_sql = File.read(File.join(JOB_PATH, "schema.sql"))
   sorted_tables = Sql_Table_Topological_Sort.sort_tables(schema_sql)
 
   sorted_tables.each do |table_name|
-    csv_file = File.expand_path("#{DOWNLOADS_PATH}/#{table_name}.csv")
+    csv_file = File.expand_path(File.join(DATASET_PATH, "#{table_name}.csv"))
     run_query("LOAD DATA LOCAL INFILE '#{csv_file}' INTO TABLE #{table_name} FIELDS TERMINATED BY ',';")
   end
 
