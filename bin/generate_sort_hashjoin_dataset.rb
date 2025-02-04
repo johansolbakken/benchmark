@@ -43,6 +43,10 @@ def random_timestamp(start_year = 2000, end_year = 2025)
   random_time.strftime('%Y-%m-%d %H:%M:%S')
 end
 
+# Generate unique random IDs for table_a
+# Here we generate from a range that is 10 times larger than num_rows_a to reduce the chance of duplicates.
+ids_a = (1..(num_rows_a * 10)).to_a.sample(num_rows_a)
+
 #
 # Generate table_a.sql
 #
@@ -67,12 +71,15 @@ File.open('table_a.sql', 'w') do |f|
   f.puts ");"
   f.puts
 
-  (1..num_rows_a).each do |i|
+  ids_a.each do |id|
     name  = random_string(10)
     value = random_int(1, 1_000_000)
-    f.puts "INSERT INTO table_a (id, name, value) VALUES (#{i}, '#{name}', #{value});"
+    f.puts "INSERT INTO table_a (id, name, value) VALUES (#{id}, '#{name}', #{value});"
   end
 end
+
+# Generate unique random IDs for table_b
+ids_b = (1..(num_rows_b * 10)).to_a.sample(num_rows_b)
 
 #
 # Generate table_b.sql
@@ -99,12 +106,13 @@ File.open('table_b.sql', 'w') do |f|
   f.puts ");"
   f.puts
 
-  (1..num_rows_b).each do |i|
-    a_id        = rand(1..num_rows_a)
+  ids_b.each do |id|
+    # Pick a random table_a id for the foreign key column
+    a_id        = ids_a.sample
     description = random_string(20)
     timestamp   = random_timestamp(2000, 2025)
     f.puts "INSERT INTO table_b (id, a_id, description, timestamp_col)"
-    f.puts "  VALUES (#{i}, #{a_id}, '#{description}', '#{timestamp}');"
+    f.puts "  VALUES (#{id}, #{a_id}, '#{description}', '#{timestamp}');"
   end
 end
 
