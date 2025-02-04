@@ -121,4 +121,29 @@ To clean up the database and remove generated artifacts, run:
 ruby cleanup.rb
 #+end_src
 
-* TPC-DS
+* Homemade Sorting and Hash Join Dataset
+
+To generate the data:
+
+#+begin_src shell
+cd bin
+ruby generate_sort_hashjoin_dataset.rb 10 10
+cd ..
+ruby benchmark.rb --run bin/table_a.sql
+ruby benchmark.rb --run bin/table_b.sql
+#+end_src
+
+Always remember to prepare the env before running queries:
+
+#+begin_src shell
+make prepare
+#+end_src
+
+Then you can run the following sql:
+
+,#+begin_src sql
+use test_sort_hashjoin_db;
+EXPLAIN FORMAT=tree select * from table_b, table_a WHERE table_b.a_id = table_a.id ORDER BY table_a.id;
+#+end_src
+
+This generates lets us propose optimistic hash joins since ordering_state gets set.
