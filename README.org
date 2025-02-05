@@ -5,7 +5,7 @@
 This software is /not/ intended for production use and is intended for our own private research purposes. Although others may use the code, please be aware that it is prone to change without notice.
 #+END_QUOTE
 
-This repository is part of our Master's thesis, focused on benchmarking modifications made to MySQL. The project specifically evaluates the performance of our newly developed operator, Optimistic Order-Preserving Hash Join (OOHJ), using the Join Order Benchmark (JOB).
+This repository is part of our Master's thesis, focused on benchmarking modifications made to MySQL. Our fork of MySQL, which implements the Optimistic Order-Preserving Hash Join (OOHJ) feature, is available at: https://github.com/johansolbakken/mysql-server/tree/oohj/oohj-iterator.
 
 * Requirements
 
