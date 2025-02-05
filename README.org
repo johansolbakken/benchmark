@@ -1,4 +1,4 @@
-#+title: JOB for Optimistic Order-Preserving Hash Join (OOHJ)
+#+title: Benchmarking for Optimistic Order-Preserving Hash Join (OOHJ)
 
 This repository is part of our Master's thesis, focused on benchmarking modifications made to MySQL. The project specifically evaluates the performance of our newly developed operator, Optimistic Order-Preserving Hash Join (OOHJ), using the Join Order Benchmark (JOB).
 
@@ -20,6 +20,43 @@ make fresh                                              # setup, feed, prepare
 ruby bin/benchmark.rb --run ./job/6a.sql --analyze      # EXPLAIN ANALYZE on query 6a
 #+end_src
 
+* Testing the Optimistic Hash Join
+
+1. Start the MySQL server
+2. Fill out config.yaml
+
+#+begin_src shell
+make test
+#+end_src
+
+This will compare .sql files in homemade_dataset folder against .expected files in homemade_dataset folder. It will also do other types tests defined in tests.yaml file.
+
+These tests are passing under our current assumptions. As we improve optimistic order-preserving hash join these tests will fail and we need to take new snapshots of the new expected state.
+
+* Homemade Sorting and Hash Join Dataset
+
+To generate the data:
+
+#+begin_src shell
+ruby ./bin/generate_sort_hashjoin_dataset.rb 10 10
+#+end_src
+
+Always remember to prepare the env before running queries:
+
+#+begin_src shell
+make prepare
+#+end_src
+
+Then you can run the following sql:
+
+#+begin_src sql
+use test_sort_hashjoin_db;
+EXPLAIN FORMAT=tree select * from table_b, table_a WHERE table_b.a_id = table_a.id ORDER BY table_a.id;
+#+end_src
+
+This generates lets us propose optimistic hash joins since ordering_state gets set.
+
+Since the JOB dataset does not include any ORDER BY or DISTINCT, it did not make any interesting order in MySQL. This was experimentally proven by checking for an ordering that was followed every time optimistic hash join was proposed. Therefoer we created this dataset which we can build our own queries around and also scale the dataset using the generate script.
 
 * Commands
 
@@ -111,37 +148,10 @@ ruby bin/benchmark.rb --run ./job/1a.sql --analyze
 ruby bin/benchmark.rb --run ./job/1a.sql --tree
 #+end_src
 
-* Cleanup
+* Cleanup JOB files
 
 To clean up the database and remove generated artifacts, run:
 
 #+begin_src shell
 ruby bin/cleanup.rb
 #+end_src
-
-* Homemade Sorting and Hash Join Dataset
-
-To generate the data:
-
-#+begin_src shell
-cd bin
-ruby generate_sort_hashjoin_dataset.rb 10 10
-cd ..
-ruby bin/benchmark.rb --run bin/table_a.sql
-ruby bin/benchmark.rb --run bin/table_b.sql
-#+end_src
-
-Always remember to prepare the env before running queries:
-
-#+begin_src shell
-make prepare
-#+end_src
-
-Then you can run the following sql:
-
-#+begin_src sql
-use test_sort_hashjoin_db;
-EXPLAIN FORMAT=tree select * from table_b, table_a WHERE table_b.a_id = table_a.id ORDER BY table_a.id;
-#+end_src
-
-This generates lets us propose optimistic hash joins since ordering_state gets set.
