@@ -1,6 +1,8 @@
+#!/usr/bin/env ruby
+
 require 'fileutils'
 
-require_relative 'lib/color'
+require_relative '../lib/color'
 
 TAR_URL = 'https://event.cwi.nl/da/job/imdb.tgz'
 DESTINATION_DIR = './dataset'

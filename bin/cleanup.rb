@@ -2,7 +2,7 @@
 
 require 'fileutils'
 
-require_relative 'lib/color'
+require_relative '../lib/color'
 
 DATASET_DIR = './dataset'
 

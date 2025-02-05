@@ -4,8 +4,9 @@ require 'optparse'
 require 'open3'
 require 'yaml'
 
-require_relative 'lib/sql_table_topological_sort'
-require_relative 'lib/color'
+require_relative '../lib/sql_table_topological_sort'
+require_relative '../lib/color'
+require_relative '../lib/mysql'
 
 ##
 # Configuration
@@ -21,68 +22,7 @@ JOB_PATH = './job'
 SQL_PATH = './sql'
 DATASET_PATH = './dataset'
 
-##
-# Runs a command and streams STDOUT / STDERR in real-time.
-#
-def run_command_stream(command)
-  puts "#{Color.bold("Executing")}: #{command}"
-
-  Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
-    stdin.close
-
-    threads = []
-
-    # Stream STDOUT
-    threads << Thread.new do
-      stdout.each_line do |line|
-        line.gsub("\\n", "\n").each_line { |sub_line| puts sub_line }
-      end
-    end
-
-    # Stream STDERR
-    threads << Thread.new do
-      stderr.each_line do |line|
-        line.gsub("\\n", "\n").each_line { |sub_line| warn sub_line }
-      end
-    end
-
-    exit_status = wait_thr.value
-    threads.each(&:join)
-
-    unless exit_status.success?
-      Color.red(puts "#{Color.red("Error")}: Command exited with status #{exit_status.exitstatus}")
-      exit 1
-    end
-  end
-end
-
-def run_query_without_db(query)
-  run_command_stream(
-    "#{MYSQL_CLIENT_PATH} -u#{DB_USER} --local-infile=1 --port=#{DB_PORT} --host=#{DB_HOST} -e \"#{query}\""
-  )
-end
-
-def run_query(query)
-  run_command_stream(
-    "#{MYSQL_CLIENT_PATH} -u#{DB_USER} --local-infile=1 --port=#{DB_PORT} --host=#{DB_HOST} #{DB_NAME} -e \"#{query}\""
-  )
-end
-
-def run_file(file)
-  run_command_stream(
-    "#{MYSQL_CLIENT_PATH} -u#{DB_USER} --local-infile=1 --port=#{DB_PORT} --host=#{DB_HOST} #{DB_NAME} < #{file}"
-  )
-end
-
-##
-# Enable local_infile in MySQL server (if needed).
-#
-def enable_local_infile
-  run_command_stream(
-    "#{MYSQL_CLIENT_PATH} -u#{DB_USER} --port=#{DB_PORT} --host=#{DB_HOST} " \
-    "-e 'SET GLOBAL local_infile=1;'"
-  )
-end
+CLIENT = MySQL::Client.new(DB_USER, DB_PORT, DB_HOST, DB_NAME, MYSQL_CLIENT_PATH)
 
 ##
 # Subcommand: Setup database with schema + foreign keys
@@ -96,7 +36,7 @@ def setup_database
     "CREATE DATABASE #{DB_NAME};",
   ]
   commands.each do |cmd|
-   run_query_without_db(cmd)
+    CLIENT.run_query_without_db(cmd)
   end
 
   setup_files = [
@@ -105,7 +45,11 @@ def setup_database
     File.join(SQL_PATH, "experimental_setup.sql")
   ]
   setup_files.each do |file|
-    run_file(file)
+    unless File.exist?(file)
+      puts Color.red("File not found: #{file}")
+      exit 1
+    end
+    CLIENT.run_file(file)
   end
 
   puts Color.green("\nDatabase setup completed.")
@@ -139,10 +83,13 @@ end
 # Subcommand: Run query from file (with optional EXPLAIN)
 #
 def run_query_file(query_file, options)
+  unless File.exist?(query_file)
+    puts Color.red("Query file not found: #{query_file}")
+    exit 1
+  end
   explain_prefix = build_explain_prefix(options)
   query_contents = File.read(query_file)
-
-  run_query("#{explain_prefix}#{query_contents}")
+  CLIENT.run_query("#{explain_prefix}#{query_contents}")
 rescue StandardError => e
   puts Color.red("An error occurred while running the query: #{e.message}")
   exit 1
@@ -152,29 +99,37 @@ end
 # Subcommand: Feed all CSV data (in topological order) into DB
 #
 def feed_data
-  enable_local_infile
-
   # Sort tables in topological order based on schema
-  schema_sql = File.read(File.join(JOB_PATH, "schema.sql"))
+  schema_file = File.join(JOB_PATH, "schema.sql")
+  unless File.exist?(schema_file)
+    puts Color.red("Schema file not found: #{schema_file}")
+    exit 1
+  end
+  schema_sql = File.read(schema_file)
   sorted_tables = Sql_Table_Topological_Sort.sort_tables(schema_sql)
 
   sorted_tables.each do |table_name|
     csv_file = File.expand_path(File.join(DATASET_PATH, "#{table_name}.csv"))
-    run_query("LOAD DATA LOCAL INFILE '#{csv_file}' INTO TABLE #{table_name} FIELDS TERMINATED BY ',';")
+    unless File.exist?(csv_file)
+      puts Color.red("CSV file not found: #{csv_file}")
+      exit 1
+    end
+    CLIENT.run_query("LOAD DATA LOCAL INFILE '#{csv_file}' INTO TABLE #{table_name} FIELDS TERMINATED BY ',';")
   end
 
-  run_file(File.join(SQL_PATH, "experimental_setup.sql"))
-
+  CLIENT.run_file(File.join(SQL_PATH, "experimental_setup.sql"))
   puts Color.green("\nLoaded all CSV files into MySQL!")
 rescue StandardError => e
   puts Color.red("An error occurred during feeding: #{e.message}")
   exit 1
 end
 
+##
+# Subcommand: Prepare MySQL environment (analyze tables, etc.)
+#
 def prepare_mysql
-  run_file(File.join(SQL_PATH, "experimental_setup.sql"))
-  run_file(File.join(SQL_PATH, "analyze_tables.sql"))
-
+  CLIENT.run_file(File.join(SQL_PATH, "experimental_setup.sql"))
+  CLIENT.run_file(File.join(SQL_PATH, "analyze_tables.sql"))
   puts Color.green("\nPrepared MySQL environment")
 end
 
@@ -233,7 +188,7 @@ def run
     prepare_mysql
   else
     puts Color.red("No valid option provided.")
-    puts "Use #{Color.bold("--setup")} to create schema, #{Color.bold("--run FILE")} to run a file, or #{Color.bold("--feed")} to load CSV data."
+    puts "Use #{Color.bold('--setup')} to create schema, #{Color.bold('--run FILE')} to run a file, or #{Color.bold('--feed')} to load CSV data."
   end
 end
 

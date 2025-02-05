@@ -15,11 +15,9 @@ brew install hyperfine
 - Requires MySQL running and config.yaml set up pointing at a mysql executable and server.
 
 #+begin_src
-ruby download.rb                                          # downloads csv files with JOB dataset
-ruby benchmark.rb --setup                                 # loads schema and creates indexes
-ruby benchmark.rb --feed                                  # feeds the downloaded dataset folder into MySQL
-ruby benchmark.rb --prepare-mysql                         # sets up a consistent environment in MySQL for testing
-ruby benchmark.rb --run ./job/6a.sql --analyze            # EXPLAIN ANALYZE on query 6a
+ruby bin/download.rb                                    # downloads csv files with JOB dataset
+make fresh                                              # setup, feed, prepare
+ruby bin/benchmark.rb --run ./job/6a.sql --analyze      # EXPLAIN ANALYZE on query 6a
 #+end_src
 
 
@@ -39,7 +37,7 @@ cd benchmark
 Use the provided script to download the dataset required for benchmarking:
 
 #+begin_src shell
-ruby download.rb
+ruby bin/download.rb
 #+end_src
 
 This will create a `dataset` folder containing the necessary data.
@@ -75,7 +73,7 @@ It is important that /path/ points to a mysql client executable.
 Then, initialize the database by creating tables and indexes:
 
 #+begin_src shell
-ruby benchmark.rb --setup
+ruby bin/benchmark.rb --setup
 #+end_src
 
 ** Load the Data
@@ -83,7 +81,7 @@ ruby benchmark.rb --setup
 Feed the downloaded dataset into the database:
 
 #+begin_src shell
-ruby benchmark.rb --feed
+ruby bin/benchmark.rb --feed
 #+end_src
 
 ** Prepare MySQL environment
@@ -91,7 +89,7 @@ ruby benchmark.rb --feed
 This command sets the environment to ensure the environment is the same for every test.
 
 #+begin_src shell
-ruby benchmark.rb --prepare-mysql
+ruby bin/benchmark.rb --prepare-mysql
 #+end_src
 
 ** Run SQL Queries
@@ -100,17 +98,17 @@ To run SQL queries, use the following commands:
 
 - Execute a query:
 #+begin_src shell
-ruby benchmark.rb --run ./job/1a.sql
+ruby bin/benchmark.rb --run ./job/1a.sql
 #+end_src
 
 - Execute a query with EXPLAIN ANALYZE to analyze execution:
 #+begin_src shell
-ruby benchmark.rb --run ./job/1a.sql --analyze
+ruby bin/benchmark.rb --run ./job/1a.sql --analyze
 #+end_src
 
 - Execute a query with EXPLAIN FORMAT=TREE to analyze plan:
 #+begin_src shell
-ruby benchmark.rb --run ./job/1a.sql --tree
+ruby bin/benchmark.rb --run ./job/1a.sql --tree
 #+end_src
 
 * Cleanup
@@ -118,7 +116,7 @@ ruby benchmark.rb --run ./job/1a.sql --tree
 To clean up the database and remove generated artifacts, run:
 
 #+begin_src shell
-ruby cleanup.rb
+ruby bin/cleanup.rb
 #+end_src
 
 * Homemade Sorting and Hash Join Dataset
@@ -129,8 +127,8 @@ To generate the data:
 cd bin
 ruby generate_sort_hashjoin_dataset.rb 10 10
 cd ..
-ruby benchmark.rb --run bin/table_a.sql
-ruby benchmark.rb --run bin/table_b.sql
+ruby bin/benchmark.rb --run bin/table_a.sql
+ruby bin/benchmark.rb --run bin/table_b.sql
 #+end_src
 
 Always remember to prepare the env before running queries:
@@ -141,7 +139,7 @@ make prepare
 
 Then you can run the following sql:
 
-,#+begin_src sql
+#+begin_src sql
 use test_sort_hashjoin_db;
 EXPLAIN FORMAT=tree select * from table_b, table_a WHERE table_b.a_id = table_a.id ORDER BY table_a.id;
 #+end_src
