@@ -2,22 +2,28 @@ USE test_sort_hashjoin_db;
 
 SET @prev_id = NULL;
 
-SELECT 
-  current_id,
-  previous_id,
-  sorted_status
+SELECT COUNT(*) AS not_sorted_count
 FROM (
   SELECT 
-    table_a.id AS current_id,
-    @prev_id AS previous_id,
-    (@prev_id := table_a.id) AS dummy,
     CASE 
-      WHEN @prev_id IS NOT NULL AND table_a.id < @prev_id THEN 'Not Sorted'
+      WHEN @prev_id IS NOT NULL AND sub.table_a_id < @prev_id THEN 'Not Sorted'
       ELSE 'Sorted'
-    END AS sorted_status
-  FROM table_b
-  JOIN table_a ON table_b.a_id = table_a.id
-  ORDER BY table_a.id
-) AS sub
+    END AS sorted_status,
+    (@prev_id := sub.table_a_id) AS dummy
+  FROM (
+    -- The query being tested: sorted on a.id (aliased as table_a_id)
+    SELECT 
+      a.id AS table_a_id,
+      a.name,
+      a.value,
+      b.id AS table_b_id,
+      b.description,
+      b.timestamp_col
+    FROM table_a AS a
+    JOIN table_b AS b
+      ON b.a_id = a.id
+    ORDER BY a.id ASC
+  ) AS sub
+) AS check_sorted
 WHERE sorted_status = 'Not Sorted';
 
