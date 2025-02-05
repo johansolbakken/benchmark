@@ -13,4 +13,7 @@ prepare:
 run_all:
 	find job -type f -name '[0-9]*[a-z].sql' | sort | xargs -I {} ruby bin/benchmark.rb --run {} --tree
 
+test: prepare
+	ruby bin/oohj_test.rb
+
 fresh: setup feed prepare

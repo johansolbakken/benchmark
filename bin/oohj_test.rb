@@ -95,12 +95,13 @@ class SQLJob
   end
 end
 
-# Create a list of jobs. Currently, we have only one job.
-jobs = [
-  SQLJob.new("./homemade_dataset/homemade.sql", "./homemade_dataset/homemade.expected")
+job_definitions = [
+  { sql: "./homemade_dataset/homemade.sql",           expected: "./homemade_dataset/homemade.expected" },
+  { sql: "./homemade_dataset/homemade_disabled.sql",  expected: "./homemade_dataset/homemade_disabled.expected" }
 ]
 
-# Loop through the list and run each job.
+jobs = job_definitions.map { |job| SQLJob.new(job[:sql], job[:expected]) }
+
 jobs.each do |job|
   job.run
   puts Color.gray("---------------------------------------")
