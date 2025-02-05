@@ -155,3 +155,38 @@ To clean up the database and remove generated artifacts, run:
 #+begin_src shell
 ruby bin/cleanup.rb
 #+end_src
+
+* C++ Debugging Tools
+
+** Header-only Logging File
+
+The =debug/logger.h=  is a class that can be used to fast log to a file.
+
+Usage:
+
+#+begin_src c++
+#include "/absolute_path_to_benchmark/debug/logger.h"
+
+static Logger* s_logger = nullptr;
+
+ClassToTest::ClassToTest() {
+    s_logger = new Logger("~/path_to_output/log.txt");
+}
+
+void ClassToTest::functionToTest() {
+    // Lets write CSV information to the logger.
+    auto& logger = *s_logger;
+
+    while (someCondition) {
+        logger << logger.timestamp() << "," this->getSomeValue() << ",";
+        logger << this->getState() << "\n";
+    }
+}
+
+#+end_src
+
+This class will delete the log-file on construction.
+
+There is a =timestamp()= function for getting timestamps easily.
+
+Currently using streams.
