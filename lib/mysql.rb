@@ -65,9 +65,12 @@ module MySQL
     # @param [String] file The path to the SQL file.
     # @return [void]
     def run_file(file)
-      # For file execution, you may still use shell redirection if the file is not huge.
-      command = "#{@mysql_client_path} -u#{@db_user} --local-infile=1 --port=#{@db_port} --host=#{@db_host} #{@db_name} < #{file}"
-      Stream.run_command(command)
+      # Read the file's contents (including newlines)
+      sql = File.read(file)
+      # Build the command without any redirection.
+      command = "#{@mysql_client_path} -u#{@db_user} --local-infile=1 --port=#{@db_port} --host=#{@db_host} #{@db_name}"
+      # Pass the file content as input so newlines are preserved.
+      Stream.run_command_with_input(command, sql)
     end
   end
 end

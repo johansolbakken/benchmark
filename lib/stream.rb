@@ -16,14 +16,14 @@ module Stream
 
       threads = []
 
-      # Stream STDOUT
+      # Stream STDOUT, converting literal "\n" sequences into actual newlines.
       threads << Thread.new do
-        stdout.each_line { |line| puts line.chomp }
+        stdout.each_line { |line| puts line.chomp.gsub('\\n', "\n") }
       end
 
-      # Stream STDERR
+      # Stream STDERR, converting literal "\n" sequences into actual newlines.
       threads << Thread.new do
-        stderr.each_line { |line| warn line.chomp }
+        stderr.each_line { |line| warn line.chomp.gsub('\\n', "\n") }
       end
 
       threads.each(&:join)
@@ -50,8 +50,8 @@ module Stream
       stdin.close
 
       threads = []
-      threads << Thread.new { stdout.each_line { |line| puts line.chomp } }
-      threads << Thread.new { stderr.each_line { |line| warn line.chomp } }
+      threads << Thread.new { stdout.each_line { |line| puts line.chomp.gsub('\\n', "\n") } }
+      threads << Thread.new { stderr.each_line { |line| warn line.chomp.gsub('\\n', "\n") } }
       threads.each(&:join)
 
       exit_status = wait_thr.value
