@@ -7,6 +7,8 @@ This software is /not/ intended for production use and is intended for our own p
 
 This repository is part of our Master's thesis, focused on benchmarking modifications made to MySQL. Our fork of MySQL, which implements the Optimistic Order-Preserving Hash Join (OOHJ) feature, is available at: https://github.com/johansolbakken/mysql-server/tree/oohj/oohj-iterator.
 
+Link to Master Thesis will be added later.
+
 * Requirements
 
 #+begin_src
