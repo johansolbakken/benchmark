@@ -1,7 +1,7 @@
 EXPLAIN
--> Sort: b.a_id  (cost=4.91..4.91 rows=1)
-    -> Inner hash join (b.a_id = a.id)  (cost=4.56..4.56 rows=1)
-        -> Table scan on a  (cost=0.866..0.866 rows=1)
+-> Sort: b.a_id  (cost=53368..53368 rows=10000)
+    -> Inner hash join (b.a_id = a.id)  (cost=33504..45625 rows=10000)
+        -> Index scan on a using PRIMARY  (cost=0.867..8666 rows=10000)
         -> Hash
-            -> Table scan on b  (cost=1.85..1.85 rows=1)
+            -> Table scan on b  (cost=1.85..18525 rows=10000)
 
