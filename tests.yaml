@@ -1,0 +1,39 @@
+tests:
+  diff_test:
+    setup:
+      - "ruby ./bin/generate_sort_hashjoin_dataset.rb 10000 10000"
+      - "ruby ./bin/benchmark.rb --prepare-mysql"
+    tests:
+      - name: "Basic test"
+        sql: "./homemade_dataset/homemade.sql"
+        expected: "./homemade_dataset/homemade.expected"
+
+      - name: "Disable optimistic hash join"
+        sql: "./homemade_dataset/homemade_disabled.sql"
+        expected: "./homemade_dataset/homemade_disabled.expected"
+
+      - name: "No interesting order => no optimistic hash join"
+        sql: "./homemade_dataset/no_order.sql"
+        expected: "./homemade_dataset/no_order.expected"
+
+  contain_test:
+    # here there is no global setup. Allowed.
+    tests:
+      - name: "went_on_disk=false, n=100 m=100"
+        setup:
+          - "ruby ./bin/generate_sort_hashjoin_dataset.rb 100 100"
+          - "ruby ./bin/benchmark.rb --prepare-mysql"
+        sql: "./homemade_dataset/went_on_disk.sql"
+        contains:
+          - "(optimistic hash join!)"
+          - "(went_on_disk=false)"
+
+      - name: "went_on_disk=true, n=100000 m=100000"
+        setup:
+          - "ruby ./bin/generate_sort_hashjoin_dataset.rb 10000 10000"
+          - "ruby ./bin/benchmark.rb --prepare-mysql"
+
+        sql: "./homemade_dataset/went_on_disk.sql"
+        contains:
+          - "(optimistic hash join!)"
+          - "(went_on_disk=true)"
