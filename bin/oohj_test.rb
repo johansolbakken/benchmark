@@ -119,7 +119,8 @@ end
 
 job_definitions = [
   { sql: "./homemade_dataset/homemade.sql",           expected: "./homemade_dataset/homemade.expected" },
-  { sql: "./homemade_dataset/homemade_disabled.sql",  expected: "./homemade_dataset/homemade_disabled.expected" }
+  { sql: "./homemade_dataset/homemade_disabled.sql",  expected: "./homemade_dataset/homemade_disabled.expected" },
+  { sql: "./homemade_dataset/no_order.sql",  expected: "./homemade_dataset/no_order.expected" }
 ]
 
 jobs = job_definitions.map { |job| SQLJob.new(job[:sql], job[:expected]) }
