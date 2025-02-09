@@ -16,6 +16,10 @@ tests:
         sql: "./homemade_dataset/no_order.sql"
         expected: "./homemade_dataset/no_order.expected"
 
+      - name: "Set optimism level hint"
+        sql: "./homemade_dataset/homemade_optimism_value.sql"
+        expected: "./homemade_dataset/homemade_optimism_value.expected"
+
   contain_test:
     # here there is no global setup. Allowed.
     tests:
