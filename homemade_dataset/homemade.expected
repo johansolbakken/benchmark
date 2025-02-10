@@ -1,5 +1,5 @@
 EXPLAIN
--> Inner hash join (b.a_id = a.id)  (optimistic hash join!) (optimism_level=1)  (cost=33504..45625 rows=10000)
+-> Inner hash join (b.a_id = a.id)  (optimistic hash join, o_level=1, o_func=NONE)  (cost=33504..45625 rows=10000)
     -> Index scan on a using PRIMARY  (cost=0.867..8666 rows=10000)
     -> Hash
         -> Table scan on b  (cost=1.85..18525 rows=10000)

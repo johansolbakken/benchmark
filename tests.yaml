@@ -29,15 +29,20 @@ tests:
           - "ruby ./bin/benchmark.rb --prepare-mysql"
         sql: "./homemade_dataset/went_on_disk.sql"
         contains:
-          - "(optimistic hash join!)"
+          - "optimistic hash join"
           - "(went_on_disk=false)"
 
-      - name: "went_on_disk=true, n=100000 m=100000"
+      - name: "went_on_disk=true, n=10000 m=10000"
         setup:
           - "ruby ./bin/generate_sort_hashjoin_dataset.rb 10000 10000"
           - "ruby ./bin/benchmark.rb --prepare-mysql"
 
         sql: "./homemade_dataset/went_on_disk.sql"
         contains:
-          - "(optimistic hash join!)"
+          - "optimistic hash join"
           - "(went_on_disk=true)"
+
+      - name: "Set optimism func hint"
+        sql: "./homemade_dataset/homemade_optimism_func.sql"
+        contains:
+          - "SIGMOID"
