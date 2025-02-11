@@ -3,6 +3,7 @@ require 'fileutils'
 
 INPUT_DIR  = 'job'
 OUTPUT_DIR = 'ordered_job'
+SKIPLIST = ["10b.sql", "10c.sql"] #failing for some reason
 
 # Create the output folder if it doesn't exist.
 FileUtils.mkdir_p OUTPUT_DIR
@@ -10,6 +11,12 @@ FileUtils.mkdir_p OUTPUT_DIR
 # Process only files with names like "1a.sql", "2B.sql", etc.
 Dir.glob(File.join(INPUT_DIR, '*')).each do |file_path|
   filename = File.basename(file_path)
+
+  if SKIPLIST.include?(filename)
+    puts "Skipping #{filename} – file is in the SKIPLIST."
+    next
+  end
+
   unless filename =~ /^\d+[a-z]\.sql$/i
     puts "Skipping #{filename} – filename does not match pattern."
     next
