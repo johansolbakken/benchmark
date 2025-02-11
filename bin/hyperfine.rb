@@ -153,6 +153,11 @@ def run_baseline(queries, warmup_runs, total_runs)
   puts "------------------------------------"
 end
 
+OPTIMISM_VALUES    = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+#OPTIMISM_FUNCTIONS = ['NONE', 'LINEAR', 'SIGMOID', 'EXPONENTIAL']
 
-run_configuration2('LINEAR', 0.4, queries, warmup_runs, total_runs)
-#run_baseline(queries, warmup_runs, total_runs)
+# OPTIMISM_VALUES.each do |level|
+#   run_configuration2('EXPONENTIAL', level, queries, warmup_runs, total_runs)
+# end
+
+# run_baseline(queries, warmup_runs, total_runs)
