@@ -238,7 +238,7 @@ podman run --rm -it \
   ubuntu:22.04 \
   bash
 # now in podman ubuntu
-sudo apt update && sudo apt install -y gcc make ruby
+sudo apt update && sudo apt install -y gcc make ruby bison flex
 ruby bin/build-tpc-h.rb
 #+end_src
 
@@ -246,3 +246,22 @@ This will generate folders:
 - =tpc-h-queries=
 - =tpc-h-ddl=
 - =tpc-h-dataset=
+
+* Generate TPC-DS for MacOS
+
+#+begin_src shell
+# copy the Makefile.suite and add -fcommon to CFLAGS
+CFLAGS = $(BASE_CFLAGS) -D$(OS) $($(OS)_CFLAGS) -fcommon
+
+# Start podman
+podman run --rm -it \
+  -v $(pwd):/src \
+  -w /src \
+  ubuntu:22.04 \
+  bash
+
+# now in podman ubuntu
+sudo apt update && sudo apt install -y gcc make ruby bison flex
+ruby bin/build-tpc-ds.rb
+
+#+end_src
