@@ -228,3 +228,21 @@ This class will delete the log-file on construction.
 There is a =timestamp()= function for getting timestamps easily.
 
 Currently using streams.
+
+* Generate TPC-H for MacOS
+
+#+begin_src shell
+podman run --rm -it \
+  -v $(pwd):/src \
+  -w /src \
+  ubuntu:22.04 \
+  bash
+# now in podman ubuntu
+sudo apt update && sudo apt install -y gcc make ruby
+ruby bin/build-tpc-h.rb
+#+end_src
+
+This will generate folders:
+- =tpc-h-queries=
+- =tpc-h-ddl=
+- =tpc-h-dataset=
