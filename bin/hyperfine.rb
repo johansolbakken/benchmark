@@ -72,14 +72,14 @@ def run_configuration2(func, level, queries, warmup_runs, total_runs)
   end
   
   # Prepare single result file for all queries
-  result_file = File.join("results", "#{func}_#{level}_result.json")
+  result_file = File.join("results", "#{func}_#{level}_result.csv")
   
   # Build hyperfine's argument list with all commands
   hyperfine_args = [
     "hyperfine",
     "--warmup", warmup_runs.to_s,
     "--runs", total_runs.to_s,
-    "--export-json", result_file
+    "--export-csv", result_file
   ]
   
   # Add command names using SQL base names
@@ -123,14 +123,14 @@ def run_baseline(queries, warmup_runs, total_runs)
   end
   
   # Prepare single result file for all queries
-  result_file = File.join("results", "baseline_result.json")
+  result_file = File.join("results", "baseline_result.csv")
   
   # Build hyperfine's argument list with all commands
   hyperfine_args = [
     "hyperfine",
     "--warmup", warmup_runs.to_s,
     "--runs", total_runs.to_s,
-    "--export-json", result_file
+    "--export-csv", result_file
   ]
   
   # Add command names using SQL base names
@@ -154,10 +154,13 @@ def run_baseline(queries, warmup_runs, total_runs)
 end
 
 OPTIMISM_VALUES    = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
-#OPTIMISM_FUNCTIONS = ['NONE', 'LINEAR', 'SIGMOID', 'EXPONENTIAL']
+OPTIMISM_FUNCTIONS = ['NONE', 'LINEAR', 'SIGMOID', 'EXPONENTIAL']
 
-# OPTIMISM_VALUES.each do |level|
-#   run_configuration2('EXPONENTIAL', level, queries, warmup_runs, total_runs)
-# end
+run_baseline(queries, warmup_runs, total_runs)
 
-# run_baseline(queries, warmup_runs, total_runs)
+OPTIMISM_FUNCTIONS.each do |func|
+OPTIMISM_VALUES.each do |level|
+  run_configuration2(func, level, queries, warmup_runs, total_runs)
+end
+end
+
