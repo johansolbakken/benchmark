@@ -22,8 +22,8 @@ brew install hyperfine
 - Requires MySQL running and config.yaml set up pointing at a mysql executable and server.
 
 #+begin_src
-ruby bin/download.rb                                    # downloads csv files with JOB dataset
-make fresh                                              # setup, feed, prepare
+make job-dataset
+make job-fresh
 ruby bin/benchmark.rb --run ./job/6a.sql --analyze      # EXPLAIN ANALYZE on query 6a
 #+end_src
 
@@ -104,7 +104,7 @@ It is important that /path/ points to a mysql client executable.
 Then, initialize the database by creating tables and indexes:
 
 #+begin_src shell
-make setup
+make job-setup
 #+end_src
 
 ** Load the Data
@@ -112,7 +112,7 @@ make setup
 Feed the downloaded dataset into the database:
 
 #+begin_src shell
-ruby bin/benchmark.rb --feed
+make job-feed
 #+end_src
 
 ** Prepare MySQL environment
@@ -140,14 +140,6 @@ ruby bin/benchmark.rb --run ./job/1a.sql --analyze
 - Execute a query with EXPLAIN FORMAT=TREE to analyze plan:
 #+begin_src shell
 ruby bin/benchmark.rb --run ./job/1a.sql --tree
-#+end_src
-
-* Cleanup JOB files
-
-To clean up the database and remove generated artifacts, run:
-
-#+begin_src shell
-ruby bin/cleanup.rb
 #+end_src
 
 * tests.yaml
