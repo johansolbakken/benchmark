@@ -2,7 +2,7 @@ hello:
 	echo "setup, feed, prepare"
 
 setup:
-	ruby bin/benchmark.rb --setup
+	ruby bin/setup-job.rb
 
 feed:
 	ruby bin/benchmark.rb --feed

@@ -67,24 +67,11 @@ Since the JOB dataset does not include any ORDER BY or DISTINCT, it did not make
 
 * Commands
 
-** Clone the Repository
-
-Begin by cloning the repository to your local machine:
+** Download JOB dataset
 
 #+begin_src shell
-git clone https://github.com/johansolbakken/benchmark
-cd benchmark
+make job-dataset
 #+end_src
-
-** Download the Dataset
-
-Use the provided script to download the dataset required for benchmarking:
-
-#+begin_src shell
-ruby bin/download.rb
-#+end_src
-
-This will create a `dataset` folder containing the necessary data.
 
 ** Start MySQL
 
@@ -117,7 +104,7 @@ It is important that /path/ points to a mysql client executable.
 Then, initialize the database by creating tables and indexes:
 
 #+begin_src shell
-ruby bin/benchmark.rb --setup
+make setup
 #+end_src
 
 ** Load the Data
@@ -265,10 +252,28 @@ sudo apt update && sudo apt install -y gcc make ruby bison flex
 ruby bin/build-tpc-ds.rb
 #+end_src
 
-* Generating Join Order Benchmark files
+* Join Order Benchmark Commands
+
+** Download job dataset
+
+Creates job-dataset folder.
 
 #+begin_src shell
 make job-dataset
+#+end_src
+
+** Setup database and indexes in MySQL
+
+Requires MySQL to be running.
+
+#+begin_src shell
+ruby bin/setup-job.rb
+#+end_src
+
+To wipe database and recreate:
+
+#+begin_src shell
+ruby bin/setup-job-rb --force
 #+end_src
 
 * Make Console
