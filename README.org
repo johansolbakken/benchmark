@@ -299,6 +299,12 @@ To make ordered queries:
 make job-order-queries
 #+end_src
 
+** Run JOB queries
+
+#+begin_src shell
+make run-file DATABASE=imdbload FILE=./job-queries/10a.sql
+#+end_src
+
 ** Delete JOB artifacts
 
 #+begin_src shell
