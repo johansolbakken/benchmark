@@ -267,13 +267,19 @@ make job-dataset
 Requires MySQL to be running.
 
 #+begin_src shell
-ruby bin/setup-job.rb
+make job-setup
 #+end_src
 
 To wipe database and recreate:
 
 #+begin_src shell
 ruby bin/setup-job-rb --force
+#+end_src
+
+** Feed job data
+
+#+begin_src shell
+make job-feed
 #+end_src
 
 * Make Console

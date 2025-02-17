@@ -1,11 +1,16 @@
 hello:
-	echo "setup, feed, prepare"
+	@echo "Hello User, these are the commands:"
+	@echo "-----------------------------------"
+	@cat Makefile
 
-setup:
+job-dataset:
+	ruby bin/download-job-dataset.rb
+
+job-setup:
 	ruby bin/setup-job.rb
 
-feed:
-	ruby bin/benchmark.rb --feed
+job-feed:
+	ruby bin/feed-job.rb
 
 prepare:
 	ruby bin/benchmark.rb --prepare-mysql
@@ -18,7 +23,4 @@ empty:
 test: empty
 	ruby test/oohj_test.rb
 
-job-dataset:
-	ruby bin/download-job-dataset.rb
-
-fresh: setup feed prepare
+job-fresh: job-setup job-feed prepare
