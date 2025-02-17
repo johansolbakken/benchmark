@@ -246,14 +246,6 @@ ruby bin/build-tpc-ds.rb
 
 * Join Order Benchmark Commands
 
-** Download job dataset
-
-Creates job-dataset folder.
-
-#+begin_src shell
-make job-dataset
-#+end_src
-
 ** Setup database and indexes in MySQL
 
 Requires MySQL to be running.
@@ -268,7 +260,22 @@ To wipe database and recreate:
 ruby bin/job-setup.rb --force
 #+end_src
 
+** Download job dataset
+
+Creates job-dataset folder.
+
+#+begin_src shell
+make job-dataset
+#+end_src
+
+The job-dataset folder contains all the data as csv files.
+
+Do this before feeding.
+
+
 ** Feed job data
+
+Feed data in job-dataset to MySQL database imdbload.
 
 #+begin_src shell
 make job-feed
@@ -276,8 +283,20 @@ make job-feed
 
 ** Convert queries: remove MIN(...)
 
+The job files we were provided is altered such that each column is in a MIN aggregate.
+
+We therefore have created scripts for removing MIN and additionally adding ORDER BY clauses.
+
+To generate the queries without MIN or ORDER BY:
+
 #+begin_src shell
 make job-queries
+#+end_src
+
+To make ordered queries:
+
+#+begin_src shell
+make job-order-queries
 #+end_src
 
 ** Delete JOB artifacts
