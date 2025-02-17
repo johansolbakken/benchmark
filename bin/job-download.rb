@@ -5,7 +5,7 @@ require 'fileutils'
 require_relative '../lib/color'
 
 TAR_URL = 'https://event.cwi.nl/da/job/imdb.tgz'
-DESTINATION_DIR = './dataset'
+DESTINATION_DIR = './job-dataset'
 TAR_FILE = File.join(DESTINATION_DIR, 'imdb.tgz')
 
 if Dir.exist?(DESTINATION_DIR)

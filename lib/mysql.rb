@@ -42,35 +42,47 @@ module MySQL
     # Executes a SQL query that does not require a specific database context.
     #
     # @param [String] query The SQL query to be executed.
-    # @return [void]
+    # @return [Boolean] True if the query executed successfully, false otherwise.
     def run_query_without_db(query)
-      # Do not include the -e flag; pass the query via STDIN.
       command = "#{@mysql_client_path} -u#{@db_user} --local-infile=1 --port=#{@db_port} --host=#{@db_host}"
-      Stream.run_command_with_input(command, query)
+      _stdout, stderr, status = Stream.run_command_with_input(command, query)
+      warn stderr unless stderr.strip.empty?
+      status.success?
+    rescue StandardError => e
+      warn "Error executing query without db: #{e.message}"
+      false
     end
 
     ##
     # Executes a SQL query on the configured database.
     #
     # @param [String] query The SQL query to be executed.
-    # @return [void]
+    # @return [Boolean] True if the query executed successfully, false otherwise.
     def run_query(query)
       command = "#{@mysql_client_path} -u#{@db_user} --local-infile=1 --port=#{@db_port} --host=#{@db_host} #{@db_name}"
-      Stream.run_command_with_input(command, query)
+      _stdout, stderr, status = Stream.run_command_with_input(command, query)
+      warn stderr unless stderr.strip.empty?
+      status.success?
+    rescue StandardError => e
+      warn "Error executing query on db: #{e.message}"
+      false
     end
 
     ##
     # Executes a SQL file on the configured database.
     #
     # @param [String] file The path to the SQL file.
-    # @return [void]
+    # @return [Boolean] True if the file executed successfully, false otherwise.
     def run_file(file)
-      # Read the file's contents (including newlines)
       sql = File.read(file)
-      # Build the command without any redirection.
       command = "#{@mysql_client_path} -u#{@db_user} --local-infile=1 --port=#{@db_port} --host=#{@db_host} #{@db_name}"
-      # Pass the file content as input so newlines are preserved.
-      Stream.run_command_with_input(command, sql)
+      stdout, stderr, status = Stream.run_command_with_input(command, sql)
+      puts stdout unless stdout.strip.empty?
+      warn stderr unless stderr.strip.empty?
+      status.success?
+    rescue StandardError => e
+      warn "Error executing SQL file: #{e.message}"
+      false
     end
   end
 end

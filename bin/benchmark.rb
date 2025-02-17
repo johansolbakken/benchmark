@@ -25,40 +25,6 @@ DATASET_PATH = './dataset'
 CLIENT = MySQL::Client.new(DB_USER, DB_PORT, DB_HOST, DB_NAME, MYSQL_CLIENT_PATH)
 
 ##
-# Subcommand: Setup database with schema + foreign keys
-#
-def setup_database
-  puts "Setting up the database..."
-
-  commands = [
-    "SET GLOBAL local_infile=1;",
-    "DROP DATABASE IF EXISTS #{DB_NAME};",
-    "CREATE DATABASE #{DB_NAME};",
-  ]
-  commands.each do |cmd|
-    CLIENT.run_query_without_db(cmd)
-  end
-
-  setup_files = [
-    File.join(JOB_PATH, 'schema.sql'),
-    File.join(JOB_PATH, 'fkindexes.sql'),
-    File.join(SQL_PATH, "experimental_setup.sql")
-  ]
-  setup_files.each do |file|
-    unless File.exist?(file)
-      puts Color.red("File not found: #{file}")
-      exit 1
-    end
-    CLIENT.run_file(file)
-  end
-
-  puts Color.green("\nDatabase setup completed.")
-rescue StandardError => e
-  puts Color.red("An error occurred during setup: #{e.message}")
-  exit 1
-end
-
-##
 # Determine the EXPLAIN mode (if any)
 #
 def build_explain_prefix(options)
@@ -96,35 +62,6 @@ rescue StandardError => e
 end
 
 ##
-# Subcommand: Feed all CSV data (in topological order) into DB
-#
-def feed_data
-  # Sort tables in topological order based on schema
-  schema_file = File.join(JOB_PATH, "schema.sql")
-  unless File.exist?(schema_file)
-    puts Color.red("Schema file not found: #{schema_file}")
-    exit 1
-  end
-  schema_sql = File.read(schema_file)
-  sorted_tables = Sql_Table_Topological_Sort.sort_tables(schema_sql)
-
-  sorted_tables.each do |table_name|
-    csv_file = File.expand_path(File.join(DATASET_PATH, "#{table_name}.csv"))
-    unless File.exist?(csv_file)
-      puts Color.red("CSV file not found: #{csv_file}")
-      exit 1
-    end
-    CLIENT.run_query("LOAD DATA LOCAL INFILE '#{csv_file}' INTO TABLE #{table_name} FIELDS TERMINATED BY ',';")
-  end
-
-  CLIENT.run_file(File.join(SQL_PATH, "experimental_setup.sql"))
-  puts Color.green("\nLoaded all CSV files into MySQL!")
-rescue StandardError => e
-  puts Color.red("An error occurred during feeding: #{e.message}")
-  exit 1
-end
-
-##
 # Subcommand: Prepare MySQL environment (analyze tables, etc.)
 #
 def prepare_mysql
@@ -141,16 +78,8 @@ def parse_options
   OptionParser.new do |opts|
     opts.banner = "Usage: run_queries.rb [options]"
 
-    opts.on("--setup", "Setup the database with schema and foreign key indexes") do
-      options[:setup] = true
-    end
-
     opts.on("--run FILE", "Run a specific SQL file") do |file|
       options[:query] = file
-    end
-
-    opts.on("--feed", "Feed all CSV files in the downloads folder into the database") do
-      options[:feed] = true
     end
 
     opts.on("--prepare-mysql", "Sets costs and hypergraph optimizer use and analyzes tables") do

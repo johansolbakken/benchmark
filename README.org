@@ -22,9 +22,13 @@ brew install hyperfine
 - Requires MySQL running and config.yaml set up pointing at a mysql executable and server.
 
 #+begin_src
-ruby bin/download.rb                                    # downloads csv files with JOB dataset
-make fresh                                              # setup, feed, prepare
-ruby bin/benchmark.rb --run ./job/6a.sql --analyze      # EXPLAIN ANALYZE on query 6a
+make job-setup                # create database from schema
+make job-dataset              # download job data
+make job-feed                 # feed job data to database
+make job-queries              # normalize queries provided
+make experimental-setup       # enable hypergraph optimizer
+make run-file DATABASE=imdbload FILE=./sql/analyze_job.sql   # analyze imdbload table
+make run-file DATABASE=imdbload FILE=./sql/job/6a.sql        # run query 6a
 #+end_src
 
 * Testing the Optimistic Hash Join
@@ -67,24 +71,11 @@ Since the JOB dataset does not include any ORDER BY or DISTINCT, it did not make
 
 * Commands
 
-** Clone the Repository
-
-Begin by cloning the repository to your local machine:
+** Download JOB dataset
 
 #+begin_src shell
-git clone https://github.com/johansolbakken/benchmark
-cd benchmark
+make job-dataset
 #+end_src
-
-** Download the Dataset
-
-Use the provided script to download the dataset required for benchmarking:
-
-#+begin_src shell
-ruby bin/download.rb
-#+end_src
-
-This will create a `dataset` folder containing the necessary data.
 
 ** Start MySQL
 
@@ -117,7 +108,7 @@ It is important that /path/ points to a mysql client executable.
 Then, initialize the database by creating tables and indexes:
 
 #+begin_src shell
-ruby bin/benchmark.rb --setup
+make job-setup
 #+end_src
 
 ** Load the Data
@@ -125,7 +116,7 @@ ruby bin/benchmark.rb --setup
 Feed the downloaded dataset into the database:
 
 #+begin_src shell
-ruby bin/benchmark.rb --feed
+make job-feed
 #+end_src
 
 ** Prepare MySQL environment
@@ -153,14 +144,6 @@ ruby bin/benchmark.rb --run ./job/1a.sql --analyze
 - Execute a query with EXPLAIN FORMAT=TREE to analyze plan:
 #+begin_src shell
 ruby bin/benchmark.rb --run ./job/1a.sql --tree
-#+end_src
-
-* Cleanup JOB files
-
-To clean up the database and remove generated artifacts, run:
-
-#+begin_src shell
-ruby bin/cleanup.rb
 #+end_src
 
 * tests.yaml
@@ -263,5 +246,90 @@ podman run --rm -it \
 # now in podman ubuntu
 sudo apt update && sudo apt install -y gcc make ruby bison flex
 ruby bin/build-tpc-ds.rb
+#+end_src
 
+* Join Order Benchmark Commands
+
+** Setup database and indexes in MySQL
+
+Requires MySQL to be running.
+
+#+begin_src shell
+make job-setup
+#+end_src
+
+To wipe database and recreate:
+
+#+begin_src shell
+ruby bin/job-setup.rb --force
+#+end_src
+
+** Download job dataset
+
+Creates job-dataset folder.
+
+#+begin_src shell
+make job-dataset
+#+end_src
+
+The job-dataset folder contains all the data as csv files.
+
+Do this before feeding.
+
+
+** Feed job data
+
+Feed data in job-dataset to MySQL database imdbload.
+
+#+begin_src shell
+make job-feed
+#+end_src
+
+** Convert queries: remove MIN(...)
+
+The job files we were provided is altered such that each column is in a MIN aggregate.
+
+We therefore have created scripts for removing MIN and additionally adding ORDER BY clauses.
+
+To generate the queries without MIN or ORDER BY:
+
+#+begin_src shell
+make job-queries
+#+end_src
+
+To make ordered queries:
+
+#+begin_src shell
+make job-order-queries
+#+end_src
+
+** Run JOB queries
+
+#+begin_src shell
+make run-file DATABASE=imdbload FILE=./job-queries/10a.sql
+#+end_src
+
+** Delete JOB artifacts
+
+#+begin_src shell
+make job-clean
+#+end_src
+
+* Analyze
+
+To analyze run the script:
+
+#+begin_src shell
+ruby bin/analyze.rb --job
+#+end_src
+
+* Check if any query fails for a database
+#+begin_src shell
+ruby ./bin/test-sql-files.rb --folder ./job-queries --database imdbload
+#+end_src
+
+* Run any file
+
+#+begin_src shell
+make run-file DATABASE=imdbload FILE=./job-queries/10b.sql
 #+end_src

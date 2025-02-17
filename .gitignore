@@ -1,8 +1,14 @@
-/dataset/
 /config.yaml
+query.sql
+
 tpc-ds
 
 tpc-h
 tpc-h-dataset
 tpc-h-queries
 tpc-h-ddl
+
+job-dataset
+job-queries
+job-order-queries
+job-schema

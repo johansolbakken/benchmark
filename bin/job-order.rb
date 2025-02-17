@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 require 'fileutils'
 
-INPUT_DIR  = 'job'
-OUTPUT_DIR = 'ordered_job'
+INPUT_DIR  = './job-queries'
+OUTPUT_DIR = './job-order-queries'
 SKIPLIST = ["10b.sql", "10c.sql"] #failing for some reason
 
 # Create the output folder if it doesn't exist.
