@@ -46,6 +46,9 @@ TABLE_B_SIZE=10000
 homemade-dataset:
 	ruby bin/homemade-generate.rb ${TABLE_A_SIZE} ${TABLE_B_SIZE}
 
+homemade-feed: homemade-dataset
+	ruby bin/homemade-feed.rb
+
 empty:
 
 test: empty
