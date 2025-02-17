@@ -1,0 +1,3 @@
+ANALYZE TABLE table_a;
+ANALYZE TABLE table_b;
+ANALYZE TABLE table_c;

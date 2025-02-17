@@ -5,20 +5,20 @@ tests:
       - "ruby ./bin/benchmark.rb --prepare-mysql"
     tests:
       - name: "Basic test"
-        sql: "./homemade-dataset/homemade.sql"
-        expected: "./homemade-dataset/homemade.expected"
+        sql: "./homemade-test-queries/homemade.sql"
+        expected: "./homemade-test-queries/homemade.expected"
 
       - name: "Disable optimistic hash join"
-        sql: "./homemade-dataset/homemade-disabled.sql"
-        expected: "./homemade-dataset/homemade-disabled.expected"
+        sql: "./homemade-test-queries/homemade-disabled.sql"
+        expected: "./homemade-test-queries/homemade-disabled.expected"
 
       - name: "No interesting order => no optimistic hash join"
-        sql: "./homemade-dataset/no-order.sql"
-        expected: "./homemade-dataset/no-order.expected"
+        sql: "./homemade-test-queries/no-order.sql"
+        expected: "./homemade-test-queries/no-order.expected"
 
       - name: "Set optimism level hint"
-        sql: "./homemade-dataset/homemade-optimism-value.sql"
-        expected: "./homemade-dataset/homemade-optimism-value.expected"
+        sql: "./homemade-test-queries/homemade-optimism-value.sql"
+        expected: "./homemade-test-queries/homemade-optimism-value.expected"
 
   contain_test:
     # here there is no global setup. Allowed.
@@ -27,7 +27,7 @@ tests:
         setup:
           - "ruby ./bin/generate_sort_hashjoin_dataset.rb 100 100"
           - "ruby ./bin/benchmark.rb --prepare-mysql"
-        sql: "./homemade-dataset/went-on-disk.sql"
+        sql: "./homemade-test-queries/went-on-disk.sql"
         contains:
           - "optimistic hash join"
           - "(went_on_disk=false)"
@@ -37,12 +37,12 @@ tests:
           - "ruby ./bin/generate_sort_hashjoin_dataset.rb 10000 10000"
           - "ruby ./bin/benchmark.rb --prepare-mysql"
 
-        sql: "./homemade-dataset/went-on-disk.sql"
+        sql: "./homemade-test-queries/went-on-disk.sql"
         contains:
           - "optimistic hash join"
           - "(went_on_disk=true)"
 
       - name: "Set optimism func hint"
-        sql: "./homemade-dataset/homemade-optimism-func.sql"
+        sql: "./homemade-test-queries/homemade-optimism-func.sql"
         contains:
           - "SIGMOID"
