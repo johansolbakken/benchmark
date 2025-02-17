@@ -4,13 +4,13 @@ hello:
 	@cat Makefile
 
 job-dataset:
-	ruby bin/download-job-dataset.rb
+	ruby bin/job-download.rb
 
 job-queries:
 	ruby bin/job-remove-min.rb
 
 job-order-queries: job-queries
-	ruby bin/order-job.rb
+	ruby bin/job-order.rb
 
 job-schema:
 	mkdir -p job-schema
@@ -18,10 +18,10 @@ job-schema:
 	cp -f ./job/fkindexes.sql job-schema
 
 job-setup: job-schema
-	ruby bin/setup-job.rb
+	ruby bin/job-setup.rb
 
 job-feed: job-dataset
-	ruby bin/feed-job.rb
+	ruby bin/job-feed.rb
 
 job-clean:
 	rm -rf job-queries job-schema job-order-queries

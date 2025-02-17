@@ -265,7 +265,7 @@ make job-setup
 To wipe database and recreate:
 
 #+begin_src shell
-ruby bin/setup-job-rb --force
+ruby bin/job-setup.rb --force
 #+end_src
 
 ** Feed job data
