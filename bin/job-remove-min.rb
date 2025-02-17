@@ -1,3 +1,4 @@
+
 #!/usr/bin/env ruby
 require 'fileutils'
 
@@ -17,11 +18,8 @@ Dir.glob(File.join(SOURCE_FOLDER, '*.sql')).select { |file_path|
 }.each do |file_path|
   content = File.read(file_path)
 
-  # Find regions from SELECT to FROM (non-greedy, case-insensitive, multiline)
-  new_content = content.gsub(/(SELECT.*?FROM)/im) do |segment|
-    # Replace MIN(schema.table) or MIN(table) with just schema.table or table
-    segment.gsub(/MIN\(\s*([\w\.]+)\s*\)/i, '\1')
-  end
+  # Replace every instance of MIN(schema.table) or MIN(table) with just schema.table or table
+  new_content = content.gsub(/MIN\(\s*([\w\.]+)\s*\)/i, '\1')
 
   # Determine the output file path (same filename in output folder)
   output_file = File.join(OUTPUT_FOLDER, File.basename(file_path))
@@ -30,3 +28,4 @@ Dir.glob(File.join(SOURCE_FOLDER, '*.sql')).select { |file_path|
   File.write(output_file, new_content)
   puts "Processed #{file_path} -> #{output_file}"
 end
+
