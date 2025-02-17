@@ -1,4 +1,3 @@
-
 #!/usr/bin/env ruby
 require 'fileutils'
 
@@ -20,6 +19,9 @@ Dir.glob(File.join(SOURCE_FOLDER, '*.sql')).select { |file_path|
 
   # Replace every instance of MIN(schema.table) or MIN(table) with just schema.table or table
   new_content = content.gsub(/MIN\(\s*([\w\.]+)\s*\)/i, '\1')
+  
+  # Rename alias 'character' to 'character_name'
+  new_content = new_content.gsub(/\bcharacter\b/, 'character_name')
 
   # Determine the output file path (same filename in output folder)
   output_file = File.join(OUTPUT_FOLDER, File.basename(file_path))
