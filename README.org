@@ -317,3 +317,9 @@ ruby bin/analyze.rb --job
 #+begin_src shell
 ruby ./bin/test-sql-files.rb --folder ./job-queries --database imdbload
 #+end_src
+
+* Run any file
+
+#+begin_src shell
+make run-file DATABASE=imdbload FILE=./job-queries/10b.sql
+#+end_src
