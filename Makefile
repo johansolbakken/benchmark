@@ -18,4 +18,7 @@ empty:
 test: empty
 	ruby test/oohj_test.rb
 
+job-dataset:
+	ruby bin/download-job-dataset.rb
+
 fresh: setup feed prepare
