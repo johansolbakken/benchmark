@@ -6,11 +6,25 @@ hello:
 job-dataset:
 	ruby bin/download-job-dataset.rb
 
-job-setup:
+job-queries:
+	ruby bin/job-remove-min.rb
+
+job-order-queries: job-queries
+	ruby bin/order-job.rb
+
+job-schema:
+	mkdir -p job-schema
+	cp -f ./job/schema.sql job-schema
+	cp -f ./job/fkindexes.sql job-schema
+
+job-setup: job-schema
 	ruby bin/setup-job.rb
 
-job-feed:
+job-feed: job-dataset
 	ruby bin/feed-job.rb
+
+job-clean:
+	rm -rf job-queries job-schema job-order-queries
 
 prepare:
 	ruby bin/benchmark.rb --prepare-mysql

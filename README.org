@@ -274,10 +274,14 @@ ruby bin/setup-job-rb --force
 make job-feed
 #+end_src
 
-* Make Console
-
-Easy setup. Requires the mysql server to be running.
+** Convert queries: remove MIN(...)
 
 #+begin_src shell
-make console
-#+END_SRC
+make job-queries
+#+end_src
+
+** Delete JOB artifacts
+
+#+begin_src shell
+make job-clean
+#+end_src
