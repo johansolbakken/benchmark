@@ -38,6 +38,14 @@ experimental-setup:
 run-file:
 	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 ${DATABASE} < ${FILE}
 
+homemade-setup:
+	ruby bin/homemade-setup.rb
+
+TABLE_A_SIZE=10000
+TABLE_B_SIZE=10000
+homemade-dataset:
+	ruby bin/homemade-generate.rb ${TABLE_A_SIZE} ${TABLE_B_SIZE}
+
 empty:
 
 test: empty

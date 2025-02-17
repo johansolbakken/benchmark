@@ -333,3 +333,19 @@ ruby ./bin/test-sql-files.rb --folder ./job-queries --database imdbload
 #+begin_src shell
 make run-file DATABASE=imdbload FILE=./job-queries/10b.sql
 #+end_src
+
+* Homemade Dataset
+
+** Setup database and indexes in MySQL
+
+Requires MySQL to be running.
+
+#+begin_src shell
+make homemade-setup
+#+end_src
+
+To wipe database and recreate:
+
+#+begin_src shell
+ruby bin/homemade-setup.rb --force
+#+end_src
