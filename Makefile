@@ -35,7 +35,7 @@ run_all:
 experimental-setup:
 	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 < ./sql/experimental_setup.sql
 
-run-job:
+run-file:
 	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 ${DATABASE} < ${FILE}
 
 empty:
