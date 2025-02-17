@@ -37,6 +37,6 @@ empty:
 test: empty
 	ruby test/oohj_test.rb
 
-job-fresh: job-setup job-feed prepare
+job-fresh: job-setup job-feed job-queries prepare
 
 clean: job-clean

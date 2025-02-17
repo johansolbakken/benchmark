@@ -304,3 +304,11 @@ make job-order-queries
 #+begin_src shell
 make job-clean
 #+end_src
+
+* Analyze
+
+To analyze run the script:
+
+#+begin_src shell
+ruby bin/analyze.rb --job
+#+end_src
