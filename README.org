@@ -263,5 +263,18 @@ podman run --rm -it \
 # now in podman ubuntu
 sudo apt update && sudo apt install -y gcc make ruby bison flex
 ruby bin/build-tpc-ds.rb
-
 #+end_src
+
+* Generating Join Order Benchmark files
+
+#+begin_src shell
+make job-dataset
+#+end_src
+
+* Make Console
+
+Easy setup. Requires the mysql server to be running.
+
+#+begin_src shell
+make console
+#+END_SRC
