@@ -9,10 +9,7 @@ MYSQL_PORT = "13000"
 warmup_runs = 0
 total_runs  = 1
 
-OPTIMISM_VALUES    = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
-OPTIMISM_FUNCTIONS = ['NONE', 'LINEAR', 'SIGMOID', 'EXPONENTIAL']
-
-query_dir="./ordered_job"
+query_dir="./job-order-queries"
 queries = Dir.glob(File.join(query_dir, '*.sql')).sort
 if queries.empty?
   puts "No SQL files found in directory: #{query_dir}"
@@ -153,14 +150,13 @@ def run_baseline(queries, warmup_runs, total_runs)
   puts "------------------------------------"
 end
 
-OPTIMISM_VALUES    = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
-OPTIMISM_FUNCTIONS = ['NONE', 'LINEAR', 'SIGMOID', 'EXPONENTIAL']
+OPTIMISM_VALUES    = [0.0, 0.25, 0.5, 0.75, 1.0]
+OPTIMISM_FUNCTIONS = ['LINEAR']
 
 run_baseline(queries, warmup_runs, total_runs)
-
+run_configuration2('NONE', 0.0, queries, warmup_runs, total_runs)
 OPTIMISM_FUNCTIONS.each do |func|
-OPTIMISM_VALUES.each do |level|
-  run_configuration2(func, level, queries, warmup_runs, total_runs)
+  OPTIMISM_VALUES.each do |level|
+    run_configuration2(func, level, queries, warmup_runs, total_runs)
+  end
 end
-end
-
