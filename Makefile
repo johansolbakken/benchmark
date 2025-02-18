@@ -1,11 +1,30 @@
 hello:
-	echo "setup, feed, prepare"
+	@echo "Hello User, these are the commands:"
+	@echo "-----------------------------------"
+	@cat Makefile
 
-setup:
-	ruby bin/benchmark.rb --setup
+job-dataset:
+	ruby bin/job-download.rb
 
-feed:
-	ruby bin/benchmark.rb --feed
+job-queries:
+	ruby bin/job-remove-min.rb
+
+job-order-queries: job-queries
+	ruby bin/job-order.rb
+
+job-schema:
+	mkdir -p job-schema
+	cp -f ./job/schema.sql job-schema
+	cp -f ./job/fkindexes.sql job-schema
+
+job-setup: job-schema
+	ruby bin/job-setup.rb
+
+job-feed: job-dataset
+	ruby bin/job-feed.rb
+
+job-clean:
+	rm -rf job-queries job-schema job-order-queries
 
 prepare:
 	ruby bin/benchmark.rb --prepare-mysql
@@ -13,9 +32,17 @@ prepare:
 run_all:
 	find job -type f -name '[0-9]*[a-z].sql' | sort | xargs -I {} ruby bin/benchmark.rb --run {} --tree
 
+experimental-setup:
+	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 < ./sql/experimental_setup.sql
+
+run-file:
+	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 ${DATABASE} < ${FILE}
+
 empty:
 
 test: empty
 	ruby test/oohj_test.rb
 
-fresh: setup feed prepare
+job-fresh: job-setup job-feed job-queries prepare
+
+clean: job-clean
