@@ -22,13 +22,14 @@ brew install hyperfine
 - Requires MySQL running and config.yaml set up pointing at a mysql executable and server.
 
 #+begin_src
-make job-setup                # create database from schema
-make job-dataset              # download job data
-make job-feed                 # feed job data to database
-make job-queries              # normalize queries provided
-make experimental-setup       # enable hypergraph optimizer
-make run-file DATABASE=imdbload FILE=./sql/analyze_job.sql   # analyze imdbload table
-make run-file DATABASE=imdbload FILE=./sql/job/6a.sql        # run query 6a
+make job-setup                                                # create database from schema
+make job-dataset                                              # download job data
+make inline-local DATABASE=imdbload                           # inline local queries
+make job-feed                                                 # feed job data to database
+make job-queries                                              # normalize queries provided
+make experimental-setup                                       # enable hypergraph optimizer
+make run-file DATABASE=imdbload FILE=./sql/analyze_job.sql    # analyze imdbload table
+make run-file DATABASE=imdbload FILE=./sql/job/6a.sql         # run query 6a
 #+end_src
 
 * Testing the Optimistic Hash Join
