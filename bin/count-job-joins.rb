@@ -2,46 +2,29 @@
 
 require 'optparse'
 require 'yaml'
+require 'terminal-table'
 
-require_relative '../lib/sql_table_topological_sort'
-require_relative '../lib/color'
 require_relative '../lib/mysql'
 
-# Configuration
+# Load MySQL configuration
 CONFIG = YAML.load_file('config.yaml')['mysql']
+CLIENT = MySQL::Client.new(CONFIG['user'], CONFIG['port'], CONFIG['host'], CONFIG['name'], CONFIG['path'], silent=true)
 
-# Create a MySQL CLIENT from lib/mysql.rb
-CLIENT = MySQL::Client.new(CONFIG['user'], CONFIG['port'], CONFIG['host'], CONFIG['name'], CONFIG['path'])
-
-# Fetch queries from ./job and add EXPLAIN FORMAT = TREE at the start of each query
+# Count join occurrences in SQL queries from the job-queries directory
 def count_joins
-  job_queries = Dir['./job-queries/*.sql']
-  dict = {}
-  job_queries.each do |file|
-    query = File.read(file)
-    query = query.split("\n").map(&:strip).join(' ')
-    query = "EXPLAIN FORMAT = TREE #{query}"
-    stdout, _, ok = CLIENT.run_query_get_stdout(query)
-    count = 0
-    stdout.split("->").each do |line|
-      # Process each line of stdout here
-      if line.downcase.include?("join")
-      count += 1
-      end
-    end
-    if dict.key?(count)
-      dict[count] += 1
-    else
-      dict[count] = 1
-    end
-  end
-  dict
-end
-
-def run()
-  count_joins.sort.each do |key, value|
-    puts "#{key} joins: #{value} queries"
+  Dir['./job-queries/*.sql'].each_with_object(Hash.new(0)) do |file, join_counts|
+    query = File.read(file).lines.map(&:strip).join(' ')
+    stdout, _, _ = CLIENT.run_query_get_stdout("EXPLAIN FORMAT = TREE #{query}")
+    join_count = stdout.scan(/join/i).size
+    join_counts[join_count] += 1
   end
 end
 
-run() if __FILE__ == $PROGRAM_NAME
+# Print the join count summary in a table format
+def run
+  rows = count_joins.sort.map { |joins, count| [joins, count] }
+  table = Terminal::Table.new(title: "Join Count Summary", headings: ['Joins', 'Queries'], rows: rows)
+  puts table
+end
+
+run if __FILE__ == $PROGRAM_NAME
