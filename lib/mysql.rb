@@ -68,6 +68,15 @@ module MySQL
       false
     end
 
+    def run_query_get_stdout(query)
+      command = "#{@mysql_client_path} -u#{@db_user} --local-infile=1 --port=#{@db_port} --host=#{@db_host} #{@db_name}"
+      stdout, stderr, status = Stream.run_command_with_input(command, query)
+      [stdout, stderr, status.success?]
+    rescue StandardError => e
+      warn "Error executing query on db: #{e.message}"
+      ["", "", false]
+    end
+
     ##
     # Executes a SQL file on the configured database.
     #
