@@ -57,3 +57,6 @@ test: empty
 job-fresh: job-setup job-feed job-queries prepare
 
 clean: job-clean
+
+inline-local:
+	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 ${DATABASE} -e "SET GLOBAL local_infile = 1;" 

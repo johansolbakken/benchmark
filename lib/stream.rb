@@ -49,7 +49,7 @@ module Stream
   # @param [String] input The string to write to STDIN.
   # @return [Array(String, String, Process::Status)] A tuple containing the STDOUT output,
   #   STDERR output, and the exit status of the command.
-  def self.run_command_with_input(command, input)
+  def self.run_command_with_input(command, input, silent=false)
     puts "Executing: #{command} with input size: #{input.bytesize} bytes"
 
     stdout_str = ""
@@ -63,7 +63,9 @@ module Stream
       threads << Thread.new do
         stdout.each_line do |line|
           formatted_line = line.chomp.gsub('\\n', "\n")
-          puts formatted_line
+          if !silent
+            puts formatted_line
+          end
           stdout_str << line
         end
       end

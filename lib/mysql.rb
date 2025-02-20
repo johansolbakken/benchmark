@@ -30,12 +30,14 @@ module MySQL
     # @param [String] db_host The MySQL host.
     # @param [String] db_name The database name.
     # @param [String] mysql_client_path The path to the MySQL client executable (default: 'mysql').
-    def initialize(db_user, db_port, db_host, db_name, mysql_client_path = 'mysql')
+    # @param [Boolean] silent Whether to suppress some of the output (default: false).
+    def initialize(db_user, db_port, db_host, db_name, mysql_client_path = 'mysql', silent=false)
       @db_user = db_user
       @db_port = db_port
       @db_host = db_host
       @db_name = db_name
       @mysql_client_path = mysql_client_path
+      @silent = silent
     end
 
     ##
@@ -45,7 +47,7 @@ module MySQL
     # @return [Boolean] True if the query executed successfully, false otherwise.
     def run_query_without_db(query)
       command = "#{@mysql_client_path} -u#{@db_user} --local-infile=1 --port=#{@db_port} --host=#{@db_host}"
-      _stdout, stderr, status = Stream.run_command_with_input(command, query)
+      _stdout, stderr, status = Stream.run_command_with_input(command, query, silent=@silent)
       warn stderr unless stderr.strip.empty?
       status.success?
     rescue StandardError => e
@@ -60,12 +62,21 @@ module MySQL
     # @return [Boolean] True if the query executed successfully, false otherwise.
     def run_query(query)
       command = "#{@mysql_client_path} -u#{@db_user} --local-infile=1 --port=#{@db_port} --host=#{@db_host} #{@db_name}"
-      _stdout, stderr, status = Stream.run_command_with_input(command, query)
+      _stdout, stderr, status = Stream.run_command_with_input(command, query, silent=@silent)
       warn stderr unless stderr.strip.empty?
       status.success?
     rescue StandardError => e
       warn "Error executing query on db: #{e.message}"
       false
+    end
+
+    def run_query_get_stdout(query)
+      command = "#{@mysql_client_path} -u#{@db_user} --local-infile=1 --port=#{@db_port} --host=#{@db_host} #{@db_name}"
+      stdout, stderr, status = Stream.run_command_with_input(command, query, silent=@silent)
+      [stdout, stderr, status.success?]
+    rescue StandardError => e
+      warn "Error executing query on db: #{e.message}"
+      ["", "", false]
     end
 
     ##

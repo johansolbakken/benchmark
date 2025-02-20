@@ -25,13 +25,13 @@ def feed_data
   schema_sql = File.read(schema_file)
   sorted_tables = Sql_Table_Topological_Sort.sort_tables(schema_sql)
 
-  sorted_tables.each do |table_name|
+  sorted_tables.each_with_index do |table_name, i|
     csv_file = File.expand_path(File.join(DATASET_PATH, "#{table_name}.csv"))
     unless File.exist?(csv_file)
       abort Color.red("CSV file not found: #{csv_file}")
     end
 
-    puts Color.bold("Running file: #{csv_file}")
+    puts Color.bold("(#{i+1}/#{sorted_tables.count}) Running file: #{csv_file}")
     unless CLIENT.run_query("LOAD DATA LOCAL INFILE '#{csv_file}' INTO TABLE #{table_name} FIELDS TERMINATED BY ',';")
       abort Color.red("Failed to execute SQL file: #{file}")
     end
