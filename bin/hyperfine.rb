@@ -10,7 +10,7 @@ warmup_runs = 2
 total_runs  = 5
 
 query_dir="./job-order-queries"
-queries = Dir.glob(File.join(query_dir, '*.sql')).shuffle
+queries = Dir.glob(File.join(query_dir, '*.sql')).sort
 queries = queries.take(queries.size)
 if queries.empty?
   puts "No SQL files found in directory: #{query_dir}"
@@ -151,7 +151,7 @@ def run_baseline(queries, warmup_runs, total_runs)
   puts "------------------------------------"
 end
 
-OPTIMISM_VALUES    = [0.0, 0.25, 0.5, 0.75, 1.0]
+OPTIMISM_VALUES    = [0.0, 0.5, 1.0]
 OPTIMISM_FUNCTIONS = [
   'NONE', 
   'LINEAR', 
