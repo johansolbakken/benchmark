@@ -14,6 +14,7 @@ Link to Master Thesis will be added later.
 #+begin_src
 brew install ruby
 gem install pq_query
+gem install terminal-table
 brew install hyperfine
 #+END_SRC
 
