@@ -151,12 +151,13 @@ def run_baseline(queries, warmup_runs, total_runs)
   puts "------------------------------------"
 end
 
-OPTIMISM_VALUES    = [0.0, 0.5, 1.0]
+OPTIMISM_VALUES    = [0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
 OPTIMISM_FUNCTIONS = [
-  'NONE', 
+  #'NONE', 
   'LINEAR', 
-  'SIGMOID', 
-  'EXPONENTIAL']
+  #'SIGMOID', 
+  #'EXPONENTIAL'
+]
 
 run_baseline(queries, warmup_runs, total_runs)
 OPTIMISM_FUNCTIONS.each do |func|
@@ -164,3 +165,7 @@ OPTIMISM_FUNCTIONS.each do |func|
     run_configuration2(func, level, queries, warmup_runs, total_runs)
   end
 end
+
+system("git add -A")
+system("git commit -m \"Benchmark complete\"")
+system("git push")
