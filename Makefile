@@ -26,8 +26,8 @@ job-feed: job-dataset
 job-clean:
 	rm -rf job-queries job-schema job-order-queries
 
-prepare:
-	ruby bin/benchmark.rb --prepare-mysql
+prepare: experimental-setup
+	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 imdbload < ./sql/analyze_job.sql
 
 run_all:
 	find job -type f -name '[0-9]*[a-z].sql' | sort | xargs -I {} ruby bin/benchmark.rb --run {} --tree
