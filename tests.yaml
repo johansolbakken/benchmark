@@ -1,7 +1,7 @@
 tests:
   diff_test:
     setup:
-      - "ruby ./bin/generate_sort_hashjoin_dataset.rb 10000 10000"
+      - "ruby ./bin/homemade_generate.rb 10000 10000"
       - "ruby ./bin/benchmark.rb --prepare-mysql"
     tests:
       - name: "Basic test"
@@ -25,7 +25,7 @@ tests:
     tests:
       - name: "went_on_disk=false, n=100 m=100"
         setup:
-          - "ruby ./bin/generate_sort_hashjoin_dataset.rb 100 100"
+          - "ruby ./bin/homemade_generate.rb 100 100"
           - "ruby ./bin/benchmark.rb --prepare-mysql"
         sql: "./homemade-test-queries/went-on-disk.sql"
         contains:
@@ -34,7 +34,7 @@ tests:
 
       - name: "went_on_disk=true, n=10000 m=10000"
         setup:
-          - "ruby ./bin/generate_sort_hashjoin_dataset.rb 10000 10000"
+          - "ruby ./bin/homemade_generate.rb 10000 10000"
           - "ruby ./bin/benchmark.rb --prepare-mysql"
 
         sql: "./homemade-test-queries/went-on-disk.sql"
