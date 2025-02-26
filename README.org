@@ -49,31 +49,6 @@ This will compare .sql files in homemade_dataset folder against .expected files 
 
 These tests are passing under our current assumptions. As we improve optimistic order-preserving hash join these tests will fail and we need to take new snapshots of the new expected state.
 
-* Homemade Sorting and Hash Join Dataset
-
-To generate the data:
-
-#+begin_src shell
-ruby ./bin/generate_sort_hashjoin_dataset.rb 10 10
-#+end_src
-
-Always remember to prepare the env before running queries:
-
-#+begin_src shell
-make prepare
-#+end_src
-
-Then you can run the following sql:
-
-#+begin_src sql
-use test_sort_hashjoin_db;
-EXPLAIN FORMAT=tree select * from table_b, table_a WHERE table_b.a_id = table_a.id ORDER BY table_a.id;
-#+end_src
-
-This generates lets us propose optimistic hash joins since ordering_state gets set.
-
-Since the JOB dataset does not include any ORDER BY or DISTINCT, it did not make any interesting order in MySQL. This was experimentally proven by checking for an ordering that was followed every time optimistic hash join was proposed. Therefoer we created this dataset which we can build our own queries around and also scale the dataset using the generate script.
-
 * Commands
 
 ** Download JOB dataset
