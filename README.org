@@ -18,19 +18,22 @@ gem install terminal-table
 brew install hyperfine
 #+END_SRC
 
-* Quick start
+* JOB from a fresh start
 
-- Requires MySQL running and config.yaml set up pointing at a mysql executable and server.
+If MySQL has lost JOB data then do the following.
+
+First, make sure MySQL is running. (Tips use =mtr --start-dirty= or =make run-dirty= to avoid resetting MySQL).
 
 #+begin_src
-make job-setup                                                # create database from schema
-make job-dataset                                              # download job data
-make inline-local DATABASE=imdbload                           # inline local queries
-make job-feed                                                 # feed job data to database
-make job-queries                                              # normalize queries provided
-make experimental-setup                                       # enable hypergraph optimizer
-make run-file DATABASE=imdbload FILE=./sql/analyze_job.sql    # analyze imdbload table
-make run-file DATABASE=imdbload FILE=./sql/job/6a.sql         # run query 6a
+make job-dataset            # Download job dataset
+make job-order-queries      # Convert job queries to ORDER BY
+
+# Ensure MySQL is running
+make job-setup              # Create databases
+make inline-local           # Allow inserting data from CSV
+make job-feed               # Feed data to database
+make prepare                # Enable hypergraph optimizer and disable stats_auto_recalc
+make job-analyze            # Analyze job tables
 #+end_src
 
 * Testing the Optimistic Hash Join
