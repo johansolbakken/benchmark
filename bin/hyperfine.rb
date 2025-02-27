@@ -6,7 +6,7 @@ MYSQL_DB   = "imdbload"
 MYSQL_HOST = "127.0.0.1"
 MYSQL_PORT = "13000"
 
-warmup_runs = 2
+warmup_runs = 1
 total_runs  = 5
 
 query_dir="./job-order-queries"
@@ -151,12 +151,13 @@ def run_baseline(queries, warmup_runs, total_runs)
   puts "------------------------------------"
 end
 
-OPTIMISM_VALUES    = [0.0, 0.5, 1.0]
+OPTIMISM_VALUES    = [0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 1.0]
 OPTIMISM_FUNCTIONS = [
-  'NONE', 
+#  'NONE', 
   'LINEAR', 
-  'SIGMOID', 
-  'EXPONENTIAL']
+#  'SIGMOID', 
+#  'EXPONENTIAL'
+]
 
 run_baseline(queries, warmup_runs, total_runs)
 OPTIMISM_FUNCTIONS.each do |func|
