@@ -6,8 +6,8 @@ MYSQL_DB   = "imdbload"
 MYSQL_HOST = "127.0.0.1"
 MYSQL_PORT = "13000"
 
-warmup_runs = 1
-total_runs  = 5
+warmup_runs = 2
+total_runs  = 10
 
 query_dir="./job-order-queries"
 queries = Dir.glob(File.join(query_dir, '*.sql')).sort
@@ -165,3 +165,7 @@ OPTIMISM_FUNCTIONS.each do |func|
     run_configuration2(func, level, queries, warmup_runs, total_runs)
   end
 end
+
+system("git add -A")
+system("git commit -m \"Done deal\"")
+system("git push")
