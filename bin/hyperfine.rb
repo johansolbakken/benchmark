@@ -75,6 +75,7 @@ def run_configuration2(func, level, queries, warmup_runs, total_runs)
   # Build hyperfine's argument list with all commands
   hyperfine_args = [
     "hyperfine",
+    "--show-output",
     "--warmup", warmup_runs.to_s,
     "--runs", total_runs.to_s,
     "--export-csv", result_file
