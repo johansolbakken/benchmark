@@ -40,7 +40,7 @@ def build_command_for_query(query_file, config_hint)
   modified_query = insert_hint(content, config_hint).strip
   sql = "USE #{MYSQL_DB}; #{modified_query}"
   escaped_sql = sql.gsub('"', '\"')
-  "mysql -u #{MYSQL_USER} --host=#{MYSQL_HOST} --port=#{MYSQL_PORT} -e \"#{escaped_sql}\" > /dev/null"
+  "../mysql-server-build/build-release/bin/mysql -u #{MYSQL_USER} --host=#{MYSQL_HOST} --port=#{MYSQL_PORT} -e \"#{escaped_sql}\" > /dev/null"
 end
 
 def sanitize_filename(filename)
@@ -75,7 +75,6 @@ def run_configuration2(func, level, queries, warmup_runs, total_runs)
   # Build hyperfine's argument list with all commands
   hyperfine_args = [
     "hyperfine",
-    "--show-output",
     "--warmup", warmup_runs.to_s,
     "--runs", total_runs.to_s,
     "--export-csv", result_file
