@@ -32,7 +32,7 @@ make job-order-queries      # Convert job queries to ORDER BY
 make job-setup              # Create databases
 make inline-local           # Allow inserting data from CSV
 make job-feed               # Feed data to database
-make prepare                # Enable hypergraph optimizer and disable stats_auto_recalc
+make prepare                # Enable hypergraph optimizer and disable stats_auto_recalc and set size-values for join-buffer and innodb-pool
 make job-analyze            # Analyze job tables
 #+end_src
 
