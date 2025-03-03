@@ -349,3 +349,17 @@ make homemade-feed
 #+begin_src shell
 make run-file DATABASE=homemade FILE=./sql/analyze_homemade.sql
 #+end_src
+
+** Count Optimistic Hash Join
+
+`bin/count-ohj.rb`, counts occurrences of "optimistic hash join" in SQL execution plans. It works by:
+
+#+begin_src sh
+ruby bin/count-ohj.rb [--join-buffer-size SIZE]
+#+end_src
+
+Example (setting join buffer size to 16MB):
+
+#+begin_src sh
+ruby bin/count-ohj.rb --join-buffer-size 16777216
+#+end_src
