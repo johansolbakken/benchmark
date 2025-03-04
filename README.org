@@ -363,3 +363,27 @@ Example (setting join buffer size to 16MB):
 #+begin_src sh
 ruby bin/count-ohj.rb --join-buffer-size 16777216
 #+end_src
+
+** Export query plan as DOT
+
+Generates a graphical representation of a query plan from an input SQL file.
+
+- **Run with an SQL file:**
+  #+begin_src shell
+  ruby bin/benchmark.rb ./job/1a.sql
+  #+end_src
+
+- **Display the JSON output:**
+  #+begin_src shell
+  ruby bin/benchmark.rb --show-json ./job/1a.sql
+  #+end_src
+
+- **Specify a custom output PNG file:**
+  #+begin_src shell
+  ruby bin/benchmark.rb -o custom_plan.png ./job/1a.sql
+  #+end_src
+
+- **Keep the DOT file:**
+  #+begin_src shell
+  ruby bin/benchmark.rb -c ./job/1a.sql
+  #+end_src
