@@ -387,3 +387,8 @@ ruby bin/benchmark.rb -o custom_plan.png ./job/1a.sql
 #+begin_src shell
 ruby bin/benchmark.rb -c ./job/1a.sql
 #+end_src
+
+*With hints*
+#+begin_src shell
+ruby bin/print-plan-as-graphwiz.rb ./job-order-queries/1a.sql -o./1a.png --hint "/*+ SET_OPTIMISM_FUNC(SIGMOID) */"
+#+end_src
