@@ -45,8 +45,16 @@ def json_to_dot(data)
   dot_lines.join("\n")
 end
 
-def run(input_sql_file, show_json, output_png, keep_dot)
+def run(input_sql_file, show_json, output_png, keep_dot, hint)
+  # Read and join SQL file lines into one query string.
   query = File.read(input_sql_file).lines.map(&:strip).join(' ')
+
+  # If a hint is provided, modify the query by replacing the first occurrence of SELECT.
+  if hint && !hint.empty?
+    # Replace the first occurrence of SELECT (case insensitive) with "SELECT #{hint}"
+    query.sub!(/select/i, "SELECT #{hint}")
+  end
+
   explain_query = "EXPLAIN FORMAT=json #{query}"
   stdout, _stderr = CLIENT.run_query_get_stdout(explain_query)
   text_without_newlines = stdout.gsub(/\\n/, "")
@@ -70,7 +78,8 @@ end
 options = {
   show_json: false,
   output_png: 'query_tree.png',
-  keep_dot: false
+  keep_dot: false,
+  hint: ""
 }
 
 OptionParser.new do |opts|
@@ -87,6 +96,10 @@ OptionParser.new do |opts|
   opts.on("-c", "--keep-dot", "Keep the DOT file (default delete it)") do
     options[:keep_dot] = true
   end
+
+  opts.on("--hint HINT", "SQL hint to be inserted after SELECT (example: '/*+ SET_OPTIMISM_FUNC(SIGMOID) */')") do |hint|
+    options[:hint] = hint
+  end
 end.parse!
 
 if ARGV.empty?
@@ -95,4 +108,4 @@ if ARGV.empty?
 end
 
 input_sql_file = ARGV[0]
-run(input_sql_file, options[:show_json], options[:output_png], options[:keep_dot]) if __FILE__ == $PROGRAM_NAME
+run(input_sql_file, options[:show_json], options[:output_png], options[:keep_dot], options[:hint]) if __FILE__ == $PROGRAM_NAME
