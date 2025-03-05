@@ -6,7 +6,7 @@ tpc-ds
 tpc-h
 tpc-h-dataset
 tpc-h-queries
-tpc-h-ddl
+tpc-h-schema
 
 job-dataset
 job-queries
