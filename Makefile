@@ -26,9 +26,12 @@ job-feed: job-dataset
 job-analyze:
 	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 imdbload < ./sql/analyze_job.sql
 
-job-plan-png: job-order-queries
+job-order-all-queries: job-queries
+	ruby bin/job-all.rb
+
+job-plan-png: job-order-all-queries
 	mkdir -p job-plan-png
-	@for f in job-order-queries/*.sql; do \
+	@for f in job-order-all-queries/*.sql; do \
 	  base=$$(basename $$f .sql); \
 	  ruby bin/print-plan-as-graphwiz.rb $$f -o./job-plan-png/$$base.png --hint "/*+ SET_OPTIMISM_FUNC(SIGMOID) */" || exit 1; \
 	done
