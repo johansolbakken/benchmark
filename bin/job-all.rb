@@ -25,9 +25,11 @@ Dir.glob(File.join(INPUT_DIR, '*')).each do |file_path|
     "#{$1}*#{$3}"
   end
 
-  # Replace the semicolon at the end (plus any trailing whitespace)
-  # with " order by title.title;"
-  new_content = new_content.sub(/;\s*\z/, ' order by t.title;')
+  if new_content.include?('cast_info')
+    new_content = new_content.sub(/;\s*\z/, ' order by ci.id;')
+  else
+    new_content = new_content.sub(/;\s*\z/, ' order by t.id;')
+  end
 
   # Write the modified content to the output folder.
   output_file = File.join(OUTPUT_DIR, filename)
