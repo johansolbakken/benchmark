@@ -11,7 +11,7 @@ CONFIG = YAML.load_file('config.yaml')['mysql']
 CLIENT = MySQL::Client.new(CONFIG['user'], CONFIG['port'], CONFIG['host'], CONFIG['name'], CONFIG['path'], true)
 
 # Convert a JSON query plan to DOT graph format.
-def json_to_dot(data)
+def json_to_dot(data, truncate)
   dot_lines = [
     'digraph QueryPlan {',
     '  node [fontname="Helvetica" shape=none]',
@@ -27,6 +27,26 @@ def json_to_dot(data)
     label = node["operation"] || "Node"
     label = label.gsub(/Inner hash join/, 'Optimistic Hash Join') if node['was_optimistic_hash_join']
     label = label.gsub('"', '\"')
+
+    if truncate
+      map = {
+        'Nested loop inner join' => 'NLJ',
+        'Optimistic Hash Join' => 'OOHJ',
+        'Index lookup' => 'IDX',
+        'Single-row index lookup' => '1IDX',
+        'PRIMARY' => 'PRI',
+        'Table scan' => 'TS',
+        'Inner hash join' => 'HJ',
+      }
+
+      label = label.gsub(/using\s+\w+/, '')
+
+      map.each do |find, replace|
+        label.gsub!(find, replace)
+      end
+    end
+
+
     nodes << "  node#{current_id} [label=\"#{label}\"];"
     @node_counter += 1
 
@@ -45,7 +65,7 @@ def json_to_dot(data)
   dot_lines.join("\n")
 end
 
-def run(input_sql_file, show_json, output_png, keep_dot, hint)
+def run(input_sql_file, show_json, output_png, keep_dot, hint, truncate)
   # Read and join SQL file lines into one query string.
   query = File.read(input_sql_file).lines.map(&:strip).join(' ')
 
@@ -63,7 +83,7 @@ def run(input_sql_file, show_json, output_png, keep_dot, hint)
 
   puts JSON.pretty_generate(data) if show_json
 
-  dot_output = json_to_dot(data)
+  dot_output = json_to_dot(data, truncate)
   dot_file = 'query_plan.dot'
   File.write(dot_file, dot_output)
   puts "DOT file has been written to #{dot_file}"
@@ -79,6 +99,7 @@ options = {
   show_json: false,
   output_png: 'query_tree.png',
   keep_dot: false,
+  truncate: false,
   hint: ""
 }
 
@@ -100,6 +121,10 @@ OptionParser.new do |opts|
   opts.on("--hint HINT", "SQL hint to be inserted after SELECT (example: '/*+ SET_OPTIMISM_FUNC(SIGMOID) */')") do |hint|
     options[:hint] = hint
   end
+
+  opts.on("--truncate", "Truncate all nodes") do
+    options[:truncate] = true
+  end
 end.parse!
 
 if ARGV.empty?
@@ -108,4 +133,9 @@ if ARGV.empty?
 end
 
 input_sql_file = ARGV[0]
-run(input_sql_file, options[:show_json], options[:output_png], options[:keep_dot], options[:hint]) if __FILE__ == $PROGRAM_NAME
+run(input_sql_file,
+    options[:show_json],
+    options[:output_png],
+    options[:keep_dot],
+    options[:hint],
+    options[:truncate]) if __FILE__ == $PROGRAM_NAME
