@@ -9,6 +9,9 @@ job-dataset:
 job-queries:
 	ruby bin/job-remove-min.rb
 
+job-synthetic: empty
+	ruby bin/job-generate.rb -o job-synthetic
+
 job-order-queries: job-queries
 	ruby bin/job-order.rb
 
@@ -31,7 +34,7 @@ job-order-all-queries: job-queries
 
 job-plan-png: job-order-all-queries
 	mkdir -p job-plan-png
-	@for f in job-order-all-queries/*.sql; do \
+	@for f in job-synthetic/*.sql; do \
 	  base=$$(basename $$f .sql); \
 	  ruby bin/print-plan-as-graphwiz.rb $$f -o./job-plan-png/$$base.png --hint "/*+ SET_OPTIMISM_FUNC(SIGMOID) */" || exit 1; \
 	done
