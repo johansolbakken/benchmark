@@ -19,8 +19,7 @@ end
 # Create the output directory if it doesn't exist
 FileUtils.mkdir_p(options[:output_dir])
 
-JOIN_COUNT = 8
-TABLE_COUNT = JOIN_COUNT + 1
+JOIN_COUNT = 15
 ORDER_BY = 'ORDER BY cast_info.id;'
 
 # Total order of joinable tables with "title" first
@@ -82,31 +81,34 @@ join_conditions = {
   }
 }
 
+for i in 2..JOIN_COUNT
+  table_count = i + 1
 
+  # Select the first TABLE_COUNT tables from total_order
+  tables_to_join = total_order[0...table_count]
 
-# Select the first TABLE_COUNT tables from total_order
-tables_to_join = total_order[0...TABLE_COUNT]
+  # Build the join query based on tables_to_join and join_conditions.
+  # For each table (after the first) we find a parent in the already-joined tables that provides a join condition.
+  join_query = "SELECT * FROM #{tables_to_join.first}"
+  joined_tables = [tables_to_join.first]
 
-# Build the join query based on tables_to_join and join_conditions.
-# For each table (after the first) we find a parent in the already-joined tables that provides a join condition.
-join_query = "SELECT * FROM #{tables_to_join.first}"
-joined_tables = [tables_to_join.first]
-
-tables_to_join[1..-1].each do |tbl|
-  parent = joined_tables.find { |p| join_conditions[p] && join_conditions[p].key?(tbl) }
-  if parent
-    condition = join_conditions[parent][tbl]
-    join_query += " JOIN #{tbl} ON #{condition}"
-    joined_tables << tbl
-  else
-    abort "No join condition found for table #{tbl} with any of the joined tables: #{joined_tables.join(', ')}"
+  tables_to_join[1..-1].each do |tbl|
+    parent = joined_tables.find { |p| join_conditions[p] && join_conditions[p].key?(tbl) }
+    if parent
+      condition = join_conditions[parent][tbl]
+      join_query += " JOIN #{tbl} ON #{condition}"
+      joined_tables << tbl
+    else
+      abort "No join condition found for table #{tbl} with any of the joined tables: #{joined_tables.join(', ')}"
+    end
   end
+
+  join_query += " #{ORDER_BY}"
+
+  # Write the join query to a file in the output directory
+  output_file = File.join(options[:output_dir], "q_J#{i}.sql")
+  File.write(output_file, join_query)
+
+  puts "Join query written to #{output_file}"
+
 end
-
-join_query += " #{ORDER_BY}"
-
-# Write the join query to a file in the output directory
-output_file = File.join(options[:output_dir], "join_query.sql")
-File.write(output_file, join_query)
-
-puts "Join query written to #{output_file}"
