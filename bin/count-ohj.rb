@@ -17,17 +17,25 @@ ALWAYS_PROPOSE_HINT = '/*+ SET_OPTIMISM_FUNC(SIGMOID) */'
 def parse_options
   options = {}
   OptionParser.new do |opts|
-    opts.banner = "Usage: #{$PROGRAM_NAME} [options]"
+    opts.banner = "Usage: #{$PROGRAM_NAME} [options] INPUT_DIR"
     opts.on("--join-buffer-size SIZE", "Set join buffer size (in bytes)") do |size|
       options[:join_buffer_size] = size
     end
   end.parse!
+
+  if ARGV.empty?
+    puts "Error: Missing mandatory INPUT_DIR argument."
+    puts "Usage: #{$PROGRAM_NAME} [options] INPUT_DIR"
+    exit 1
+  end
+
+  options[:input_dir] = ARGV.shift
   options
 end
 
-def count_optimistic
+def count_optimistic(input_dir)
   mapping = {}
-  Dir['./job-order-queries/*.sql'].each do |file|
+  Dir[File.join(input_dir, '*.sql')].each do |file|
     # Read the SQL file and collapse it into a single line
     query = File.read(file).lines.map(&:strip).join(' ')
     # Insert the hint right after the SELECT keyword
@@ -53,13 +61,14 @@ def run
     CLIENT.run_query_get_stdout("SET GLOBAL join_buffer_size = #{buffer_size}")
   end
 
-  results = count_optimistic
+  input_dir = options[:input_dir]
+  results = count_optimistic(input_dir)
 
   # Ensure the results directory exists
   output_dir = './results'
   FileUtils.mkdir_p(output_dir) unless Dir.exist?(output_dir)
 
-  # Prepare CSV file path; add join buffer size to the file name if provided
+  # Prepare CSV file path; include join buffer size in the file name if provided
   file_name = if options[:join_buffer_size]
                 "ohj-count-inf-memory-#{options[:join_buffer_size]}.csv"
               else
