@@ -12,5 +12,6 @@ job-dataset
 job-queries
 job-order-queries
 job-schema
+job-synthetic
 
 homemade-dataset

@@ -24,6 +24,10 @@ JOIN_COUNT = 15
 ORDER_BY = 'ORDER BY cast_info.id;'
 # Array of where clause counts to generate.
 where_counts = [0, 1, 2, 4, 8]
+order_bys = {
+  ID: 'ORDER BY cast_info.id;',
+  TITLE: 'ORDER BY title.title;',
+}
 
 # Total order of joinable tables with "title" first.
 total_order = [
@@ -86,7 +90,7 @@ join_conditions = {
 
 # Map of example where conditions for each table, using non-id fields.
 table_conditions = {
-  "title"           => "title.title = 'the matrix'",
+  "title"           => "title.title = '%The Matrix%'",
   "cast_info"       => "cast_info.note LIKE '%hero%'",
   "name"            => "name.name LIKE 'Keanu%'",
   "role_type"       => "role_type.role = 'Lead'",
@@ -125,11 +129,8 @@ for i in 2..JOIN_COUNT
     end
   end
 
-  # Generate a list of WHERE conditions for the selected tables using the table_conditions mapping.
-  # (Each condition is of the form "table.col = value" where col is not an id.)
   where_conditions = tables_to_join.map { |t| table_conditions[t] }
 
-  # For each desired number of WHERE conditions, if there are enough conditions, generate a query version.
   where_counts.each do |wc|
     next if wc > where_conditions.length  # Skip if not enough tables.
 
@@ -137,11 +138,13 @@ for i in 2..JOIN_COUNT
     if wc > 0
       query += " WHERE " + where_conditions[0...wc].join(" AND ")
     end
-    query += " #{ORDER_BY}"
 
-    # Write the query to a file with naming convention: q_J#{i}_A#{wc}.sql
-    output_file = File.join(options[:output_dir], "QJ#{i}A#{wc}.sql")
-    File.write(output_file, query)
-    puts "Query written to #{output_file}"
+    for k,v in order_bys
+      out_query = "#{query} #{v}"
+
+      output_file = File.join(options[:output_dir], "QJ#{i}A#{wc}#{k}.sql")
+      File.write(output_file, out_query)
+      puts "Query written to #{output_file}"
+    end
   end
 end
