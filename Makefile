@@ -36,7 +36,7 @@ job-plan-png: job-order-all-queries
 	mkdir -p job-plan-png
 	@for f in job-synthetic/*.sql; do \
 	  base=$$(basename $$f .sql); \
-	  ruby bin/print-plan-as-graphwiz.rb $$f -o./job-plan-png/$$base.png --hint "/*+ SET_OPTIMISM_FUNC(SIGMOID) */" || exit 1; \
+	  ruby bin/print-plan-as-graphwiz.rb $$f -o./job-plan-png/$$base.png --hint "/*+ SET_OPTIMISM_FUNC(SIGMOID) */" --truncate || exit 1; \
 	done
 
 job-clean:
