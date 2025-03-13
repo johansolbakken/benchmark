@@ -19,11 +19,10 @@ end
 # Create the output directory if it doesn't exist
 FileUtils.mkdir_p(options[:output_dir])
 
-# Settings: JOIN_COUNT is the maximum number of joins; ORDER_BY clause appended at the end.
 JOIN_COUNT = 15
-ORDER_BY = 'ORDER BY cast_info.id;'
+
 # Array of where clause counts to generate.
-where_counts = [0, 1, 2, 4, 8]
+where_counts = [1, 2, 4, 6, 8]
 order_bys = {
   ID: 'ORDER BY cast_info.id;',
   TITLE: 'ORDER BY title.title;',
@@ -90,7 +89,7 @@ join_conditions = {
 
 # Map of example where conditions for each table, using non-id fields.
 table_conditions = {
-  "title"           => "title.title = '%The Matrix%'",
+  "title"           => "(title.title LIKE '%Matrix%' OR title.title LIKE '%Marvel%')",
   "cast_info"       => "cast_info.note LIKE '%hero%'",
   "name"            => "name.name LIKE 'Keanu%'",
   "role_type"       => "role_type.role = 'Lead'",
