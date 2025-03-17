@@ -29,6 +29,12 @@ job-feed: job-dataset
 job-analyze:
 	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 imdbload < ./sql/analyze_job.sql
 
+job-index-enable:
+	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 imdbload < ./sql/enable-job-indexes.sql
+
+job-index-disable:
+	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 imdbload < ./sql/disable-job-indexes.sql
+
 job-order-all-queries: job-queries
 	ruby bin/job-all.rb
 
