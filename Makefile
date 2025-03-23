@@ -26,6 +26,9 @@ job-setup: job-schema
 job-feed: job-dataset
 	ruby bin/job-feed.rb
 
+job-warmup:
+	ruby bin/job-warmup.rb
+
 job-analyze:
 	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 imdbload < ./sql/analyze_job.sql
 
