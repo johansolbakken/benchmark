@@ -52,7 +52,14 @@ def count_optimistic(input_dir, analyze)
     if analyze
       explain_query = "EXPLAIN ANALYZE #{modified_query}"
     end
-    stdout, _stderr = CLIENT.run_query_get_stdout(explain_query)
+    stdout, stderr, ok = CLIENT.run_query_get_stdout(explain_query)
+
+    if !ok
+      puts 'stdout:'
+      puts stdout
+      abort stderr
+    end
+
     # Count the occurrences of "optimistic hash join" (case-insensitive)
     join_count = stdout.scan(/optimistic hash join/i).size
     if analyze
