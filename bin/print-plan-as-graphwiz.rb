@@ -51,9 +51,18 @@ def json_to_dot(data, truncate)
     @node_counter += 1
 
     if node["inputs"].is_a?(Array)
-      node["inputs"].each do |child|
+      node["inputs"].each_with_index do |child, index|
         child_id = traverse.call(child)
+
+        if label.downcase.include?('hash join') or label.downcase.include?('hj')
+          probe = 'probe'
+          if index > 0
+            probe = 'build'
+          end
+          edges << "  node#{current_id} -> node#{child_id} [label=\"#{probe}\"];"
+        else
         edges << "  node#{current_id} -> node#{child_id};"
+        end
       end
     end
     current_id
