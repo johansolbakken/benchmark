@@ -27,8 +27,10 @@ Dir.glob(File.join(INPUT_DIR, '*')).each do |file_path|
 
   if new_content.include?('cast_info')
     new_content = new_content.sub(/;\s*\z/, ' order by ci.id;')
+  elsif new_content.include?('title AS t1')
+    new_content = new_content.sub(/;\s*\z/, ' order by t1.title;')
   else
-    new_content = new_content.sub(/;\s*\z/, ' order by t.id;')
+    new_content = new_content.sub(/;\s*\z/, ' order by t.title;')
   end
 
   # Write the modified content to the output folder.
