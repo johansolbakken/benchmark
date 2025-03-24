@@ -86,7 +86,7 @@ module MySQL
     # @param [String] file The path to the SQL file.
     # @return [Boolean] True if the file executed successfully, false otherwise.
     def run_file(file)
-      puts "#{Color.bolD('Running file')}: #{file}"
+      puts "#{Color.bold('Running file')}: #{file}"
       sql = File.read(file)
       command = "#{@mysql_client_path} -u#{@db_user} --local-infile=1 --port=#{@db_port} --host=#{@db_host} #{@db_name}"
       stdout, stderr, status = Stream.run_command_with_input(command, sql)
