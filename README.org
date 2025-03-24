@@ -295,6 +295,14 @@ make run-file DATABASE=imdbload FILE=./job-queries/10a.sql
 make job-clean
 #+end_src
 
+** Warmup MySQL
+
+Essentially means loading all data into memory.
+
+#+begin_src shell
+make job-warmup
+#+end_src
+
 * Analyze
 
 To analyze run the script:
