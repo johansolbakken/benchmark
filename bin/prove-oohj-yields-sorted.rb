@@ -4,6 +4,8 @@ require 'optparse'
 require 'yaml'
 require 'terminal-table'
 require 'csv'
+require 'unicode_utils'
+
 
 require_relative '../lib/mysql' 
 
@@ -74,16 +76,17 @@ def get_order_by_condition(query_name, input_dir)
 end
 
 def check_if_result_is_sorted_on_condition(file_name, condition)
-  # Check in both ascending and descending order
+  # TODO: ignore accents and case
   rows = CSV.read(file_name)
   header = rows.shift
   column_index = header.index(condition)
   rows.each_cons(2) do |row1, row2|
-    if row1[column_index].downcase > row2[column_index].downcase
-      # Print rows that break the order
+    # Normalize accents and convert to lowercase
+    normalized1 = UnicodeUtils.nfkd(row1[column_index]).downcase.gsub(/\p{Mn}/, '')
+    normalized2 = UnicodeUtils.nfkd(row2[column_index]).downcase.gsub(/\p{Mn}/, '')
+    if normalized1 > normalized2
       puts "Row 1: #{row1}"
       puts "Row 2: #{row2}"
-      
       return false
     end
   end
