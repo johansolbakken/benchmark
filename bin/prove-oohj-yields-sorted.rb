@@ -6,7 +6,6 @@ require 'terminal-table'
 require 'csv'
 require 'unicode_utils'
 
-
 require_relative '../lib/mysql' 
 
 # Load MySQL configuration
@@ -75,15 +74,27 @@ def get_order_by_condition(query_name, input_dir)
   order_by_condition 
 end
 
+# Normalize the string: remove accents, downcase, strip punctuation, handle numbers, remove leading quotes
+def normalize_str(str)
+  UnicodeUtils.nfkd(str).downcase
+    .gsub(/\p{Mn}/, '')   # Remove accents
+    .gsub(/^["'\s]+/, '') # Remove leading quotes and spaces
+    .gsub(/["'\s]+$/, '') # Remove trailing quotes and spaces
+    .gsub(/[^a-z0-9\s]/i, '') # Remove punctuation except numbers
+    .gsub(/\d+/) { |m| m.rjust(10, '0') } # Normalize numbers for sorting
+end
+
+# Check if the output of the queries is sorted
 def check_if_result_is_sorted_on_condition(file_name, condition)
-  # TODO: ignore accents and case
   rows = CSV.read(file_name)
   header = rows.shift
   column_index = header.index(condition)
+
   rows.each_cons(2) do |row1, row2|
-    # Normalize accents and convert to lowercase
-    normalized1 = UnicodeUtils.nfkd(row1[column_index]).downcase.gsub(/\p{Mn}/, '')
-    normalized2 = UnicodeUtils.nfkd(row2[column_index]).downcase.gsub(/\p{Mn}/, '')
+    # Normalize both strings for comparison
+    normalized1 = normalize_str(row1[column_index])
+    normalized2 = normalize_str(row2[column_index])
+
     if normalized1 > normalized2
       puts "Row 1: #{row1}"
       puts "Row 2: #{row2}"
@@ -92,7 +103,6 @@ def check_if_result_is_sorted_on_condition(file_name, condition)
   end
   true
 end
-
 
 # Run the script
 def run()
@@ -105,12 +115,12 @@ def run()
     CLIENT.run_query_get_stdout("SET GLOBAL join_buffer_size = #{buffer_size}")
   end
 
-  # puts "Finding queries that use optimistic hash join and go on disk..."
-  # files_with_optimistic = find_oohj_on_disk_queries(input_dir)
+  puts "Finding queries that use optimistic hash join and go on disk..."
+  files_with_optimistic = find_oohj_on_disk_queries(input_dir)
 
-  # puts "Running the queries and saving the output to a file..."
-  #files_with_optimistic = File.readlines('./results/oohj-queries-on-disk.txt').map(&:strip)
-  #run_queries_and_save_output(files_with_optimistic)
+  puts "Running the queries and saving the output to a file..."
+  files_with_optimistic = File.readlines('./results/oohj-queries-on-disk.txt').map(&:strip)
+  run_queries_and_save_output(files_with_optimistic)
 
   # ./job-order-queries/14c.sql
   # puts "Get the order by condition for query 14c..."
@@ -135,12 +145,6 @@ def run()
       puts "CSV file for query #{query_name} not found. Skipping."
     end
   end
-
-
-
-
-
-
 
   #puts "Checking if the output of the queries is sorted..."
   #check_if_output_is_sorted(files_with_optimistic)
