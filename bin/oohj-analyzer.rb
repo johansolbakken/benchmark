@@ -157,10 +157,19 @@ def run()
     CLIENT.run_query_get_stdout("SET GLOBAL join_buffer_size = #{buffer_size}")
   end
 
-  files = Dir[File.join(input_dir, '*.sql')]
+  if File.directory?(input_dir)
+    files = Dir[File.join(input_dir, '*.sql')]
+  elsif File.file?(input_dir) && File.extname(input_dir) == '.sql'
+    files = [input_dir]
+  else
+    puts 'Error: INPUT_DIR must be a directory containing .sql files or a single .sql file.'
+    exit 1
+  end
+
   if options[:small]
     files = files[0..0]
   end
+
   queries = files.map do |file|
     {
       file: file,
