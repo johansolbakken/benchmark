@@ -1,7 +1,0 @@
-./job-order-queries/14c.sql
-./job-order-queries/22a.sql
-./job-order-queries/22b.sql
-./job-order-queries/22c.sql
-./job-order-queries/22d.sql
-./job-order-queries/28a.sql
-./job-order-queries/28c.sql

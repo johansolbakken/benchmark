@@ -3,9 +3,6 @@
 require 'optparse'
 require 'yaml'
 require 'terminal-table'
-require 'csv'
-require 'unicode_utils'
-require 'i18n'
 
 require_relative '../lib/byte'
 require_relative '../lib/mysql'
@@ -17,8 +14,6 @@ CLIENT = MySQL::Client.new(CONFIG['user'], CONFIG['port'], CONFIG['host'], CONFI
 QUERIES_ON_DISK_FILE = './results/oohj-queries-on-disk.txt'
 HINT = '/*+ SET_OPTIMISM_FUNC(SIGMOID) */'
 HINT = '/*+ DISABLE_OPTIMISTIC_HASH_JOIN */'
-
-I18n.config.available_locales = [:en]
 
 def parse_options
   options = {
@@ -61,10 +56,6 @@ def get_order_by_condition(file)
   query = File.read(file)
   order_by_condition = query.match(/order by (.*)/i)[1].gsub(";", "").strip
   order_by_condition
-end
-
-def normalize_string(str)
-  str
 end
 
 def contains_order_by(file)
@@ -129,14 +120,14 @@ def check_sorting(file)
   end
 
   order_condition = get_order_by_condition(file)
-  order_index = header.find_index { |col| normalize_string(col) == normalize_string(order_condition) }
+  order_index = header.find_index { |col| col == order_condition }
   if order_index.nil?
     puts "  Failed to find index of order by column '#{order_condition}' in header: #{header.inspect}"
     return false
   end
 
   order_values = result[1..-1].map { |row| row[order_index] }
-  normalized_values = order_values.map { |value| normalize_string(value) }
+  normalized_values = order_values.map { |value| value }
 
   if normalized_values == normalized_values.sort
     puts "  The column '#{order_condition}' is sorted."
