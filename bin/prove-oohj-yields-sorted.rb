@@ -12,15 +12,14 @@ CONFIG = YAML.load_file('config.yaml')['mysql']
 CLIENT = MySQL::Client.new(CONFIG['user'], CONFIG['port'], CONFIG['host'], CONFIG['name'], CONFIG['path'], silent=true)
 
 QUERIES_ON_DISK_FILE = './results/oohj-queries-on-disk.txt'
-HINT = '/*+ SET_OPTIMISM_FUNC(SIGMOID) */'
-HINT = '/*+ DISABLE_OPTIMISTIC_HASH_JOIN */'
 
 def parse_options
   options = {
     analyze: false,
     compare: false,
     disable_optimistic: false,
-    summary: false
+    summary: false,
+    small: false
   }
 
   OptionParser.new do |opts|
@@ -40,6 +39,9 @@ def parse_options
     opts.on('--summary', 'Display summary at end of execution') do
       options[:summary] = true
     end
+    opts.on('--small', 'Debug: limit amount of queries to test') do
+      options[:small] = true
+    end
   end.parse!
 
   if ARGV.empty?
@@ -58,14 +60,22 @@ def get_order_by_condition(file)
   order_by_condition
 end
 
+def add_hint(query, disable)
+  hint = '/*+ SET_OPTIMISM_FUNC(SIGMOID) */'
+  if disable
+    hint = '/*+ DISABLE_OPTIMISTIC_HASH_JOIN */'
+  end
+  query.gsub(/select/i, "select #{hint}")
+end
+
 def contains_order_by(file)
   query = File.read(file).lines.map(&:strip).join(' ')
   !!(query =~ /order\s+by/i)
 end
 
-def count_oohj(file)
+def count_oohj(file, disable)
   query = File.read(file).lines.map(&:strip).join(' ')
-  query = query.gsub(/select/i, "select #{HINT}")
+  query = add_hint(query, disable)
   query = query.gsub(/order by/i, 'order by binary')
   query = "EXPLAIN FORMAT=TREE #{query}"
   stdout, stderr, ok = CLIENT.run_query_get_stdout(query)
@@ -79,9 +89,9 @@ def count_oohj(file)
   stdout.scan(/optimistic hash join/i).size
 end
 
-def count_went_on_disk_true(file)
+def count_went_on_disk_true(file, disable)
   query = File.read(file).lines.map(&:strip).join(' ')
-  query = query.gsub(/select/i, "select #{HINT}")
+  query = add_hint(query, disable)
   query = query.gsub(/order by/i, 'order by binary')
   query = "EXPLAIN ANALYZE #{query}"
 
@@ -95,9 +105,9 @@ def count_went_on_disk_true(file)
   stdout.scan(/went_on_disk=true/i).size
 end
 
-def check_sorting(file)
+def check_sorting(file, disable)
   query = File.read(file).lines.map(&:strip).join(' ')
-  query = query.gsub(/select/i, "select #{HINT}")
+  query = add_hint(query, disable)
   query = query.gsub(/order by/i, 'order by binary')
   stdout, stderr, ok = CLIENT.run_query_get_stdout(query)
   unless ok
@@ -148,6 +158,9 @@ def run()
   end
 
   files = Dir[File.join(input_dir, '*.sql')]
+  if options[:small]
+    files = files[0..0]
+  end
   queries = files.map do |file|
     {
       file: file,
@@ -168,18 +181,18 @@ def run()
       next
     end
 
-    query[:optimistic_count] = count_oohj(query[:file])
+    query[:optimistic_count] = count_oohj(query[:file], options[:disable_optimistic])
     if query[:optimistic_count] <= 0
       puts '  OOHJ count was 0.'
     end
 
     if options[:analyze]
-      query[:spill_count] = count_went_on_disk_true(query[:file])
+      query[:spill_count] = count_went_on_disk_true(query[:file], options[:disable_optimistic])
       puts "  Spill count: #{query[:spill_count]}"
     end
 
     if options[:compare]
-      query[:was_sorted] = check_sorting(query[:file])
+      query[:was_sorted] = check_sorting(query[:file], options[:disable_optimistic])
       sort_text = Color.red('false')
       if query[:was_sorted]
         sort_text = Color.green('true')
