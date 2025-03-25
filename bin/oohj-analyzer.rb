@@ -76,7 +76,7 @@ end
 def count_oohj(file, disable)
   query = File.read(file).lines.map(&:strip).join(' ')
   query = add_hint(query, disable)
-  query = query.gsub(/order by/i, 'order by binary')
+  # query = query.gsub(/order by/i, 'order by binary')
   query = "EXPLAIN FORMAT=TREE #{query}"
   stdout, stderr, ok = CLIENT.run_query_get_stdout(query)
 
@@ -92,7 +92,7 @@ end
 def count_went_on_disk_true(file, disable)
   query = File.read(file).lines.map(&:strip).join(' ')
   query = add_hint(query, disable)
-  query = query.gsub(/order by/i, 'order by binary')
+  # query = query.gsub(/order by/i, 'order by binary')
   query = "EXPLAIN ANALYZE #{query}"
 
   stdout, stderr, ok = CLIENT.run_query_get_stdout(query)
@@ -108,7 +108,7 @@ end
 def check_sorting(file, disable)
   query = File.read(file).lines.map(&:strip).join(' ')
   query = add_hint(query, disable)
-  query = query.gsub(/order by/i, 'order by binary')
+  # query = query.gsub(/order by/i, 'order by binary')
   stdout, stderr, ok = CLIENT.run_query_get_stdout(query)
   unless ok
     puts Color.red('Error running query during sort check.')
