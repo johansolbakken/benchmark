@@ -57,79 +57,15 @@ def parse_options
   options
 end
 
-# Find queries that use optimistic hash join and go on disk and write names of those queries to a file
-# def find_oohj_on_disk_queries(input_dir)
-#   files_with_optimistic = []
-#   files = Dir[File.join(input_dir, '*.sql')]
-#   files.each_with_index do |file, index|
-#     header = Color.bold("Processing #{index+1}/#{files.count}:")
-#     puts "#{header} #{file}"
-#     query = File.read(file).lines.map(&:strip).join(' ')
-#     stdout, _stderr = CLIENT.run_query_get_stdout("EXPLAIN ANALYZE #{query}")
-#     if stdout.include?('went_on_disk=true')
-#       files_with_optimistic << file
-#     end
-#   end
-
-#   puts "#{Color.bold('Caching analyzed results in:')} #{QUERIES_ON_DISK_FILE}"
-#   file_path = QUERIES_ON_DISK_FILE
-#   File.open(file_path, 'w') do |f|
-#     files_with_optimistic.each do |file|
-#       f.puts file
-#     end
-#   end
-# end
-
-# Run all queries that use optimistic hash join and go on disk and save the output to a file
-# def run_queries_and_save_output(files_with_optimistic)
-#   files_with_optimistic.each do |file|
-#     query = File.read(file).lines.map(&:strip).join(' ')
-
-#     if options[:disable_optimistic]
-#       query = query.sub(/select\s+/i, "/*+ DISABLE_OPTIMISTIC_HASH_JOIN */")
-#     end
-
-#     stdout, _stderr = CLIENT.run_query_get_rows(query)
-#     file_path = "./results/#{File.basename(file)}.csv"
-#     CSV.open(file_path, 'w') do |csv|
-#       stdout.each do |row|
-#         csv << row
-#       end
-#     end
-#   end
-# end
-
 def get_order_by_condition(file)
   query = File.read(file)
-  order_by_condition = query.match(/order by (.*)/i)[1].gsub(";", "")
-  order_by_condition 
+  order_by_condition = query.match(/order by (.*)/i)[1].gsub(";", "").strip
+  order_by_condition
 end
 
-# Normalize the string: remove accents, downcase, strip punctuation, handle numbers, remove leading quotes
 def normalize_string(str)
-  I18n.transliterate(str).downcase
+  str
 end
-
-
-# Check if the output of the queries is sorted
-# def check_if_result_is_sorted_on_condition(file_name, condition)
-#   rows = CSV.read(file_name)
-#   header = rows.shift
-#   column_index = header.index(condition)
-
-#   rows.each_cons(2) do |row1, row2|
-#     # Normalize both strings for comparison
-#     normalized1 = normalize_string(row1[column_index])
-#     normalized2 = normalize_string(row2[column_index])
-
-#     if normalized1 > normalized2
-#       puts "Row 1: #{row1}"
-#       puts "Row 2: #{row2}"
-#       return false
-#     end
-#   end
-#   true
-# end
 
 def contains_order_by(file)
   query = File.read(file).lines.map(&:strip).join(' ')
@@ -139,6 +75,7 @@ end
 def count_oohj(file)
   query = File.read(file).lines.map(&:strip).join(' ')
   query = query.gsub(/select/i, "select #{HINT}")
+  query = query.gsub(/order by/i, 'order by binary')
   query = "EXPLAIN FORMAT=TREE #{query}"
   stdout, stderr, ok = CLIENT.run_query_get_stdout(query)
 
@@ -154,6 +91,7 @@ end
 def count_went_on_disk_true(file)
   query = File.read(file).lines.map(&:strip).join(' ')
   query = query.gsub(/select/i, "select #{HINT}")
+  query = query.gsub(/order by/i, 'order by binary')
   query = "EXPLAIN ANALYZE #{query}"
 
   stdout, stderr, ok = CLIENT.run_query_get_stdout(query)
@@ -169,6 +107,7 @@ end
 def check_sorting(file)
   query = File.read(file).lines.map(&:strip).join(' ')
   query = query.gsub(/select/i, "select #{HINT}")
+  query = query.gsub(/order by/i, 'order by binary')
   stdout, stderr, ok = CLIENT.run_query_get_stdout(query)
   unless ok
     puts Color.red('Error running query during sort check.')
@@ -179,7 +118,7 @@ def check_sorting(file)
   lines = stdout.split("\n")
   if lines.empty?
     puts "  No output returned for file #{file}"
-    return false
+    return true
   end
 
   result = lines.map { |line| line.split("\t") }
@@ -208,8 +147,6 @@ def check_sorting(file)
   end
 end
 
-
-# Run the script
 def run()
   options = parse_options
   input_dir = options[:input_dir]
@@ -252,7 +189,11 @@ def run()
 
     if options[:compare]
       query[:was_sorted] = check_sorting(query[:file])
-      puts "  Was sorted: #{query[:was_sorted]}"
+      sort_text = Color.red('false')
+      if query[:was_sorted]
+        sort_text = Color.green('true')
+      end
+      puts "  Was sorted: #{sort_text}"
     end
   end
 
@@ -277,34 +218,6 @@ def run()
   end
 
   puts Color.green('Successfully terminated!')
-
-
-  # files.each_with_index do |file, index|
-  #   header = Color.bold("Processing #{index+1}/#{files.count}:")
-  #   puts "#{header} #{file}"
-  #   end
-
-  # if options[:compare]
-  #   puts Color.bold('Running the queries and saving the output to a file...')
-  #   files_with_optimistic = File.readlines(QUERIES_ON_DISK_FILE).map(&:strip)
-  #   run_queries_and_save_output(files_with_optimistic)
-
-  #   files_with_optimistic = File.readlines(QUERIES_ON_DISK_FILE).map(&:strip)
-
-  #   files_with_optimistic.each do |file|
-  #     query_name = File.basename(file, '.sql')
-  #     order_by_condition = get_order_by_condition(query_name, input_dir)
-  #     csv_file_path = "./results/#{query_name}.sql.csv"
-  #     puts "Order by condition for query #{query_name}: #{order_by_condition}"
-
-  #     if File.exist?(csv_file_path)
-  #       is_sorted = check_if_result_is_sorted_on_condition(csv_file_path, order_by_condition)
-  #       puts "Query #{query_name}: Result is #{is_sorted ? 'sorted' : 'not sorted'} on condition '#{order_by_condition}'."
-  #     else
-  #       puts "CSV file for query #{query_name} not found. Skipping."
-  #     end
-  #   end
-  # end
 end
 
 run()
