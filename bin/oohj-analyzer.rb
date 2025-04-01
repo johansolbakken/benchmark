@@ -193,6 +193,8 @@ def run()
     query[:optimistic_count] = count_oohj(query[:file], options[:disable_optimistic])
     if query[:optimistic_count] <= 0
       puts '  OOHJ count was 0.'
+    else
+      puts "  OOHJ count: #{query[:optimistic_count]}"
     end
 
     if options[:analyze]
