@@ -15,3 +15,6 @@ job-schema
 job-synthetic
 
 homemade-dataset
+/job-order-all-queries/
+/job-plan-png/
+query_tree.png
