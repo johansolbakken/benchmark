@@ -53,13 +53,21 @@ def run_query_file(query_file, options)
     puts Color.red("Query file not found: #{query_file}")
     exit 1
   end
+
   explain_prefix = build_explain_prefix(options)
   query_contents = File.read(query_file)
+
+  if options[:hint]
+    user_hint = options[:hint]
+    query_contents.sub!(/\bSELECT\b/i, "SELECT #{user_hint}")
+  end
+
   CLIENT.run_query("#{explain_prefix}#{query_contents}")
 rescue StandardError => e
   puts Color.red("An error occurred while running the query: #{e.message}")
   exit 1
 end
+
 
 ##
 # Subcommand: Prepare MySQL environment (analyze tables, etc.)
@@ -96,6 +104,10 @@ def parse_options
 
     opts.on("--json", "Use EXPLAIN FORMAT=JSON") do
       options[:json] = true
+    end
+
+    opts.on("--hint HINT", "Set hint") do |hint|
+      options[:hint] = hint
     end
   end.parse!
   options
