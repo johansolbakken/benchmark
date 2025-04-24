@@ -3,7 +3,7 @@ FROM    title AS t
 LEFT JOIN (
     SELECT *
     FROM   aka_title
-    WHERE  id < 2500
+    WHERE  id < 1000
 )          AS at  ON at.movie_id  = t.id
 
 LEFT JOIN (
@@ -15,7 +15,7 @@ LEFT JOIN (
 LEFT JOIN (
     SELECT *
     FROM   movie_info_idx
-    WHERE  id < 12500
+    WHERE  id < 50000
 )          AS mii ON mii.movie_id = t.id
 
 LEFT JOIN (
@@ -27,25 +27,25 @@ LEFT JOIN (
 LEFT JOIN (
     SELECT *
     FROM   movie_link
-    WHERE  id < 10000
+    WHERE  id < 5000
 )          AS ml  ON ml.movie_id  = t.id
 
 LEFT JOIN (
     SELECT *
     FROM   movie_companies
-    WHERE  id < 5000
+    WHERE  id < 2500
 )          AS mc  ON mc.movie_id  = t.id
 
 LEFT JOIN (
     SELECT *
     FROM   complete_cast
-    WHERE  id < 10000
+    WHERE  id < 50000
 )          AS cc  ON cc.movie_id  = t.id
 
 LEFT JOIN (
     SELECT *
     FROM   cast_info
-    WHERE  id < 2000
+    WHERE  id < 1000
 )          AS ci  ON ci.movie_id  = t.id
 
 LEFT JOIN (
