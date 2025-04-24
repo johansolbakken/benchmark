@@ -3,49 +3,49 @@ FROM    title AS t
 LEFT JOIN (
     SELECT *
     FROM   aka_title
-    WHERE  id < 10
+    WHERE  id < 2500
 )          AS at  ON at.movie_id  = t.id
 
 LEFT JOIN (
     SELECT *
     FROM   movie_info
-    WHERE  id < 10
+    WHERE  id < 2000
 )          AS mi  ON mi.movie_id  = t.id
 
 LEFT JOIN (
     SELECT *
     FROM   movie_info_idx
-    WHERE  id < 10
+    WHERE  id < 12500
 )          AS mii ON mii.movie_id = t.id
 
 LEFT JOIN (
     SELECT *
     FROM   movie_keyword
-    WHERE  id < 10
+    WHERE  id < 20000
 )          AS mk  ON mk.movie_id  = t.id
 
 LEFT JOIN (
     SELECT *
     FROM   movie_link
-    WHERE  id < 10
+    WHERE  id < 10000
 )          AS ml  ON ml.movie_id  = t.id
 
 LEFT JOIN (
     SELECT *
     FROM   movie_companies
-    WHERE  id < 10
+    WHERE  id < 5000
 )          AS mc  ON mc.movie_id  = t.id
 
 LEFT JOIN (
     SELECT *
     FROM   complete_cast
-    WHERE  id < 10
+    WHERE  id < 10000
 )          AS cc  ON cc.movie_id  = t.id
 
 LEFT JOIN (
     SELECT *
     FROM   cast_info
-    WHERE  id < 10
+    WHERE  id < 2000
 )          AS ci  ON ci.movie_id  = t.id
 
 LEFT JOIN (
@@ -114,10 +114,4 @@ LEFT JOIN (
     WHERE  id < 10
 )          AS lt  ON lt.id       = ml.link_type_id
 
-LEFT JOIN (
-    SELECT *
-    FROM   kind_type
-    WHERE  id < 10
-)          AS kt  ON kt.id       = t.kind_id
-
-ORDER BY t.production_year;
+ORDER BY t.id;
