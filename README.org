@@ -192,7 +192,7 @@ There is a =timestamp()= function for getting timestamps easily.
 
 Currently using streams.
 
-* Generate TPC-H -- new
+* Generate TPC-H-data -- new
 cd TPC-H/dbgen
 cp makefile.suite
 Edit these values: 
@@ -201,35 +201,20 @@ DATABASE= SQLSERVER
 MACHINE = LINUX
 WORKLOAD = TPCH
 
-make
+make clean
 
 ./dbgen -s 0.1 = create 0.1gb of data
-./dbgen -s 1 -y = create 0.1gb of data
 
-
-
-if you do ls -lrt, you see that reguin.tbl, nation.tbl, ... files are created. 
-
-create a folder /data
 copy these files into a /data folder and change to .csv
 `mkdir -p ../../tpc-h/data && for f in *.tbl; do cp "$f" "tpc-h/data/${f%.tbl}.csv"; done`
 
+Make sure casing is correct: tpc-h/data/*.csv shold be uppercase
 
-#!/bin/bash
-# Create the target directory if it doesn't exist
-mkdir -p ../../tpc-h/data
-mkdir -p ../../tpc-h/queries
-mkdir -p ../../tpc-h/schema
+Feed data using ruby ./bin/tpc-h-feed.rb
 
-# Loop through all .tbl files in the current directory
-for f in *.tbl; do
-  # Copy each .tbl file to the target directory with a .csv extension
-  cp "$f" "../../tpc-h/data/${f%.tbl}.csv"
-done
+Make sure local infile is enabled in mysql, using make inline-local
 
-# Coopy all queries in queries-dir and copy to /tpc-h/queries
-for q in 
-
+Make sure foreign keys are set!!
 
 * Generate TPC-H for MacOS
 

@@ -11,13 +11,13 @@ require_relative '../lib/mysql'
 # Configuration
 CONFIG  = YAML.load_file('config.yaml')['mysql']
 DB_NAME = 'tpc_h'
-FILES   = ['./job-schema/dss.dll', './job-schema/dss.ri']
+FILES   = ['./tpc-h-schema/create-dataset-with-fks.sql']
 CLIENT  = MySQL::Client.new(CONFIG['user'], CONFIG['port'], CONFIG['host'], DB_NAME, CONFIG['path'])
 DATASET_PATH = './tpc-h-dataset'
 
 def feed_data
   # Sort tables in topological order based on schema
-  schema_file = File.join("./tpc-h-schema", "dss.ddl")
+  schema_file = File.join("./tpc-h-schema", "create-dataset-with-fks.sql")
   unless File.exist?(schema_file)
     puts Color.red("Schema file not found: #{schema_file}")
     exit 1
