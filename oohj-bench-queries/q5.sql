@@ -27,7 +27,7 @@ LEFT JOIN (
 LEFT JOIN (
     SELECT *
     FROM   movie_link
-    WHERE  id < 10000
+    WHERE  id < 10000000
 )          AS ml  ON ml.movie_id  = t.id
 
 LEFT JOIN (
@@ -45,73 +45,45 @@ LEFT JOIN (
 LEFT JOIN (
     SELECT *
     FROM   cast_info
-    WHERE  id < 1500
+    WHERE  id < 15000
 )          AS ci  ON ci.movie_id  = t.id
 
 LEFT JOIN (
     SELECT *
     FROM   name
-    WHERE  id < 10
+    WHERE  id < 1000
 )          AS n   ON n.id        = ci.person_id
 
 LEFT JOIN (
     SELECT *
     FROM   aka_name
-    WHERE  id < 10
+    WHERE  id < 10000
 )          AS an  ON an.person_id = n.id
 
 LEFT JOIN (
     SELECT *
     FROM   person_info
-    WHERE  id < 10
+    WHERE  id < 10000
 )          AS pi  ON pi.person_id = n.id
 
 LEFT JOIN (
     SELECT *
     FROM   char_name
-    WHERE  id < 10
+    WHERE  id < 1000
 )          AS cn  ON cn.id       = ci.role_id
 
 LEFT JOIN (
     SELECT *
-    FROM   role_type
-    WHERE  id < 10
-)          AS rt  ON rt.id       = ci.role_id
-
-LEFT JOIN (
-    SELECT *
-    FROM   comp_cast_type
-    WHERE  id < 10
-)          AS cct ON cct.id      = cc.subject_id
-
-LEFT JOIN (
-    SELECT *
     FROM   company_name
-    WHERE  id < 10
+    WHERE  id < 1000
 )          AS cna ON cna.id      = mc.company_id
 
 LEFT JOIN (
     SELECT *
-    FROM   company_type
-    WHERE  id < 10
-)          AS cty ON cty.id      = mc.company_type_id
-
-LEFT JOIN (
-    SELECT *
-    FROM   info_type
-    WHERE  id < 10
-)          AS it  ON it.id       = mi.info_type_id
-
-LEFT JOIN (
-    SELECT *
     FROM   keyword
-    WHERE  id < 10
+    WHERE  id < 1000
 )          AS k   ON k.id        = mk.keyword_id
 
-LEFT JOIN (
-    SELECT *
-    FROM   link_type
-    WHERE  id < 10
-)          AS lt  ON lt.id       = ml.link_type_id
+WHERE t.id < 100
 
 ORDER BY t.id;
