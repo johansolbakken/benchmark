@@ -18,3 +18,7 @@ homemade-dataset
 /job-order-all-queries/
 /job-plan-png/
 query_tree.png
+
+target/
+
+.DS_Store
