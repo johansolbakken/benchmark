@@ -1,0 +1,6 @@
+label,join_buffer_size_bytes,spill_ratio,spill_count,optimistic_count,optimism_level,duration_s
+q7,6291456,0.0,0,0,0.0,0.288482625
+q7,6291456,0.0,0,1,0.25,0.197506416
+q7,6291456,0.0,0,1,0.5,0.186586583
+q7,6291456,0.0,0,1,0.75,0.183558125
+q7,6291456,0.0,0,11,1.0,0.16489525
