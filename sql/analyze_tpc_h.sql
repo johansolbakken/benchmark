@@ -1,21 +1,25 @@
-ANALYZE TABLE aka_name;
-ANALYZE TABLE aka_title;
-ANALYZE TABLE cast_info;
-ANALYZE TABLE char_name;
-ANALYZE TABLE company_name;
-ANALYZE TABLE company_type;
-ANALYZE TABLE comp_cast_type;
-ANALYZE TABLE complete_cast;
-ANALYZE TABLE info_type;
-ANALYZE TABLE keyword;
-ANALYZE TABLE kind_type;
-ANALYZE TABLE link_type;
-ANALYZE TABLE movie_companies;
-ANALYZE TABLE movie_info;
-ANALYZE TABLE movie_info_idx;
-ANALYZE TABLE movie_keyword;
-ANALYZE TABLE movie_link;
-ANALYZE TABLE name;
-ANALYZE TABLE person_info;
-ANALYZE TABLE role_type;
-ANALYZE TABLE title;
+-- analyze_tpch.sql
+
+-- Analyze all TPC-H tables in tpch_s1
+USE tpch_s1;
+
+ANALYZE TABLE region;
+ANALYZE TABLE nation;
+ANALYZE TABLE supplier;
+ANALYZE TABLE part;
+ANALYZE TABLE partsupp;
+ANALYZE TABLE customer;
+ANALYZE TABLE orders;
+ANALYZE TABLE lineitem;
+
+-- Analyze all TPC-H tables in tpch_s10
+USE tpch_s10;
+
+ANALYZE TABLE region;
+ANALYZE TABLE nation;
+ANALYZE TABLE supplier;
+ANALYZE TABLE part;
+ANALYZE TABLE partsupp;
+ANALYZE TABLE customer;
+ANALYZE TABLE orders;
+ANALYZE TABLE lineitem;
