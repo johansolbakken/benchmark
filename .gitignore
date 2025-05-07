@@ -22,3 +22,5 @@ query_tree.png
 target/
 
 .DS_Store
+/tpc-h-s1-dataset/
+/tpc-h-s10-dataset/
