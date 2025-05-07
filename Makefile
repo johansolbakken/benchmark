@@ -84,3 +84,9 @@ clean: job-clean
 
 inline-local:
 	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 ${DATABASE} -e "SET GLOBAL local_infile = 1;" 
+
+tpc-h-setup:
+	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 < ./tpc-h-schema/schema.sql
+
+tpc-h-feed:
+	ruby bin/tpc-h-feed.rb
