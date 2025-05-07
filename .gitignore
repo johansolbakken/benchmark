@@ -24,3 +24,4 @@ target/
 .DS_Store
 /tpc-h-s1-dataset/
 /tpc-h-s10-dataset/
+/tpc-h-tool/
