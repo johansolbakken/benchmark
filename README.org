@@ -407,3 +407,7 @@ ruby bin/print-plan-as-graphwiz.rb ./job-order-queries/1a.sql -o./1a.png --hint 
 make job-index-enable
 make job-index-disable
 #+end_src
+
+* TPC-H setup
+
+- There must exist an folder in root of this repo called =tpc-h-tool= with =dbgen= and others.
