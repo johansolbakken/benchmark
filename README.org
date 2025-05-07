@@ -411,3 +411,18 @@ make job-index-disable
 * TPC-H setup
 
 - There must exist an folder in root of this repo called =tpc-h-tool= with =dbgen= and others.
+
+#+begin_src shell
+# Ensure you have data
+ls tpc-h-tool/dbgen/*
+
+# Generate tpc-h data
+cargo run -p tpc-h-datagen
+
+make experimental-setup      # activate hypergraph optimizer
+make tpc-h-setup             # will setup both s1 and s10
+make tpc-h-feed              # will feed both
+make tpc-h-analyze           # this will analyze both s1 and s10
+ruby bin/tpc-h-warmup.rb s1
+rbuy bin/tpc-h-warmup.rb s10
+#+end_src
