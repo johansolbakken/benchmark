@@ -33,6 +33,12 @@
 -- Contributors:
 -- Gradient Systems
 --
+
+-- Adapted to MySQL and OOHJ needs.
+DROP DATABASE IF EXISTS tpcds_s1;
+CREATE DATABASE tpcds_s1;
+USE tpcds_s1;
+
 create table dbgen_version
 (
     dv_version                varchar(16)                   ,
