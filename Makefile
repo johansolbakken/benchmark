@@ -93,3 +93,6 @@ tpc-h-feed:
 
 tpc-h-analyze:
 	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 < ./sql/analyze_tpc_h.sql
+
+tpc-ds-setup:
+	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 < ./tpc-ds-schema/tpcds.sql
