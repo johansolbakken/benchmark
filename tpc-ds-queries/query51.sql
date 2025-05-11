@@ -21,7 +21,7 @@ where ss_sold_date_sk=d_date_sk
   and d_month_seq between 1212 and 1212+11
   and ss_item_sk is not NULL
 group by ss_item_sk, d_date)
- select top 100 *
+ select  *
 from (select item_sk
      ,d_date
      ,web_sales
@@ -40,6 +40,6 @@ from (select item_sk
 where web_cumulative > store_cumulative
 order by item_sk
         ,d_date
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query51.tpl

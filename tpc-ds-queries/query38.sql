@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query38.tpl
-select top 100 count(*) from (
+select  count(*) from (
     select distinct c_last_name, c_first_name, d_date
     from store_sales, date_dim, customer
           where store_sales.ss_sold_date_sk = date_dim.d_date_sk
@@ -18,6 +18,6 @@ select top 100 count(*) from (
       and web_sales.ws_bill_customer_sk = customer.c_customer_sk
       and d_month_seq between 1212 and 1212 + 11
 ) hot_cust
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query38.tpl

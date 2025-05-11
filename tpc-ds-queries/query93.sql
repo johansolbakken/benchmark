@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query93.tpl
-select top 100 ss_customer_sk
+select  ss_customer_sk
             ,sum(act_sales) sumsales
       from (select ss_item_sk
                   ,ss_ticket_number
@@ -13,6 +13,6 @@ select top 100 ss_customer_sk
               and r_reason_desc = 'Did not like the warranty') t
       group by ss_customer_sk
       order by sumsales, ss_customer_sk
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query93.tpl

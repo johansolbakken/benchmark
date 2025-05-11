@@ -35,7 +35,7 @@ ss as
    where sr_ticket_number is null
    group by d_year, ss_item_sk, ss_customer_sk
    )
- select top 100
+ select 
 ss_sold_year, ss_item_sk, ss_customer_sk,
 round(ss_qty/(coalesce(ws_qty,0)+coalesce(cs_qty,0)),2) ratio,
 ss_qty store_qty, ss_wc store_wholesale_cost, ss_sp store_sales_price,
@@ -53,6 +53,6 @@ order by
   other_chan_wholesale_cost,
   other_chan_sales_price,
   ratio
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query78.tpl

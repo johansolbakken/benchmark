@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query17.tpl
-select top 100 i_item_id
+select  i_item_id
        ,i_item_desc
        ,s_state
        ,count(ss_quantity) as store_sales_quantitycount
@@ -40,6 +40,6 @@ select top 100 i_item_id
  order by i_item_id
          ,i_item_desc
          ,s_state
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query17.tpl

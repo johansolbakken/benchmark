@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query85.tpl
-select top 100 substr(r_reason_desc,1,20)
+select  substr(r_reason_desc,1,20)
        ,avg(ws_quantity)
        ,avg(wr_refunded_cash)
        ,avg(wr_fee)
@@ -79,6 +79,6 @@ order by substr(r_reason_desc,1,20)
         ,avg(ws_quantity)
         ,avg(wr_refunded_cash)
         ,avg(wr_fee)
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query85.tpl

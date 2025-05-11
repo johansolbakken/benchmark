@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query25.tpl
-select top 100 
+select  
  i_item_id
  ,i_item_desc
  ,s_store_id
@@ -43,6 +43,6 @@ select top 100
  ,i_item_desc
  ,s_store_id
  ,s_store_name
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query25.tpl

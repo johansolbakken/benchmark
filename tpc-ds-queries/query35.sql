@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query35.tpl
-select top 100  
+select   
   ca_state,
   cd_gender,
   cd_marital_status,
@@ -53,6 +53,6 @@ select top 100
           cd_dep_count,
           cd_dep_employed_count,
           cd_dep_college_count
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query35.tpl

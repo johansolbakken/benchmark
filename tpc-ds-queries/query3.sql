@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query3.tpl
-select top 100 dt.d_year 
+select  dt.d_year 
        ,item.i_brand_id brand_id 
        ,item.i_brand brand
        ,sum(ss_ext_sales_price) sum_agg
@@ -16,6 +16,6 @@ select top 100 dt.d_year
  order by dt.d_year
          ,sum_agg desc
          ,brand_id
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query3.tpl

@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query82.tpl
-select top 100 i_item_id
+select  i_item_id
        ,i_item_desc
        ,i_current_price
  from item, inventory, date_dim, store_sales
@@ -12,6 +12,6 @@ select top 100 i_item_id
  and ss_item_sk = i_item_sk
  group by i_item_id,i_item_desc,i_current_price
  order by i_item_id
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query82.tpl

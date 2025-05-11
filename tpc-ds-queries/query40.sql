@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query40.tpl
-select top 100 
+select  
    w_state
   ,i_item_id
   ,sum(case when (cast(d_date as date) < cast ('1998-04-08' as date)) 
@@ -23,6 +23,6 @@ select top 100
  group by
     w_state,i_item_id
  order by w_state,i_item_id
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query40.tpl

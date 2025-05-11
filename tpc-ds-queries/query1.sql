@@ -9,7 +9,7 @@ where sr_returned_date_sk = d_date_sk
 and d_year =2000
 group by sr_customer_sk
 ,sr_store_sk)
- select top 100 c_customer_id
+ select  c_customer_id
 from customer_total_return ctr1
 ,store
 ,customer
@@ -20,6 +20,6 @@ and s_store_sk = ctr1.ctr_store_sk
 and s_state = 'TN'
 and ctr1.ctr_customer_sk = c_customer_sk
 order by c_customer_id
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query1.tpl

@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query41.tpl
-select top 100 distinct(i_product_name)
+select  distinct(i_product_name)
  from item i1
  where i_manufact_id between 742 and 742+40 
    and (select count(*) as item_cnt
@@ -47,6 +47,6 @@ select top 100 distinct(i_product_name)
         (i_size = 'petite' or i_size = 'medium')
         )))) > 0
  order by i_product_name
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query41.tpl

@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query18.tpl
-select top 100 i_item_id,
+select  i_item_id,
         ca_country,
         ca_state, 
         ca_county,
@@ -29,6 +29,6 @@ select top 100 i_item_id,
         ca_state, 
         ca_county,
 	i_item_id
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query18.tpl

@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query27.tpl
-select top 100 i_item_id,
+select  i_item_id,
         s_state, grouping(s_state) g_state,
         avg(ss_quantity) agg1,
         avg(ss_list_price) agg2,
@@ -18,6 +18,6 @@ select top 100 i_item_id,
  group by rollup (i_item_id, s_state)
  order by i_item_id
          ,s_state
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query27.tpl

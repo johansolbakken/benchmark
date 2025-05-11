@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query86.tpl
-select top 100  
+select   
     sum(ws_net_paid) as total_sum
    ,i_category
    ,i_class
@@ -21,6 +21,6 @@ select top 100
    lochierarchy desc,
    case when lochierarchy = 0 then i_category end,
    rank_within_parent
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query86.tpl

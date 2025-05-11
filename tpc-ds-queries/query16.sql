@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query16.tpl
-select top 100 
+select  
    count(distinct cs_order_number) as "order count"
   ,sum(cs_ext_ship_cost) as "total shipping cost"
   ,sum(cs_net_profit) as "total net profit"
@@ -26,6 +26,6 @@ and not exists(select *
                from catalog_returns cr1
                where cs1.cs_order_number = cr1.cr_order_number)
 order by count(distinct cs_order_number)
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query16.tpl

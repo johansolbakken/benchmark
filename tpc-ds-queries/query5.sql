@@ -93,7 +93,7 @@ with ssr as
                   and (cast('1998-08-04' as date) +  14 days)
        and wsr_web_site_sk = web_site_sk
  group by web_site_id)
-  select top 100 channel
+  select  channel
         , id
         , sum(sales) as sales
         , sum(returns) as returns
@@ -123,6 +123,6 @@ with ssr as
  group by rollup (channel, id)
  order by channel
          ,id
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query5.tpl

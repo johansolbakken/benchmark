@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query26.tpl
-select top 100 i_item_id, 
+select  i_item_id, 
         avg(cs_quantity) agg1,
         avg(cs_list_price) agg2,
         avg(cs_coupon_amt) agg3,
@@ -16,6 +16,6 @@ select top 100 i_item_id,
        d_year = 1998 
  group by i_item_id
  order by i_item_id
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query26.tpl

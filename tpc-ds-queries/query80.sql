@@ -61,7 +61,7 @@ group by cp_catalog_page_id)
        and ws_promo_sk = p_promo_sk
        and p_channel_tv = 'N'
 group by web_site_id)
-  select top 100 channel
+  select  channel
         , id
         , sum(sales) as sales
         , sum(returns) as returns
@@ -91,6 +91,6 @@ group by web_site_id)
  group by rollup (channel, id)
  order by channel
          ,id
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query80.tpl

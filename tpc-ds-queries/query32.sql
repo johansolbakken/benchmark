@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query32.tpl
-select top 100 sum(cs_ext_discount_amt)  as "excess discount amount" 
+select  sum(cs_ext_discount_amt)  as "excess discount amount" 
 from 
    catalog_sales 
    ,item 
@@ -23,6 +23,6 @@ and cs_ext_discount_amt
                              (cast('1998-03-18' as date) + 90 days)
           and d_date_sk = cs_sold_date_sk 
       ) 
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query32.tpl

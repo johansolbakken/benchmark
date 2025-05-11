@@ -11,7 +11,7 @@ with customer_total_return as
    and wr_returning_addr_sk = ca_address_sk 
  group by wr_returning_customer_sk
          ,ca_state)
-  select top 100 c_customer_id,c_salutation,c_first_name,c_last_name,c_preferred_cust_flag
+  select  c_customer_id,c_salutation,c_first_name,c_last_name,c_preferred_cust_flag
        ,c_birth_day,c_birth_month,c_birth_year,c_birth_country,c_login,c_email_address
        ,c_last_review_date_sk,ctr_total_return
  from customer_total_return ctr1
@@ -26,6 +26,6 @@ with customer_total_return as
  order by c_customer_id,c_salutation,c_first_name,c_last_name,c_preferred_cust_flag
                   ,c_birth_day,c_birth_month,c_birth_year,c_birth_country,c_login,c_email_address
                   ,c_last_review_date_sk,ctr_total_return
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query30.tpl

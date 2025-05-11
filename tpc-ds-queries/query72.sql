@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query72.tpl
-select top 100 i_item_desc
+select  i_item_desc
       ,w_warehouse_name
       ,d1.d_week_seq
       ,sum(case when p_promo_sk is null then 1 else 0 end) no_promo
@@ -24,6 +24,6 @@ where d1.d_week_seq = d2.d_week_seq
   and cd_marital_status = 'M'
 group by i_item_desc,w_warehouse_name,d1.d_week_seq
 order by total_cnt desc, i_item_desc, w_warehouse_name, d_week_seq
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query72.tpl

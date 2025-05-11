@@ -4,7 +4,7 @@ with ws_wh as
  from web_sales ws1,web_sales ws2
  where ws1.ws_order_number = ws2.ws_order_number
    and ws1.ws_warehouse_sk <> ws2.ws_warehouse_sk)
- select top 100 
+ select  
    count(distinct ws_order_number) as "order count"
   ,sum(ws_ext_ship_cost) as "total shipping cost"
   ,sum(ws_net_profit) as "total net profit"
@@ -27,6 +27,6 @@ and ws1.ws_order_number in (select wr_order_number
                             from web_returns,ws_wh
                             where wr_order_number = ws_wh.ws_order_number)
 order by count(distinct ws_order_number)
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query95.tpl

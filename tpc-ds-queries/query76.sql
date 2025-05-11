@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query76.tpl
-select top 100 channel, col_name, d_year, d_qoy, i_category, COUNT(*) sales_cnt, SUM(ext_sales_price) sales_amt FROM (
+select  channel, col_name, d_year, d_qoy, i_category, COUNT(*) sales_cnt, SUM(ext_sales_price) sales_amt FROM (
         SELECT 'store' as channel, 'ss_addr_sk' col_name, d_year, d_qoy, i_category, ss_ext_sales_price ext_sales_price
          FROM store_sales, item, date_dim
          WHERE ss_addr_sk IS NULL
@@ -19,6 +19,6 @@ select top 100 channel, col_name, d_year, d_qoy, i_category, COUNT(*) sales_cnt,
            AND cs_item_sk=i_item_sk) foo
 GROUP BY channel, col_name, d_year, d_qoy, i_category
 ORDER BY channel, col_name, d_year, d_qoy, i_category
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query76.tpl

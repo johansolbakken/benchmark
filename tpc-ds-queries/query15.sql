@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query15.tpl
-select top 100 ca_zip
+select  ca_zip
        ,sum(cs_sales_price)
  from catalog_sales
      ,customer
@@ -15,6 +15,6 @@ select top 100 ca_zip
  	and d_qoy = 2 and d_year = 2000
  group by ca_zip
  order by ca_zip
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query15.tpl

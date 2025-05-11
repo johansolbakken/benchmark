@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query49.tpl
-select top 100 channel, item, return_ratio, return_rank, currency_rank from
+select  channel, item, return_ratio, return_rank, currency_rank from
  (select
  'web' as channel
  ,web.item
@@ -124,6 +124,6 @@ select top 100 channel, item, return_ratio, return_rank, currency_rank from
  )
  )
  order by 1,4,5,2
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query49.tpl

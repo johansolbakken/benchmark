@@ -46,7 +46,7 @@ WITH all_sales AS (
                                             AND ws_item_sk=wr_item_sk)
        WHERE i_category='Sports') sales_detail
  GROUP BY d_year, i_brand_id, i_class_id, i_category_id, i_manufact_id)
- SELECT top 100 prev_yr.d_year AS prev_year
+ SELECT  prev_yr.d_year AS prev_year
                           ,curr_yr.d_year AS year
                           ,curr_yr.i_brand_id
                           ,curr_yr.i_class_id
@@ -65,6 +65,6 @@ WITH all_sales AS (
    AND prev_yr.d_year=2002-1
    AND CAST(curr_yr.sales_cnt AS DECIMAL(17,2))/CAST(prev_yr.sales_cnt AS DECIMAL(17,2))<0.9
  ORDER BY sales_cnt_diff,sales_amt_diff
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query75.tpl

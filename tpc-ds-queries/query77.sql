@@ -70,7 +70,7 @@ with ss as
                   and (cast('1998-08-04' as date) +  30 days)
        and wr_web_page_sk = wp_web_page_sk
  group by wp_web_page_sk)
-  select top 100 channel
+  select  channel
         , id
         , sum(sales) as sales
         , sum(returns) as returns
@@ -103,6 +103,6 @@ with ss as
  group by rollup (channel, id)
  order by channel
          ,id
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query77.tpl

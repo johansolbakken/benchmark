@@ -48,7 +48,7 @@ with year_total as (
          ,c_email_address
          ,d_year
          )
-  select top 100 
+  select  
                   t_s_secyear.customer_id
                  ,t_s_secyear.customer_first_name
                  ,t_s_secyear.customer_last_name
@@ -76,6 +76,6 @@ with year_total as (
          ,t_s_secyear.customer_first_name
          ,t_s_secyear.customer_last_name
          ,t_s_secyear.customer_email_address
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query11.tpl

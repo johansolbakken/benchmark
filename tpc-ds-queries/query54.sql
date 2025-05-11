@@ -47,10 +47,10 @@ with my_customers as (
  (select cast((revenue/50) as int) as segment
   from   my_revenue
  )
-  select top 100 segment, count(*) as num_customers, segment*50 as segment_base
+  select  segment, count(*) as num_customers, segment*50 as segment_base
  from segments
  group by segment
  order by segment, num_customers
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query54.tpl

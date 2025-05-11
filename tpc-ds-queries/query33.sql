@@ -62,7 +62,7 @@ where i_category in ('Books'))
  and     ws_bill_addr_sk         = ca_address_sk
  and     ca_gmt_offset           = -5
  group by i_manufact_id)
-  select top 100 i_manufact_id ,sum(total_sales) total_sales
+  select  i_manufact_id ,sum(total_sales) total_sales
  from  (select * from ss 
         union all
         select * from cs 
@@ -70,6 +70,6 @@ where i_category in ('Books'))
         select * from ws) tmp1
  group by i_manufact_id
  order by total_sales
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query33.tpl

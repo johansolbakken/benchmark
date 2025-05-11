@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query43.tpl
-select top 100 s_store_name, s_store_id,
+select  s_store_name, s_store_id,
         sum(case when (d_day_name='Sunday') then ss_sales_price else null end) sun_sales,
         sum(case when (d_day_name='Monday') then ss_sales_price else null end) mon_sales,
         sum(case when (d_day_name='Tuesday') then ss_sales_price else  null end) tue_sales,
@@ -14,6 +14,6 @@ select top 100 s_store_name, s_store_id,
        d_year = 1998 
  group by s_store_name, s_store_id
  order by s_store_name, s_store_id,sun_sales,mon_sales,tue_sales,wed_sales,thu_sales,fri_sales,sat_sales
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query43.tpl

@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query19.tpl
-select top 100 i_brand_id brand_id, i_brand brand, i_manufact_id, i_manufact,
+select  i_brand_id brand_id, i_brand brand, i_manufact_id, i_manufact,
  	sum(ss_ext_sales_price) ext_price
  from date_dim, store_sales, item,customer,customer_address,store
  where d_date_sk = ss_sold_date_sk
@@ -20,6 +20,6 @@ select top 100 i_brand_id brand_id, i_brand brand, i_manufact_id, i_manufact,
          ,i_brand_id
          ,i_manufact_id
          ,i_manufact
- ;
+limit 100 ;
 
 -- end query 1 in stream 0 using template query19.tpl

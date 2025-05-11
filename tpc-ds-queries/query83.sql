@@ -47,7 +47,7 @@ with sr_items as
 		where d_date in ('1998-01-02','1998-10-15','1998-11-10')))
  and   wr_returned_date_sk   = d_date_sk
  group by i_item_id)
-  select top 100 sr_items.item_id
+  select  sr_items.item_id
        ,sr_item_qty
        ,sr_item_qty/(sr_item_qty+cr_item_qty+wr_item_qty)/3.0 * 100 sr_dev
        ,cr_item_qty
@@ -62,6 +62,6 @@ with sr_items as
    and sr_items.item_id=wr_items.item_id 
  order by sr_items.item_id
          ,sr_item_qty
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query83.tpl

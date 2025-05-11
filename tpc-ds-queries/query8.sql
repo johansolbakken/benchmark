@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query8.tpl
-select top 100 s_store_name
+select  s_store_name
       ,sum(ss_net_profit)
  from store_sales
      ,date_dim
@@ -103,6 +103,6 @@ select top 100 s_store_name
   and (substr(s_zip,1,2) = substr(V1.ca_zip,1,2))
  group by s_store_name
  order by s_store_name
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query8.tpl

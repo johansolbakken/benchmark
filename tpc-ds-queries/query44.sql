@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query44.tpl
-select top 100 asceding.rnk, i1.i_product_name best_performing, i2.i_product_name worst_performing
+select  asceding.rnk, i1.i_product_name best_performing, i2.i_product_name worst_performing
 from(select *
      from (select item_sk,rank() over (order by rank_col asc) rnk
            from (select ss_item_sk item_sk,avg(ss_net_profit) rank_col 
@@ -30,6 +30,6 @@ where asceding.rnk = descending.rnk
   and i1.i_item_sk=asceding.item_sk
   and i2.i_item_sk=descending.item_sk
 order by asceding.rnk
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query44.tpl

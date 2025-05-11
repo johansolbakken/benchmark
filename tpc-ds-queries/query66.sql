@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query66.tpl
-select top 100  
+select   
          w_warehouse_name
  	,w_warehouse_sq_ft
  	,w_city
@@ -215,6 +215,6 @@ select top 100
  	,ship_carriers
        ,year
  order by w_warehouse_name
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query66.tpl

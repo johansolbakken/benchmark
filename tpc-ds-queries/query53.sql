@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query53.tpl
-select top 100 * from 
+select  * from 
 (select i_manufact_id,
 sum(ss_sales_price) sum_sales,
 avg(sum(ss_sales_price)) over (partition by i_manufact_id) avg_quarterly_sales
@@ -23,6 +23,6 @@ where case when avg_quarterly_sales > 0
 order by avg_quarterly_sales,
 	 sum_sales,
 	 i_manufact_id
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query53.tpl

@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query22.tpl
-select top 100 i_product_name
+select  i_product_name
              ,i_brand
              ,i_class
              ,i_category
@@ -15,6 +15,6 @@ select top 100 i_product_name
                        ,i_class
                        ,i_category)
 order by qoh, i_product_name, i_brand, i_class, i_category
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query22.tpl

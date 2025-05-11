@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query92.tpl
-select top 100 
+select  
    sum(ws_ext_discount_amt)  as "Excess Discount Amount" 
 from 
     web_sales 
@@ -25,6 +25,6 @@ and ws_ext_discount_amt
           and d_date_sk = ws_sold_date_sk 
       ) 
 order by sum(ws_ext_discount_amt)
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query92.tpl

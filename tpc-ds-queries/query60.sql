@@ -62,7 +62,7 @@ where i_category in ('Children'))
  and     ws_bill_addr_sk         = ca_address_sk
  and     ca_gmt_offset           = -6
  group by i_item_id)
-  select top 100  
+  select   
   i_item_id
 ,sum(total_sales) total_sales
  from  (select * from ss 
@@ -73,6 +73,6 @@ where i_category in ('Children'))
  group by i_item_id
  order by i_item_id
       ,total_sales
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query60.tpl

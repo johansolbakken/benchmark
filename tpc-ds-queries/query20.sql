@@ -1,5 +1,5 @@
 -- start query 1 in stream 0 using template query20.tpl
-select top 100 i_item_id
+select  i_item_id
        ,i_item_desc 
        ,i_category 
        ,i_class 
@@ -25,6 +25,6 @@ select top 100 i_item_id
          ,i_item_id
          ,i_item_desc
          ,revenueratio
-;
+limit 100;
 
 -- end query 1 in stream 0 using template query20.tpl

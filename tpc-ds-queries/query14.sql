@@ -57,7 +57,7 @@ with  cross_items as
            ,date_dim
        where ws_sold_date_sk = d_date_sk
          and d_year between 1998 and 1998 + 2) x)
-  select top 100 channel, i_brand_id,i_class_id,i_category_id,sum(sales), sum(number_sales)
+  select  channel, i_brand_id,i_class_id,i_category_id,sum(sales), sum(number_sales)
  from(
        select 'store' channel, i_brand_id,i_class_id
              ,i_category_id,sum(ss_quantity*ss_list_price) sales
@@ -99,7 +99,7 @@ with  cross_items as
  ) y
  group by rollup (channel, i_brand_id,i_class_id,i_category_id)
  order by channel,i_brand_id,i_class_id,i_category_id
- ;
+ limit 100;
 with  cross_items as
  (select i_item_sk ss_item_sk
  from item,
@@ -158,7 +158,7 @@ with  cross_items as
            ,date_dim
        where ws_sold_date_sk = d_date_sk
          and d_year between 1998 and 1998 + 2) x)
-  select top 100 this_year.channel ty_channel
+  select  this_year.channel ty_channel
                            ,this_year.i_brand_id ty_brand
                            ,this_year.i_class_id ty_class
                            ,this_year.i_category_id ty_category
@@ -205,6 +205,6 @@ with  cross_items as
    and this_year.i_class_id = last_year.i_class_id
    and this_year.i_category_id = last_year.i_category_id
  order by this_year.channel, this_year.i_brand_id, this_year.i_class_id, this_year.i_category_id
- ;
+ limit 100;
 
 -- end query 1 in stream 0 using template query14.tpl
