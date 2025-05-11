@@ -99,3 +99,6 @@ tpc-ds-setup:
 
 tpc-ds-feed:
 	ruby bin/tpc-ds-feed.rb
+
+tpc-ds-analyze:
+	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 < ./sql/analyze_tpc_ds.sql
