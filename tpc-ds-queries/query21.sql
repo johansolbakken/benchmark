@@ -1,30 +1,33 @@
--- start query 1 in stream 0 using template query21.tpl
-select  *
- from(select w_warehouse_name
-            ,i_item_id
-            ,sum(case when (cast(d_date as date) < cast ('1998-04-08' as date))
-	                then inv_quantity_on_hand 
-                      else 0 end) as inv_before
-            ,sum(case when (cast(d_date as date) >= cast ('1998-04-08' as date))
-                      then inv_quantity_on_hand 
-                      else 0 end) as inv_after
-   from inventory
-       ,warehouse
-       ,item
-       ,date_dim
-   where i_current_price between 0.99 and 1.49
-     and i_item_sk          = inv_item_sk
-     and inv_warehouse_sk   = w_warehouse_sk
-     and inv_date_sk    = d_date_sk
-     and d_date between (cast ('1998-04-08' as date) - 30 days)
-                    and (cast ('1998-04-08' as date) + 30 days)
-   group by w_warehouse_name, i_item_id) x
- where (case when inv_before > 0 
-             then inv_after / inv_before 
-             else null
-             end) between 2.0/3.0 and 3.0/2.0
- order by w_warehouse_name
-         ,i_item_id
- limit 100;
-
--- end query 1 in stream 0 using template query21.tpl
+SELECT
+  `x`.`w_warehouse_name`,
+  `x`.`i_item_id`,
+  `x`.`inv_before`,
+  `x`.`inv_after`
+FROM (
+  SELECT
+    `w`.`w_warehouse_name`,
+    `i`.`i_item_id`,
+    SUM(CASE WHEN `d`.`d_date` < '1998-04-08' THEN `inv`.`inv_quantity_on_hand` ELSE 0 END) AS `inv_before`,
+    SUM(CASE WHEN `d`.`d_date` >= '1998-04-08' THEN `inv`.`inv_quantity_on_hand` ELSE 0 END) AS `inv_after`
+  FROM `inventory` AS `inv`
+  JOIN `warehouse` AS `w`
+    ON `inv`.`inv_warehouse_sk` = `w`.`w_warehouse_sk`
+  JOIN `item` AS `i`
+    ON `inv`.`inv_item_sk` = `i`.`i_item_sk`
+  JOIN `date_dim` AS `d`
+    ON `inv`.`inv_date_sk` = `d`.`d_date_sk`
+  WHERE `i`.`i_current_price` BETWEEN 0.99 AND 1.49
+    AND `d`.`d_date` BETWEEN DATE_SUB('1998-04-08', INTERVAL 30 DAY)
+                        AND DATE_ADD('1998-04-08', INTERVAL 30 DAY)
+  GROUP BY
+    `w`.`w_warehouse_name`,
+    `i`.`i_item_id`
+) AS `x`
+WHERE (CASE WHEN `x`.`inv_before` > 0
+            THEN `x`.`inv_after` / `x`.`inv_before`
+            ELSE NULL
+       END) BETWEEN 2.0/3.0 AND 3.0/2.0
+ORDER BY
+  `x`.`w_warehouse_name`,
+  `x`.`i_item_id`
+LIMIT 100;

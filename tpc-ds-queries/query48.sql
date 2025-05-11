@@ -1,67 +1,34 @@
--- start query 1 in stream 0 using template query48.tpl
-select sum (ss_quantity)
- from store_sales, store, customer_demographics, customer_address, date_dim
- where s_store_sk = ss_store_sk
- and  ss_sold_date_sk = d_date_sk and d_year = 1998
- and  
- (
-  (
-   cd_demo_sk = ss_cdemo_sk
-   and 
-   cd_marital_status = 'M'
-   and 
-   cd_education_status = '4 yr Degree'
-   and 
-   ss_sales_price between 100.00 and 150.00  
-   )
- or
-  (
-  cd_demo_sk = ss_cdemo_sk
-   and 
-   cd_marital_status = 'D'
-   and 
-   cd_education_status = 'Primary'
-   and 
-   ss_sales_price between 50.00 and 100.00   
+SELECT
+  SUM(`ss`.`ss_quantity`)
+FROM `store_sales` AS `ss`
+JOIN `store` AS `s`
+  ON `s`.`s_store_sk` = `ss`.`ss_store_sk`
+JOIN `date_dim` AS `d`
+  ON `ss`.`ss_sold_date_sk` = `d`.`d_date_sk`
+JOIN `customer_demographics` AS `cd`
+  ON `ss`.`ss_cdemo_sk` = `cd`.`cd_demo_sk`
+JOIN `customer_address` AS `ca`
+  ON `ss`.`ss_addr_sk` = `ca`.`ca_address_sk`
+WHERE `d`.`d_year` = 1998
+  AND (
+    `cd`.`cd_marital_status` = 'M'
+    AND `cd`.`cd_education_status` = '4 yr Degree'
+    AND `ss`.`ss_sales_price` BETWEEN 100.00 AND 150.00
+    OR `cd`.`cd_marital_status` = 'D'
+    AND `cd`.`cd_education_status` = 'Primary'
+    AND `ss`.`ss_sales_price` BETWEEN 50.00 AND 100.00
+    OR `cd`.`cd_marital_status` = 'U'
+    AND `cd`.`cd_education_status` = 'Advanced Degree'
+    AND `ss`.`ss_sales_price` BETWEEN 150.00 AND 200.00
   )
- or 
- (
-  cd_demo_sk = ss_cdemo_sk
-  and 
-   cd_marital_status = 'U'
-   and 
-   cd_education_status = 'Advanced Degree'
-   and 
-   ss_sales_price between 150.00 and 200.00  
- )
- )
- and
- (
-  (
-  ss_addr_sk = ca_address_sk
-  and
-  ca_country = 'United States'
-  and
-  ca_state in ('KY', 'GA', 'NM')
-  and ss_net_profit between 0 and 2000  
-  )
- or
-  (ss_addr_sk = ca_address_sk
-  and
-  ca_country = 'United States'
-  and
-  ca_state in ('MT', 'OR', 'IN')
-  and ss_net_profit between 150 and 3000 
-  )
- or
-  (ss_addr_sk = ca_address_sk
-  and
-  ca_country = 'United States'
-  and
-  ca_state in ('WI', 'MO', 'WV')
-  and ss_net_profit between 50 and 25000 
-  )
- )
-;
-
--- end query 1 in stream 0 using template query48.tpl
+  AND (
+    `ca`.`ca_country` = 'United States'
+    AND `ca`.`ca_state` IN ('KY', 'GA', 'NM')
+    AND `ss`.`ss_net_profit` BETWEEN 0 AND 2000
+    OR `ca`.`ca_country` = 'United States'
+    AND `ca`.`ca_state` IN ('MT', 'OR', 'IN')
+    AND `ss`.`ss_net_profit` BETWEEN 150 AND 3000
+    OR `ca`.`ca_country` = 'United States'
+    AND `ca`.`ca_state` IN ('WI', 'MO', 'WV')
+    AND `ss`.`ss_net_profit` BETWEEN 50 AND 25000
+  );

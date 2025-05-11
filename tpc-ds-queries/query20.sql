@@ -1,30 +1,30 @@
--- start query 1 in stream 0 using template query20.tpl
-select  i_item_id
-       ,i_item_desc 
-       ,i_category 
-       ,i_class 
-       ,i_current_price
-       ,sum(cs_ext_sales_price) as itemrevenue 
-       ,sum(cs_ext_sales_price)*100/sum(sum(cs_ext_sales_price)) over
-           (partition by i_class) as revenueratio
- from	catalog_sales
-     ,item 
-     ,date_dim
- where cs_item_sk = i_item_sk 
-   and i_category in ('Jewelry', 'Sports', 'Books')
-   and cs_sold_date_sk = d_date_sk
- and d_date between cast('2001-01-12' as date) 
- 				and (cast('2001-01-12' as date) + 30 days)
- group by i_item_id
-         ,i_item_desc 
-         ,i_category
-         ,i_class
-         ,i_current_price
- order by i_category
-         ,i_class
-         ,i_item_id
-         ,i_item_desc
-         ,revenueratio
-limit 100;
-
--- end query 1 in stream 0 using template query20.tpl
+SELECT
+  `i`.`i_item_id`,
+  `i`.`i_item_desc`,
+  `i`.`i_category`,
+  `i`.`i_class`,
+  `i`.`i_current_price`,
+  SUM(`cs`.`cs_ext_sales_price`) AS `itemrevenue`,
+  SUM(`cs`.`cs_ext_sales_price`) * 100
+    / SUM(SUM(`cs`.`cs_ext_sales_price`)) OVER (PARTITION BY `i`.`i_class`) AS `revenueratio`
+FROM `catalog_sales` AS `cs`
+JOIN `item` AS `i`
+  ON `cs`.`cs_item_sk` = `i`.`i_item_sk`
+JOIN `date_dim` AS `d`
+  ON `cs`.`cs_sold_date_sk` = `d`.`d_date_sk`
+WHERE `i`.`i_category` IN ('Jewelry', 'Sports', 'Books')
+  AND `d`.`d_date` BETWEEN CAST('2001-01-12' AS DATE)
+                     AND CAST('2001-01-12' AS DATE) + INTERVAL 30 DAY
+GROUP BY
+  `i`.`i_item_id`,
+  `i`.`i_item_desc`,
+  `i`.`i_category`,
+  `i`.`i_class`,
+  `i`.`i_current_price`
+ORDER BY
+  `i`.`i_category`,
+  `i`.`i_class`,
+  `i`.`i_item_id`,
+  `i`.`i_item_desc`,
+  `revenueratio`
+LIMIT 100;

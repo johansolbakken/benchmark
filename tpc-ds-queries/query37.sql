@@ -1,17 +1,23 @@
--- start query 1 in stream 0 using template query37.tpl
-select  i_item_id
-       ,i_item_desc
-       ,i_current_price
- from item, inventory, date_dim, catalog_sales
- where i_current_price between 22 and 22 + 30
- and inv_item_sk = i_item_sk
- and d_date_sk=inv_date_sk
- and d_date between cast('2001-06-02' as date) and (cast('2001-06-02' as date) +  60 days)
- and i_manufact_id in (678,964,918,849)
- and inv_quantity_on_hand between 100 and 500
- and cs_item_sk = i_item_sk
- group by i_item_id,i_item_desc,i_current_price
- order by i_item_id
- limit 100;
-
--- end query 1 in stream 0 using template query37.tpl
+SELECT
+  `i`.`i_item_id`,
+  `i`.`i_item_desc`,
+  `i`.`i_current_price`
+FROM `item` AS `i`
+JOIN `inventory` AS `inv`
+  ON `inv`.`inv_item_sk` = `i`.`i_item_sk`
+JOIN `date_dim` AS `d`
+  ON `d`.`d_date_sk` = `inv`.`inv_date_sk`
+JOIN `catalog_sales` AS `cs`
+  ON `cs`.`cs_item_sk` = `i`.`i_item_sk`
+WHERE `i`.`i_current_price` BETWEEN 22 AND 22 + 30
+  AND `d`.`d_date` BETWEEN CAST('2001-06-02' AS DATE)
+                      AND CAST('2001-06-02' AS DATE) + INTERVAL 60 DAY
+  AND `i`.`i_manufact_id` IN (678, 964, 918, 849)
+  AND `inv`.`inv_quantity_on_hand` BETWEEN 100 AND 500
+GROUP BY
+  `i`.`i_item_id`,
+  `i`.`i_item_desc`,
+  `i`.`i_current_price`
+ORDER BY
+  `i`.`i_item_id`
+LIMIT 100;

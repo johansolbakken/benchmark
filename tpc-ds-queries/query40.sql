@@ -1,28 +1,36 @@
--- start query 1 in stream 0 using template query40.tpl
-select  
-   w_state
-  ,i_item_id
-  ,sum(case when (cast(d_date as date) < cast ('1998-04-08' as date)) 
- 		then cs_sales_price - coalesce(cr_refunded_cash,0) else 0 end) as sales_before
-  ,sum(case when (cast(d_date as date) >= cast ('1998-04-08' as date)) 
- 		then cs_sales_price - coalesce(cr_refunded_cash,0) else 0 end) as sales_after
- from
-   catalog_sales left outer join catalog_returns on
-       (cs_order_number = cr_order_number 
-        and cs_item_sk = cr_item_sk)
-  ,warehouse 
-  ,item
-  ,date_dim
- where
-     i_current_price between 0.99 and 1.49
- and i_item_sk          = cs_item_sk
- and cs_warehouse_sk    = w_warehouse_sk 
- and cs_sold_date_sk    = d_date_sk
- and d_date between (cast ('1998-04-08' as date) - 30 days)
-                and (cast ('1998-04-08' as date) + 30 days) 
- group by
-    w_state,i_item_id
- order by w_state,i_item_id
-limit 100;
-
--- end query 1 in stream 0 using template query40.tpl
+SELECT
+  `w`.`w_state`,
+  `i`.`i_item_id`,
+  SUM(
+    CASE
+      WHEN `d`.`d_date` < '1998-04-08' THEN `cs`.`cs_sales_price` - COALESCE(`cr`.`cr_refunded_cash`, 0)
+      ELSE 0
+    END
+  ) AS `sales_before`,
+  SUM(
+    CASE
+      WHEN `d`.`d_date` >= '1998-04-08' THEN `cs`.`cs_sales_price` - COALESCE(`cr`.`cr_refunded_cash`, 0)
+      ELSE 0
+    END
+  ) AS `sales_after`
+FROM `catalog_sales` AS `cs`
+LEFT JOIN `catalog_returns` AS `cr`
+  ON `cs`.`cs_order_number` = `cr`.`cr_order_number`
+ AND `cs`.`cs_item_sk`     = `cr`.`cr_item_sk`
+JOIN `warehouse` AS `w`
+  ON `cs`.`cs_warehouse_sk` = `w`.`w_warehouse_sk`
+JOIN `item` AS `i`
+  ON `cs`.`cs_item_sk`       = `i`.`i_item_sk`
+JOIN `date_dim` AS `d`
+  ON `cs`.`cs_sold_date_sk`  = `d`.`d_date_sk`
+WHERE
+  `i`.`i_current_price` BETWEEN 0.99 AND 1.49
+  AND `d`.`d_date` BETWEEN DATE_SUB('1998-04-08', INTERVAL 30 DAY)
+                      AND DATE_ADD('1998-04-08', INTERVAL 30 DAY)
+GROUP BY
+  `w`.`w_state`,
+  `i`.`i_item_id`
+ORDER BY
+  `w`.`w_state`,
+  `i`.`i_item_id`
+LIMIT 100;
