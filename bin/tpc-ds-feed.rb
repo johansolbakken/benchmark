@@ -11,7 +11,7 @@ require_relative '../lib/mysql'
 CONFIG = YAML.load_file('config.yaml')['mysql']
 
 # Define scales and corresponding databases and dataset directories
-SCALES = ['s1', 's10', 's100']
+SCALES = ['s1', 's10']
 
 # TPC-DS table load order (basic recommended order; adjust if needed)
 TABLES = %w[
