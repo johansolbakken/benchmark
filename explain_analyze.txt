@@ -1,0 +1,55 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 1660 bytes
+EXPLAIN
+-> Nested loop left join  (cost=734069..734396 rows=99 height=1) (actual time=115..119 rows=2992 loops=1)
+    -> Sort: t.id  (cost=734066..734066 rows=99 height=1) (actual time=115..117 rows=2992 loops=1)
+        -> Left hash join (complete_cast.movie_id = t.id) (fill_ratio=0.150995)  (cost=733977..734011 rows=99 height=1) (actual time=111..113 rows=2992 loops=1)
+            -> Sort: t.id  (cost=606663..606663 rows=99 height=1) (actual time=95.7..97.4 rows=2992 loops=1)
+                -> Left hash join (aka_title.movie_id = t.id) (fill_ratio=0.0415246)  (cost=606165..606608 rows=99 height=1) (actual time=91.8..93.7 rows=2992 loops=1)
+                    -> Nested loop left join  (cost=593938..594347 rows=99 height=1) (actual time=89.7..91.1 rows=2182 loops=1)
+                        -> Sort: t.id  (cost=593934..593934 rows=99 height=1) (actual time=89.7..90.7 rows=2182 loops=1)
+                            -> Left hash join (person_info.person_id = `name`.id) (fill_ratio=0.121295)  (cost=593844..593878 rows=99 height=1) (actual time=87.3..88.4 rows=2182 loops=1)
+                                -> Sort: t.id  (cost=541894..541894 rows=99 height=1) (actual time=80.8..81.8 rows=2182 loops=1)
+                                    -> Left hash join (movie_info.movie_id = t.id) (fill_ratio=0.117968)  (cost=541805..541839 rows=99 height=1) (actual time=78.4..79.5 rows=2182 loops=1)
+                                        -> Sort: t.id  (cost=524191..524191 rows=99 height=1) (actual time=75.7..76.7 rows=2182 loops=1)
+                                            -> Left hash join (movie_link.movie_id = t.id) (fill_ratio=0.0858237)  (cost=524102..524136 rows=99 height=1) (actual time=73.9..74.5 rows=2182 loops=1)
+                                                -> Sort: t.id  (cost=494981..494981 rows=99 height=1) (actual time=65.2..65.7 rows=1132 loops=1)
+                                                    -> Left hash join (movie_keyword.movie_id = t.id) (fill_ratio=0.0890099)  (cost=494892..494925 rows=99 height=1) (actual time=64.3..64.5 rows=1132 loops=1)
+                                                        -> Sort: t.id  (cost=342489..342489 rows=99 height=1) (actual time=53.8..54 rows=376 loops=1)
+                                                            -> Left hash join (aka_name.person_id = `name`.id) (fill_ratio=0.0749154)  (cost=342040..342434 rows=99 height=1) (actual time=53..53.7 rows=376 loops=1)
+                                                                -> Nested loop left join  (cost=298165..298525 rows=99 height=1) (actual time=45.4..46.1 rows=376 loops=1)
+                                                                    -> Sort: t.id  (cost=298161..298161 rows=99 height=1) (actual time=45.4..45.5 rows=376 loops=1)
+                                                                        -> Left hash join (movie_companies.movie_id = t.id) (fill_ratio=0.0337474)  (cost=298072..298106 rows=99 height=1) (actual time=45.2..45.3 rows=376 loops=1)
+                                                                            -> Sort: t.id  (cost=277885..277885 rows=99 height=1) (actual time=42.1..42.1 rows=151 loops=1)
+                                                                                -> Left hash join (movie_info_idx.movie_id = t.id) (fill_ratio=0.190424)  (cost=277384..277830 rows=99 height=1) (actual time=42..42.1 rows=151 loops=1)
+                                                                                    -> Nested loop left join  (cost=65122..65534 rows=99 height=1) (actual time=10.3..10.4 rows=99 loops=1)
+                                                                                        -> Sort: t.id  (cost=65117..65117 rows=99 height=1) (actual time=10.3..10.3 rows=99 loops=1)
+                                                                                            -> Left hash join (cast_info.movie_id = t.id) (fill_ratio=0.076536)  (cost=64908..65062 rows=99 height=1) (actual time=10.2..10.3 rows=99 loops=1)
+                                                                                                -> Index range scan on t using PRIMARY over (id < 100)  (cost=1.22..121 rows=99 height=1) (actual time=0.015..0.0921 rows=99 loops=1)
+                                                                                                -> Hash
+                                                                                                    -> Index range scan on cast_info using PRIMARY over (id < 15000)  (cost=0.699..20650 rows=29550 height=1) (actual time=0.0043..7.86 rows=14999 loops=1)
+                                                                                        -> Filter: (`name`.id < 1000)  (cost=4.21..4.21 rows=246e-6 height=1) (actual time=144e-6..144e-6 rows=0 loops=99)
+                                                                                            -> Single-row index lookup on name using PRIMARY (id = cast_info.person_id)  (cost=4.15..4.15 rows=1 height=1) (actual time=76.4e-6..76.4e-6 rows=0 loops=99)
+                                                                                    -> Hash
+                                                                                        -> Index range scan on movie_info_idx using PRIMARY over (id < 50000)  (cost=0.558..57589 rows=103274 height=1) (actual time=0.0055..24.8 rows=49999 loops=1)
+                                                                            -> Hash
+                                                                                -> Index range scan on movie_companies using PRIMARY over (id < 5000)  (cost=0.599..5770 rows=9626 height=1) (actual time=0.00689..2.43 rows=4999 loops=1)
+                                                                    -> Filter: (company_name.id < 1000)  (cost=3.68..3.68 rows=0.00414 height=1) (actual time=0.00142..0.00146 rows=0.806 loops=376)
+                                                                        -> Single-row index lookup on company_name using PRIMARY (id = movie_companies.company_id)  (cost=3.62..3.62 rows=1 height=1) (actual time=0.00134..0.00135 rows=0.806 loops=376)
+                                                                -> Hash
+                                                                    -> Index range scan on aka_name using PRIMARY over (id < 10000)  (cost=0.781..15041 rows=19252 height=1) (actual time=0.00607..5.77 rows=9999 loops=1)
+                                                        -> Hash
+                                                            -> Index range scan on movie_keyword using PRIMARY over (id < 40000)  (cost=0.406..32475 rows=80074 height=1) (actual time=1.06..7.58 rows=39999 loops=1)
+                                                -> Hash
+                                                    -> Index range scan on movie_link using PRIMARY over (id < 10000000)  (cost=0.47..6958 rows=14798 height=1) (actual time=0.238..6.39 rows=29997 loops=1)
+                                        -> Hash
+                                            -> Index range scan on movie_info using PRIMARY over (id < 4000)  (cost=0.655..5359 rows=8182 height=1) (actual time=0.00874..2.07 rows=3999 loops=1)
+                                -> Hash
+                                    -> Index range scan on person_info using PRIMARY over (id < 10000)  (cost=0.823..18419 rows=22388 height=1) (actual time=0.00936..5.09 rows=9999 loops=1)
+                        -> Filter: (char_name.id < 1000)  (cost=4.17..4.17 rows=297e-6 height=1) (actual time=128e-6..128e-6 rows=0 loops=2182)
+                            -> Single-row index lookup on char_name using PRIMARY (id = cast_info.role_id)  (cost=4.12..4.12 rows=1 height=1) (actual time=58.8e-6..58.8e-6 rows=0 loops=2182)
+                    -> Hash
+                        -> Index range scan on aka_title using PRIMARY over (id < 2500)  (cost=1.27..5622 rows=4410 height=1) (actual time=0.00966..1.56 rows=2236 loops=1)
+            -> Hash
+                -> Index range scan on complete_cast using PRIMARY over (id < 50000)  (cost=0.47..30414 rows=64699 height=1) (actual time=1.01..10.5 rows=49999 loops=1)
+    -> Filter: (keyword.id < 1000)  (cost=3.33..3.33 rows=0.00789 height=1) (actual time=537e-6..578e-6 rows=0.895 loops=2992)
+        -> Single-row index lookup on keyword using PRIMARY (id = movie_keyword.keyword_id)  (cost=3.28..3.28 rows=1 height=1) (actual time=453e-6..466e-6 rows=0.895 loops=2992)
