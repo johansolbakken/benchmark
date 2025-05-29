@@ -83,7 +83,7 @@ job-fresh: job-setup job-feed job-queries prepare
 clean: job-clean
 
 inline-local:
-	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 ${DATABASE} -e "SET GLOBAL local_infile = 1;" 
+	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 ${DATABASE} -e "SET GLOBAL local_infile = 1;"
 
 tpc-h-setup:
 	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 < ./tpc-h-schema/schema.sql
@@ -102,3 +102,12 @@ tpc-ds-feed:
 
 tpc-ds-analyze:
 	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 < ./sql/analyze_tpc_ds.sql
+
+ssb-setup:
+	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 < ./ssb-schema/schema.sql
+
+ssb-feed:
+	ruby bin/ssb-feed.rb
+
+ssb-analyze:
+	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 < ./sql/analyze_ssb.sql
