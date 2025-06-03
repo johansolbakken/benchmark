@@ -28,7 +28,9 @@ def json_to_dot(data, truncate)
     label = label.gsub(/Inner hash join/, 'Optimistic Hash Join') if node['was_optimistic_hash_join']
     label = label.gsub('"', '\"')
 
+
     if truncate
+      # Replace long join names with short codes
       map = {
         'Nested loop inner join' => 'NLJ',
         'Optimistic Hash Join' => 'OOHJ',
@@ -39,7 +41,8 @@ def json_to_dot(data, truncate)
         'Inner hash join' => 'HJ',
       }
 
-      label = label.gsub(/using\s+\w+/, '')
+      # Remove cost info but keep ON / USING clauses
+      label = label.gsub(/\(cost=[^)]+\)/, '').strip
 
       map.each do |find, replace|
         label.gsub!(find, replace)
@@ -53,16 +56,12 @@ def json_to_dot(data, truncate)
     if node["inputs"].is_a?(Array)
       node["inputs"].each_with_index do |child, index|
         child_id = traverse.call(child)
-
-        if label.downcase.include?('hash join') or label.downcase.include?('hj')
-          probe = 'probe'
-          if index > 0
-            probe = 'build'
-          end
-          edges << "  node#{current_id} -> node#{child_id} [label=\"#{probe}\"];"
-        else
-        edges << "  node#{current_id} -> node#{child_id};"
-        end
+        edge_label = ''
+        edges << if edge_label
+                   "  node#{current_id} -> node#{child_id} [label=\"#{edge_label}\"];"
+                 else
+                   "  node#{current_id} -> node#{child_id};"
+                 end
       end
     end
     current_id
@@ -74,15 +73,14 @@ def json_to_dot(data, truncate)
   dot_lines.join("\n")
 end
 
-def run(input_sql_file, show_json, output_png, keep_dot, hint, truncate)
-  # Read and join SQL file lines into one query string.
+def run(input_sql_file, output_pdf, hint, show_json, keep_dot, truncate, database_override)
   query = File.read(input_sql_file).lines.map(&:strip).join(' ')
 
-  # If a hint is provided, modify the query by replacing the first occurrence of SELECT.
-  if hint && !hint.empty?
-    # Replace the first occurrence of SELECT (case insensitive) with "SELECT #{hint}"
-    query.sub!(/select/i, "SELECT #{hint}")
-  end
+  # Switch to selected database
+  CLIENT.use_database(database_override) if database_override
+
+  # Add hint
+  query.sub!(/select/i, "SELECT #{hint}") if hint && !hint.empty?
 
   explain_query = "EXPLAIN FORMAT=json #{query}"
   stdout, _stderr = CLIENT.run_query_get_stdout(explain_query)
@@ -95,56 +93,89 @@ def run(input_sql_file, show_json, output_png, keep_dot, hint, truncate)
   dot_output = json_to_dot(data, truncate)
   dot_file = 'query_plan.dot'
   File.write(dot_file, dot_output)
-  puts "DOT file has been written to #{dot_file}"
+  puts "DOT file written to #{dot_file}"
 
-  system("dot -Tpng -Gdpi=600 -o #{output_png} #{dot_file}")
-  puts "PNG file has been written to #{output_png}"
+  system("dot -Tpdf -Gdpi=600 -o #{output_pdf} #{dot_file}")
+  puts "PDF file written to #{output_pdf}"
 
   File.delete(dot_file) unless keep_dot
-  puts 'Successful success!'
 end
 
+# Default options
 options = {
   show_json: false,
-  output_png: 'query_tree.png',
+  output_pdf: nil,
   keep_dot: false,
   truncate: false,
-  hint: ""
+  mode: nil,
+  database: nil
 }
 
 OptionParser.new do |opts|
-  opts.banner = "Usage: #{File.basename($PROGRAM_NAME)} [options] input_sql_file"
+  opts.banner = "Usage: #{File.basename($PROGRAM_NAME)} [options] input.sql"
 
-  opts.on("--show-json", "Print JSON output (default false)") do
+  opts.on("--baseline", "Use baseline mode (disables OOHJ)") do
+    options[:mode] = :baseline
+  end
+
+  opts.on("--oohj", "Use Optimistic Order-preserving Hash Join mode") do
+    options[:mode] = :oohj
+  end
+
+  opts.on("--database=DB", "Database to use (overrides config.yaml)") do |db|
+    options[:database] = db
+  end
+
+  opts.on("-oFILE", "--output=FILE", "Output PDF file name (required)") do |output|
+    options[:output_pdf] = output
+  end
+
+  opts.on("--show-json", "Print JSON output") do
     options[:show_json] = true
   end
 
-  opts.on("-oOUTPUT", "--output=OUTPUT", "Output PNG file name (default query_tree.png)") do |output|
-    options[:output_png] = output
-  end
-
-  opts.on("-c", "--keep-dot", "Keep the DOT file (default delete it)") do
+  opts.on("-c", "--keep-dot", "Keep intermediate DOT file") do
     options[:keep_dot] = true
   end
 
-  opts.on("--hint HINT", "SQL hint to be inserted after SELECT (example: '/*+ SET_OPTIMISM_FUNC(SIGMOID) */')") do |hint|
-    options[:hint] = hint
-  end
-
-  opts.on("--truncate", "Truncate all nodes") do
+  opts.on("--truncate", "Truncate node labels") do
     options[:truncate] = true
   end
-end.parse!
+end.order!
 
+# Check input file
 if ARGV.empty?
-  puts "Error: input SQL file is required."
+  puts "Error: You must specify an input SQL file."
   exit 1
 end
 
-input_sql_file = ARGV[0]
-run(input_sql_file,
-    options[:show_json],
-    options[:output_png],
-    options[:keep_dot],
-    options[:hint],
-    options[:truncate]) if __FILE__ == $PROGRAM_NAME
+# Validate mode
+if options[:mode].nil?
+  puts "Error: You must specify either --baseline or --oohj."
+  exit 1
+end
+
+# Validate output file
+if options[:output_pdf].nil?
+  puts "Error: You must specify an output PDF file with -o or --output."
+  exit 1
+end
+
+# Determine hint
+hint = case options[:mode]
+       when :baseline
+         '/*+ DISABLE_OPTIMISTIC_HASH_JOIN */'
+       when :oohj
+         '/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(0.8) */'
+       end
+
+# Execute
+run(
+  ARGV[0],
+  options[:output_pdf],
+  hint,
+  options[:show_json],
+  options[:keep_dot],
+  options[:truncate],
+  options[:database]
+)
