@@ -128,3 +128,19 @@ ssb-plans:
 	  ruby ./bin/print-plan-as-graphwiz.rb --baseline --truncate --database ssb_s1 -o ./ssb-plans/$${base}_baseline.pdf $$f; \
 	  ruby ./bin/print-plan-as-graphwiz.rb --oohj     --truncate --database ssb_s1 -o ./ssb-plans/$${base}_oohj.pdf     $$f; \
 	done
+
+explain-job:
+	mkdir -p explain-job && \
+	for f in job-order-all-queries/*.sql; do \
+	  base=$$(basename $$f .sql); \
+	  ruby bin/benchmark.rb --run $$f --analyze --hint "/*+ DISABLE_OPTIMISTIC_HASH_JOIN */" --database imdbload > explain-job/explain_$${base}_baseline.txt; \
+	  ruby bin/benchmark.rb --run $$f --analyze --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(0.8) */" --database imdbload > explain-job/explain_$${base}_oohj.txt; \
+	done
+
+explain-ssb:
+	mkdir -p explain-ssb && \
+	for f in ssb-queries/*.sql; do \
+	  base=$$(basename $$f .sql); \
+	  ruby bin/benchmark.rb --run $$f --analyze --hint "/*+ DISABLE_OPTIMISTIC_HASH_JOIN */" --database ssb_s1 > explain-ssb/explain_$${base}_baseline.txt; \
+	  ruby bin/benchmark.rb --run $$f --analyze --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(0.8) */" --database ssb_s1 > explain-ssb/explain_$${base}_oohj.txt; \
+	done

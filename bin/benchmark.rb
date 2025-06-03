@@ -39,9 +39,9 @@ def build_explain_prefix(options)
 
   return "" if active_explains.empty?
 
-  return "EXPLAIN ANALYZE "    if options[:explain]
-  return "EXPLAIN FORMAT=TREE " if options[:tree]
-  return "EXPLAIN FORMAT=JSON " if options[:json]
+  return "EXPLAIN ANALYZE "      if options[:explain]
+  return "EXPLAIN FORMAT=TREE "  if options[:tree]
+  return "EXPLAIN FORMAT=JSON "  if options[:json]
   ""
 end
 
@@ -67,7 +67,6 @@ rescue StandardError => e
   puts Color.red("An error occurred while running the query: #{e.message}")
   exit 1
 end
-
 
 ##
 # Subcommand: Prepare MySQL environment (analyze tables, etc.)
@@ -106,8 +105,12 @@ def parse_options
       options[:json] = true
     end
 
-    opts.on("--hint HINT", "Set hint") do |hint|
+    opts.on("--hint HINT", "Set SQL hint") do |hint|
       options[:hint] = hint
+    end
+
+    opts.on("--database DB", "Override the database name") do |db|
+      options[:database] = db
     end
   end.parse!
   options
@@ -118,6 +121,9 @@ end
 #
 def run
   options = parse_options
+
+  # Override database if specified
+  CLIENT.use_database(options[:database]) if options[:database]
 
   if options[:setup]
     setup_database
