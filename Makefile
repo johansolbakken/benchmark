@@ -111,3 +111,12 @@ ssb-feed:
 
 ssb-analyze:
 	../mysql-server-build/build-release/bin/mysql -uroot --host 127.0.0.1 --port 13000 < ./sql/analyze_ssb.sql
+
+
+job-plans:
+	mkdir -p job-plans && \
+	for f in job-order-all-queries/*.sql; do \
+	  base=$$(basename $$f .sql); \
+	  ruby bin/print-plan-as-graphwiz.rb --baseline --truncate --database imdbload -o job-plans/$${base}_baseline.pdf $$f; \
+	  ruby bin/print-plan-as-graphwiz.rb --oohj     --truncate --database imdbload -o job-plans/$${base}_oohj.pdf     $$f; \
+	done

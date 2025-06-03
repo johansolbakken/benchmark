@@ -107,5 +107,13 @@ module MySQL
       warn "Error executing SQL file: #{e.message}"
       false
     end
+
+    ##
+    # Switches the current database for subsequent queries.
+    #
+    # @param [String] new_db_name The new database name to use.
+    def use_database(new_db_name)
+      @db_name = new_db_name
+    end
   end
 end
