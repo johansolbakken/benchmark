@@ -129,6 +129,15 @@ ssb-plans:
 	  ruby ./bin/print-plan-as-graphwiz.rb --oohj     --truncate --database ssb_s1 -o ./ssb-plans/$${base}_oohj.pdf     $$f; \
 	done
 
+
+stq-plans:
+	mkdir -p stq-plans && \
+	for f in stress-test-queries/*.sql; do \
+	  base=$$(basename $$f .sql); \
+	  ruby bin/print-plan-as-graphwiz.rb --baseline --truncate --database imdbload -o stq-plans/$${base}_baseline.pdf $$f; \
+	  ruby bin/print-plan-as-graphwiz.rb --oohj     --truncate --database imdbload -o stq-plans/$${base}_oohj.pdf     $$f; \
+	done
+
 explain-job:
 	mkdir -p explain-job && \
 	for f in job-order-all-queries/*.sql; do \
