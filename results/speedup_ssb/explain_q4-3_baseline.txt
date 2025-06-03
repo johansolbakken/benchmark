@@ -1,0 +1,20 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 ssb_s1 with input size: 592 bytes
+EXPLAIN
+-> Group aggregate: sum((lineorder.lo_revenue - lineorder.lo_supplycost))  (cost=2.21e+9..2.22e+9 rows=18972 height=1)
+    -> Nested loop inner join  (cost=2.21e+9..2.22e+9 rows=56682 height=1)
+        -> Sort: `date`.d_year, supplier.s_city, part.p_brand1  (cost=2.21e+9..2.21e+9 rows=566822 height=1)
+            -> Inner hash join (lineorder.lo_orderdate = `date`.d_datekey) (fill_ratio=0)  (cost=1.88e+6..2.21e+9 rows=566822 height=1)
+                -> Inner hash join (lineorder.lo_suppkey = supplier.s_suppkey) (fill_ratio=0)  (cost=1.87e+6..2.21e+9 rows=2.98e+6 height=1)
+                    -> Inner hash join (lineorder.lo_partkey = part.p_partkey) (fill_ratio=0)  (cost=1.72e+6..2.2e+9 rows=29.8e+6 height=1)
+                        -> Table scan on lineorder  (cost=7.16..2.14e+9 rows=298e+6 height=1)
+                        -> Hash
+                            -> Filter: (part.p_category = 'MFGR#14')  (cost=12.9..1.54e+6 rows=119127 height=1)
+                                -> Table scan on part  (cost=1.24..1.47e+6 rows=1.19e+6 height=1)
+                    -> Hash
+                        -> Filter: (supplier.s_nation = 'UNITED STATES')  (cost=14..139387 rows=9933 height=1)
+                            -> Table scan on supplier  (cost=1.35..133665 rows=99333 height=1)
+                -> Hash
+                    -> Filter: ((`date`.d_year = 1997) or (`date`.d_year = 1998))  (cost=5.4..2601 rows=482 height=1)
+                        -> Table scan on date  (cost=0.968..2455 rows=2537 height=1)
+        -> Filter: (customer.c_region = 'AMERICA')  (cost=4.66..4.66 rows=0.1 height=1)
+            -> Single-row index lookup on customer using PRIMARY (c_custkey = lineorder.lo_custkey)  (cost=4.61..4.61 rows=1 height=1)
