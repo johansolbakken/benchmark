@@ -1,0 +1,9 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 ssb_s1 with input size: 299 bytes
+EXPLAIN
+-> Aggregate: sum((lineorder.lo_extendedprice * lineorder.lo_discount))  (cost=2.13e+9..2.13e+9 rows=1 height=1) (actual time=160877..160877 rows=1 loops=1)
+    -> Inner hash join (lineorder.lo_orderdate = `date`.d_datekey) (fill_ratio=2.16961e-05)  (cost=60593..2.13e+9 rows=36823 height=1) (actual time=10.1..160852 rows=47537 loops=1)
+        -> Filter: ((lineorder.lo_discount between 5 and 7) and (lineorder.lo_quantity between 26 and 35))  (cost=578..2.13e+9 rows=3.68e+6 height=1) (actual time=1.71..159832 rows=16.4e+6 loops=1)
+            -> Table scan on lineorder  (cost=7.07..2.11e+9 rows=298e+6 height=1) (actual time=1.71..144768 rows=300e+6 loops=1)
+        -> Hash
+            -> Filter: ((`date`.d_weeknuminyear = 6) and (`date`.d_year = 1994))  (cost=108..2733 rows=25.4 height=1) (actual time=1.11..2.15 rows=7 loops=1)
+                -> Table scan on date  (cost=1.01..2572 rows=2537 height=1) (actual time=0.277..2.04 rows=2557 loops=1)

@@ -1,0 +1,19 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 ssb_s1 with input size: 473 bytes
+EXPLAIN
+-> Sort: `date`.d_year, revenue DESC  (cost=2.19e+9..2.19e+9 rows=92967 height=1) (actual time=262925..262925 rows=150 loops=1)
+    -> Stream results  (cost=2.19e+9..2.19e+9 rows=92967 height=1) (actual time=259552..262925 rows=150 loops=1)
+        -> Group aggregate: sum(lineorder.lo_revenue)  (cost=2.19e+9..2.19e+9 rows=92967 height=1) (actual time=259552..262925 rows=150 loops=1)
+            -> Sort: `date`.d_year, customer.c_nation, supplier.s_nation  (cost=2.19e+9..2.19e+9 rows=331409 height=1) (actual time=259530..260719 rows=11e+6 loops=1)
+                -> Inner hash join (lineorder.lo_orderdate = `date`.d_datekey) (fill_ratio=0.00470352)  (cost=2.62e+6..2.19e+9 rows=331409 height=1) (actual time=1017..249013 rows=11e+6 loops=1)
+                    -> Inner hash join (lineorder.lo_suppkey = supplier.s_suppkey) (fill_ratio=0.0821261)  (cost=2.61e+6..2.18e+9 rows=2.98e+6 height=1) (actual time=1015..247459 rows=12.1e+6 loops=1)
+                        -> Inner hash join (lineorder.lo_custkey = customer.c_custkey) (fill_ratio=1.23149)  (cost=2.45e+6..2.18e+9 rows=29.8e+6 height=1) (actual time=965..242060 rows=60.1e+6 loops=1)
+                            -> Table scan on lineorder  (cost=7.07..2.11e+9 rows=298e+6 height=1) (actual time=1.58..168983 rows=300e+6 loops=1)
+                            -> Hash
+                                -> Filter: (customer.c_region = 'ASIA')  (cost=15..2.23e+6 rows=149181 height=1) (actual time=0.816..936 rows=300270 loops=1)
+                                    -> Table scan on customer  (cost=1.44..2.14e+6 rows=1.49e+6 height=1) (actual time=0.813..843 rows=1.5e+6 loops=1)
+                        -> Hash
+                            -> Filter: (supplier.s_region = 'ASIA')  (cost=14..139387 rows=9933 height=1) (actual time=0.901..48.3 rows=20037 loops=1)
+                                -> Table scan on supplier  (cost=1.35..133665 rows=99333 height=1) (actual time=0.897..42.1 rows=100000 loops=1)
+                    -> Hash
+                        -> Filter: ((`date`.d_year >= 1992) and (`date`.d_year <= 1997))  (cost=9.4..2650 rows=282 height=1) (actual time=0.257..2.23 rows=2192 loops=1)
+                            -> Table scan on date  (cost=0.968..2455 rows=2537 height=1) (actual time=0.255..2.08 rows=2557 loops=1)

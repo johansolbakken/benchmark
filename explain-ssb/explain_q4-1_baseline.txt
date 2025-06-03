@@ -1,0 +1,20 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 ssb_s1 with input size: 524 bytes
+EXPLAIN
+-> Group aggregate: sum((lineorder.lo_revenue - lineorder.lo_supplycost))  (cost=2.22e+9..2.22e+9 rows=16877 height=1) (actual time=288271..289459 rows=35 loops=1)
+    -> Sort: `date`.d_year, customer.c_nation  (cost=2.22e+9..2.22e+9 rows=566822 height=1) (actual time=288232..288760 rows=4.8e+6 loops=1)
+        -> Inner hash join (lineorder.lo_orderdate = `date`.d_datekey) (fill_ratio=0.00548673)  (cost=4.44e+6..2.21e+9 rows=566822 height=1) (actual time=1901..284506 rows=4.8e+6 loops=1)
+            -> Inner hash join (lineorder.lo_partkey = part.p_partkey) (fill_ratio=1.37195)  (cost=4.43e+6..2.21e+9 rows=566822 height=1) (actual time=1898..283827 rows=4.8e+6 loops=1)
+                -> Inner hash join (lineorder.lo_suppkey = supplier.s_suppkey) (fill_ratio=0.0621469)  (cost=2.6e+6..2.21e+9 rows=2.98e+6 height=1) (actual time=991..275579 rows=12e+6 loops=1)
+                    -> Inner hash join (lineorder.lo_custkey = customer.c_custkey) (fill_ratio=1.54226)  (cost=2.45e+6..2.21e+9 rows=29.8e+6 height=1) (actual time=943..270367 rows=59.9e+6 loops=1)
+                        -> Table scan on lineorder  (cost=7.16..2.14e+9 rows=298e+6 height=1) (actual time=1.74..190243 rows=300e+6 loops=1)
+                        -> Hash
+                            -> Filter: (customer.c_region = 'AMERICA')  (cost=15..2.23e+6 rows=149181 height=1) (actual time=1.05..914 rows=299436 loops=1)
+                                -> Table scan on customer  (cost=1.44..2.14e+6 rows=1.49e+6 height=1) (actual time=1.05..815 rows=1.5e+6 loops=1)
+                    -> Hash
+                        -> Filter: (supplier.s_region = 'AMERICA')  (cost=13.6..134809 rows=9933 height=1) (actual time=1.08..45.9 rows=20051 loops=1)
+                            -> Table scan on supplier  (cost=1.3..129087 rows=99333 height=1) (actual time=1.08..39.3 rows=100000 loops=1)
+                -> Hash
+                    -> Filter: ((part.p_mfgr = 'MFGR#1') or (part.p_mfgr = 'MFGR#2'))  (cost=6.56..1.48e+6 rows=226341 height=1) (actual time=0.856..871 rows=479531 loops=1)
+                        -> Table scan on part  (cost=1.19..1.42e+6 rows=1.19e+6 height=1) (actual time=0.854..691 rows=1.2e+6 loops=1)
+            -> Hash
+                -> Table scan on date  (cost=0.968..2455 rows=2537 height=1) (actual time=0.254..1.99 rows=2557 loops=1)

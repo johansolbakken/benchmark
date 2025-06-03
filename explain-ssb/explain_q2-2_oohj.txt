@@ -1,0 +1,16 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 ssb_s1 with input size: 424 bytes
+EXPLAIN
+-> Group aggregate: sum(lineorder.lo_revenue)  (cost=2.19e+9..2.19e+9 rows=15082 height=1) (actual time=193458..193561 rows=56 loops=1)
+    -> Sort: `date`.d_year, part.p_brand1  (cost=2.19e+9..2.19e+9 rows=3.31e+6 height=1) (actual time=193456..193493 rows=481436 loops=1)
+        -> Inner hash join (lineorder.lo_orderdate = `date`.d_datekey) (fill_ratio=0.00548673)  (cost=1.84e+6..2.18e+9 rows=3.31e+6 height=1) (actual time=854..193068 rows=481436 loops=1)
+            -> Inner hash join (lineorder.lo_partkey = part.p_partkey) (fill_ratio=0.0343645)  (cost=1.83e+6..2.18e+9 rows=3.31e+6 height=1) (actual time=851..192912 rows=481436 loops=1)
+                -> Inner hash join (lineorder.lo_suppkey = supplier.s_suppkey) (fill_ratio=0.0477719)  (cost=149759..2.18e+9 rows=29.8e+6 height=1) (actual time=46.8..187965 rows=60.1e+6 loops=1)
+                    -> Table scan on lineorder  (cost=7.07..2.11e+9 rows=298e+6 height=1) (actual time=1.58..163129 rows=300e+6 loops=1)
+                    -> Hash
+                        -> Filter: (supplier.s_region = 'ASIA')  (cost=13.6..134809 rows=9933 height=1) (actual time=0.689..43.2 rows=20037 loops=1)
+                            -> Table scan on supplier  (cost=1.3..129087 rows=99333 height=1) (actual time=0.687..37.2 rows=100000 loops=1)
+                -> Hash
+                    -> Filter: (part.p_brand1 between 'MFGR#2221' and 'MFGR#2228')  (cost=11.2..1.48e+6 rows=132350 height=1) (actual time=0.662..802 rows=9609 loops=1)
+                        -> Table scan on part  (cost=1.19..1.42e+6 rows=1.19e+6 height=1) (actual time=0.599..643 rows=1.2e+6 loops=1)
+            -> Hash
+                -> Table scan on date  (cost=0.968..2455 rows=2537 height=1) (actual time=0.255..2.07 rows=2557 loops=1)
