@@ -26,6 +26,7 @@ def json_to_dot(data, truncate)
     current_id = @node_counter
     label = node["operation"] || "Node"
     label = label.gsub(/Inner hash join/, 'Optimistic Hash Join') if node['was_optimistic_hash_join']
+    label = label.gsub(/Left hash join/, 'Optimistic Outer Hash Join') if node['was_optimistic_hash_join']
     label = label.gsub('"', '\"')
 
 
@@ -33,12 +34,15 @@ def json_to_dot(data, truncate)
       # Replace long join names with short codes
       map = {
         'Nested loop inner join' => 'NLJ',
+        'Nested loop left join' => 'Outer NLJ',
         'Optimistic Hash Join' => 'OOHJ',
+        'Optimistic Outer Hash Join' => 'Outer OOHJ',
         'Index lookup' => 'IDX',
         'Single-row index lookup' => '1IDX',
         'PRIMARY' => 'PRI',
         'Table scan' => 'TS',
         'Inner hash join' => 'HJ',
+        'Left hash join' => 'Outer HJ',
       }
 
       # Remove cost info but keep ON / USING clauses
