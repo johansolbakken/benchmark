@@ -120,3 +120,11 @@ job-plans:
 	  ruby bin/print-plan-as-graphwiz.rb --baseline --truncate --database imdbload -o job-plans/$${base}_baseline.pdf $$f; \
 	  ruby bin/print-plan-as-graphwiz.rb --oohj     --truncate --database imdbload -o job-plans/$${base}_oohj.pdf     $$f; \
 	done
+
+ssb-plans:
+	mkdir -p ssb-plans && \
+	for f in ssb-queries/*.sql; do \
+	  base=$$(basename $$f .sql); \
+	  ruby ./bin/print-plan-as-graphwiz.rb --baseline --truncate --database ssb_s1 -o ./ssb-plans/$${base}_baseline.pdf $$f; \
+	  ruby ./bin/print-plan-as-graphwiz.rb --oohj     --truncate --database ssb_s1 -o ./ssb-plans/$${base}_oohj.pdf     $$f; \
+	done
