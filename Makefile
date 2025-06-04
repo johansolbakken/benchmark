@@ -159,3 +159,16 @@ explain-ssb:
 	  ruby bin/benchmark.rb --run $$f --analyze --hint "/*+ DISABLE_OPTIMISTIC_HASH_JOIN */" --database ssb_s1 > explain-ssb/explain_$${base}_baseline.txt; \
 	  ruby bin/benchmark.rb --run $$f --analyze --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(0.8) */" --database ssb_s1 > explain-ssb/explain_$${base}_oohj.txt; \
 	done
+
+explain-stq:
+	mkdir -p explain-stq && \
+	total=$$(ls stress-test-queries/*.sql | wc -l); \
+	i=1; \
+	for f in stress-test-queries/*.sql; do \
+	  echo "Processing file $$i of $$total: $$f"; \
+	  base=$$(basename $$f .sql); \
+	  ruby bin/benchmark.rb --run $$f --analyze --hint "/*+ DISABLE_OPTIMISTIC_HASH_JOIN */" --database imdbload > explain-stq/explain_$${base}_baseline.txt; \
+	  ruby bin/benchmark.rb --run $$f --analyze --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(0.8) */" --database imdbload > explain-stq/explain_$${base}_oohj.txt; \
+	  i=$$((i+1)); \
+	done
+
