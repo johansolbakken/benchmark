@@ -1,0 +1,16 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 546 bytes
+EXPLAIN
+-> Sort: t.title  (cost=1.35e+6..1.35e+6 rows=2704 height=1) (actual time=21.5..21.5 rows=142 loops=1)
+    -> Nested loop inner join  (cost=503..1.35e+6 rows=2704 height=1) (actual time=0.269..21.4 rows=142 loops=1)
+        -> Inner hash join (ct.id = mc.company_type_id) (fill_ratio=1.23978e-05)  (cost=498..1.34e+6 rows=2704 height=1) (actual time=0.26..21 rows=142 loops=1)
+            -> Nested loop inner join  (cost=49.3..1.33e+6 rows=27035 height=1) (actual time=0.236..20.9 rows=147 loops=1)
+                -> Nested loop inner join  (cost=3.59..494249 rows=137651 height=1) (actual time=0.0488..0.566 rows=250 loops=1)
+                    -> Filter: (it.info = 'top 250 rank')  (cost=6.94..78.4 rows=11.3 height=1) (actual time=0.0324..0.0348 rows=1 loops=1)
+                        -> Table scan on it  (cost=0.636..71.9 rows=113 height=1) (actual time=0.00587..0.0286 rows=113 loops=1)
+                    -> Index lookup on mi_idx using info_type_id_movie_info_idx (info_type_id = it.id)  (cost=3.59..43732 rows=12181 height=1) (actual time=0.0159..0.522 rows=250 loops=1)
+                -> Filter: (((mc.note like '%(co-production)%') or (mc.note like '%(presents)%')) and (not((mc.note like '%(as Metro-Goldwyn-Mayer Pictures)%'))))  (cost=6.08..6.08 rows=0.196 height=1) (actual time=0.0795..0.0814 rows=0.588 loops=250)
+                    -> Index lookup on mc using movie_id_movie_companies (movie_id = mi_idx.movie_id)  (cost=5.71..6.01 rows=1.05 height=1) (actual time=0.00465..0.0623 rows=33.2 loops=250)
+            -> Hash
+                -> Filter: (ct.kind = 'production companies')  (cost=2.77..2.77 rows=0.4 height=1) (actual time=0.0164..0.0185 rows=1 loops=1)
+                    -> Table scan on ct  (cost=0.636..2.54 rows=4 height=1) (actual time=0.0145..0.0168 rows=4 loops=1)
+        -> Single-row index lookup on t using PRIMARY (id = mi_idx.movie_id)  (cost=4.44..4.44 rows=1 height=1) (actual time=0.00255..0.00257 rows=1 loops=142)

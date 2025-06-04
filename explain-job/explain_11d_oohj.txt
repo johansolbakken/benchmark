@@ -1,0 +1,25 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 725 bytes
+EXPLAIN
+-> Inner hash join (lt.id = ml.link_type_id)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0.000145912)  (cost=362018..363508 rows=4313 height=1) (actual time=1014..1022 rows=15245 loops=1)
+    -> Sort: t.title  (cost=361979..361979 rows=4313 height=1) (actual time=1014..1020 rows=15245 loops=1)
+        -> Nested loop inner join  (cost=91.4..358808 rows=4313 height=1) (actual time=6.98..1000 rows=15245 loops=1)
+            -> Inner hash join (mc.company_type_id = ct.id) (fill_ratio=3.71933e-05)  (cost=79.4..341160 rows=4792 height=1) (actual time=6.98..980 rows=15251 loops=1)
+                -> Nested loop inner join  (cost=63.7..339385 rows=5325 height=1) (actual time=6.96..977 rows=18964 loops=1)
+                    -> Nested loop inner join  (cost=54.3..305271 rows=5619 height=1) (actual time=6.92..939 rows=1418 loops=1)
+                        -> Nested loop inner join  (cost=13..243017 rows=18731 height=1) (actual time=0.425..522 rows=279686 loops=1)
+                            -> Nested loop inner join  (cost=14.9..150793 rows=10119 height=1) (actual time=0.414..30.6 rows=28887 loops=1)
+                                -> Table scan on ml  (cost=0.47..14271 rows=30360 height=1) (actual time=0.402..7.42 rows=29997 loops=1)
+                                -> Filter: (t.production_year > 1950)  (cost=4.5..4.5 rows=0.333 height=1) (actual time=638e-6..681e-6 rows=0.963 loops=29997)
+                                    -> Single-row index lookup on t using PRIMARY (id = ml.movie_id)  (cost=4.44..4.44 rows=1 height=1) (actual time=539e-6..554e-6 rows=1 loops=29997)
+                            -> Index lookup on mk using movie_id_movie_keyword (movie_id = t.id)  (cost=4.92..9.11 rows=1.85 height=1) (actual time=0.00342..0.0166 rows=9.68 loops=28887)
+                        -> Filter: (k.keyword in ('sequel','revenge','based-on-novel'))  (cost=3.32..3.32 rows=0.3 height=1) (actual time=0.00143..0.00143 rows=0.00507 loops=279686)
+                            -> Single-row index lookup on k using PRIMARY (id = mk.keyword_id)  (cost=3.27..3.27 rows=1 height=1) (actual time=0.00125..0.00126 rows=1 loops=279686)
+                    -> Filter: (mc.note is not null)  (cost=6.07..6.07 rows=0.948 height=1) (actual time=0.00319..0.0267 rows=13.4 loops=1418)
+                        -> Index lookup on mc using movie_id_movie_companies (movie_id = mk.movie_id)  (cost=5.71..6.01 rows=1.05 height=1) (actual time=0.00309..0.0259 rows=13.4 loops=1418)
+                -> Hash
+                    -> Filter: (ct.kind <> 'production companies')  (cost=0.771..2.77 rows=3.6 height=1) (actual time=0.0045..0.00642 rows=3 loops=1)
+                        -> Table scan on ct  (cost=0.636..2.54 rows=4 height=1) (actual time=0.00365..0.00459 rows=4 loops=1)
+            -> Filter: (cn.country_code <> '[pl]')  (cost=3.68..3.68 rows=0.9 height=1) (actual time=0.00122..0.00126 rows=1 loops=15251)
+                -> Single-row index lookup on cn using PRIMARY (id = mc.company_id)  (cost=3.62..3.62 rows=1 height=1) (actual time=0.00108..0.0011 rows=1 loops=15251)
+    -> Hash
+        -> Table scan on lt  (cost=0.636..11.4 rows=18 height=1) (actual time=0.0157..0.0187 rows=18 loops=1)

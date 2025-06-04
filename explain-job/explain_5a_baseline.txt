@@ -1,0 +1,17 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 544 bytes
+EXPLAIN
+-> Nested loop inner join  (cost=1.72e+6..1.76e+6 rows=3167 height=1) (actual time=1810..1810 rows=0 loops=1)
+    -> Nested loop inner join  (cost=1.72e+6..1.76e+6 rows=3167 height=1) (actual time=1810..1810 rows=0 loops=1)
+        -> Sort: t.title  (cost=1.72e+6..1.72e+6 rows=1057 height=1) (actual time=1810..1810 rows=0 loops=1)
+            -> Nested loop inner join  (cost=1635..1.72e+6 rows=1057 height=1) (actual time=1810..1810 rows=0 loops=1)
+                -> Inner hash join (ct.id = mc.company_type_id) (fill_ratio=1.23978e-05)  (cost=543..1.71e+6 rows=3170 height=1) (actual time=1810..1810 rows=0 loops=1)
+                    -> Filter: ((mc.note like '%(theatrical)%') and (mc.note like '%(France)%'))  (cost=53.7..1.7e+6 rows=31700 height=1) (actual time=14.5..1808 rows=24024 loops=1)
+                        -> Table scan on mc  (cost=0.599..1.54e+6 rows=2.57e+6 height=1) (actual time=0.00662..1317 rows=2.61e+6 loops=1)
+                    -> Hash
+                        -> Filter: (ct.kind = 'production companies')  (cost=2.77..2.77 rows=0.4 height=1) (actual time=0.0444..0.0467 rows=1 loops=1)
+                            -> Table scan on ct  (cost=0.636..2.54 rows=4 height=1) (actual time=0.0425..0.045 rows=4 loops=1)
+                -> Filter: (t.production_year > 2005)  (cost=4.5..4.5 rows=0.333 height=1) (never executed)
+                    -> Single-row index lookup on t using PRIMARY (id = mc.movie_id)  (cost=4.44..4.44 rows=1 height=1) (never executed)
+        -> Filter: (mi.info in ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German'))  (cost=9.53..28.6 rows=3 height=1) (never executed)
+            -> Index lookup on mi using movie_id_movie_info (movie_id = mc.movie_id)  (cost=4.71..28.2 rows=6 height=1) (never executed)
+    -> Single-row index lookup on it using PRIMARY (id = mi.info_type_id)  (cost=2.25..2.25 rows=1 height=1) (never executed)

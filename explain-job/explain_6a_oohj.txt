@@ -1,0 +1,16 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 410 bytes
+EXPLAIN
+-> Sort: ci.id  (cost=19.4e+6..19.4e+6 rows=245403 height=1) (actual time=2746..2746 rows=0 loops=1)
+    -> Inner hash join (n.id = ci.person_id) (fill_ratio=0)  (cost=4.74e+6..19.2e+6 rows=245403 height=1) (actual time=2746..2746 rows=0 loops=1)
+        -> Nested loop inner join  (cost=6.32..14e+6 rows=2.21e+6 height=1) (actual time=4.41..4.41 rows=1 loops=1)
+            -> Nested loop inner join  (cost=24.6..3.7e+6 rows=150497 height=1) (actual time=4.4..4.4 rows=1 loops=1)
+                -> Nested loop inner join  (cost=3.71..1.67e+6 rows=451537 height=1) (actual time=4.39..4.39 rows=1 loops=1)
+                    -> Filter: (k.keyword = 'marvel-cinematic-universe')  (cost=6.15..82143 rows=13352 height=1) (actual time=4.33..4.33 rows=1 loops=1)
+                        -> Table scan on k  (cost=0.558..74452 rows=133521 height=1) (actual time=0.0159..3.87 rows=8200 loops=1)
+                    -> Index lookup on mk using keyword_id_movie_keyword (keyword_id = k.id)  (cost=3.53..119 rows=33.8 height=1) (actual time=0.0532..0.0532 rows=1 loops=1)
+                -> Filter: (t.production_year > 2010)  (cost=4.5..4.5 rows=0.333 height=1) (actual time=0.0085..0.0085 rows=1 loops=1)
+                    -> Single-row index lookup on t using PRIMARY (id = mk.movie_id)  (cost=4.44..4.44 rows=1 height=1) (actual time=0.00795..0.00795 rows=1 loops=1)
+            -> Index lookup on ci using movie_id_cast_info (movie_id = t.id)  (cost=4.64..68.2 rows=14.7 height=1) (actual time=0.0112..0.0112 rows=1 loops=1)
+        -> Hash
+            -> Filter: (n.`name` like '%Downey%Robert%')  (cost=8.63..4.04e+6 rows=468035 height=1) (actual time=2742..2742 rows=0 loops=1)
+                -> Table scan on n  (cost=0.901..3.8e+6 rows=4.21e+6 height=1) (actual time=0.00536..2296 rows=4.17e+6 loops=1)

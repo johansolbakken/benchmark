@@ -1,0 +1,18 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 515 bytes
+EXPLAIN
+-> Inner hash join (it.id = mi.info_type_id)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0.00102472)  (cost=1.71e+6..1.71e+6 rows=141 height=1) (actual time=1747..1747 rows=0 loops=1)
+    -> Nested loop inner join  (cost=1.71e+6..1.71e+6 rows=141 height=1) (actual time=1747..1747 rows=0 loops=1)
+        -> Sort: t.title  (cost=1.71e+6..1.71e+6 rows=117 height=1) (actual time=1747..1747 rows=0 loops=1)
+            -> Nested loop inner join  (cost=14546..1.71e+6 rows=117 height=1) (actual time=1747..1747 rows=0 loops=1)
+                -> Inner hash join (ct.id = mc.company_type_id) (fill_ratio=1.23978e-05)  (cost=4846..1.71e+6 rows=352 height=1) (actual time=1747..1747 rows=0 loops=1)
+                    -> Filter: ((mc.note like '%(VHS)%') and (mc.note like '%(USA)%') and (mc.note like '%(1994)%'))  (cost=484..1.7e+6 rows=3522 height=1) (actual time=6.37..1747 rows=1418 loops=1)
+                        -> Table scan on mc  (cost=0.599..1.54e+6 rows=2.57e+6 height=1) (actual time=0.00638..1313 rows=2.61e+6 loops=1)
+                    -> Hash
+                        -> Filter: (ct.kind = 'production companies')  (cost=2.77..2.77 rows=0.4 height=1) (actual time=0.00469..0.00546 rows=1 loops=1)
+                            -> Table scan on ct  (cost=0.636..2.54 rows=4 height=1) (actual time=0.00324..0.00394 rows=4 loops=1)
+                -> Filter: (t.production_year > 2010)  (cost=4.5..4.5 rows=0.333 height=1) (never executed)
+                    -> Single-row index lookup on t using PRIMARY (id = mc.movie_id)  (cost=4.44..4.44 rows=1 height=1) (never executed)
+        -> Filter: (mi.info in ('USA','America'))  (cost=23.8..28.6 rows=1.2 height=1) (never executed)
+            -> Index lookup on mi using movie_id_movie_info (movie_id = mc.movie_id)  (cost=4.71..28.2 rows=6 height=1) (never executed)
+    -> Hash
+        -> Table scan on it  (cost=0.636..71.9 rows=113 height=1) (actual time=0.0168..0.0356 rows=113 loops=1)

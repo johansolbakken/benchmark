@@ -1,0 +1,17 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 485 bytes
+EXPLAIN
+-> Sort: t.title  (cost=1.4e+6..1.4e+6 rows=4294 height=1) (actual time=0.401..0.405 rows=16 loops=1)
+    -> Inner hash join (ct.id = mc.company_type_id) (fill_ratio=1.23978e-05)  (cost=330..1.4e+6 rows=4294 height=1) (actual time=0.11..0.387 rows=16 loops=1)
+        -> Nested loop inner join  (cost=32.4..1.39e+6 rows=42938 height=1) (actual time=0.078..0.355 rows=93 loops=1)
+            -> Nested loop inner join  (cost=24.3..1.11e+6 rows=45879 height=1) (actual time=0.0658..0.117 rows=6 loops=1)
+                -> Nested loop inner join  (cost=3.59..494249 rows=137651 height=1) (actual time=0.0492..0.0709 rows=10 loops=1)
+                    -> Filter: (it.info = 'bottom 10 rank')  (cost=6.94..78.4 rows=11.3 height=1) (actual time=0.0329..0.0337 rows=1 loops=1)
+                        -> Table scan on it  (cost=0.636..71.9 rows=113 height=1) (actual time=0.00567..0.0277 rows=113 loops=1)
+                    -> Index lookup on mi_idx using info_type_id_movie_info_idx (info_type_id = it.id)  (cost=3.59..43732 rows=12181 height=1) (actual time=0.0157..0.0361 rows=10 loops=1)
+                -> Filter: (t.production_year > 2000)  (cost=4.5..4.5 rows=0.333 height=1) (actual time=0.00441..0.00444 rows=0.6 loops=10)
+                    -> Single-row index lookup on t using PRIMARY (id = mi_idx.movie_id)  (cost=4.44..4.44 rows=1 height=1) (actual time=0.00423..0.00425 rows=1 loops=10)
+            -> Filter: (not((mc.note like '%(as Metro-Goldwyn-Mayer Pictures)%')))  (cost=6.07..6.07 rows=0.936 height=1) (actual time=0.00709..0.0391 rows=15.5 loops=6)
+                -> Index lookup on mc using movie_id_movie_companies (movie_id = mi_idx.movie_id)  (cost=5.71..6.01 rows=1.05 height=1) (actual time=0.0065..0.0344 rows=15.5 loops=6)
+        -> Hash
+            -> Filter: (ct.kind = 'production companies')  (cost=2.77..2.77 rows=0.4 height=1) (actual time=0.0165..0.0185 rows=1 loops=1)
+                -> Table scan on ct  (cost=0.636..2.54 rows=4 height=1) (actual time=0.0145..0.0166 rows=4 loops=1)

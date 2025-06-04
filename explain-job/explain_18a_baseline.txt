@@ -1,0 +1,24 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 607 bytes
+EXPLAIN
+-> Nested loop inner join  (cost=6.51e+6..6.52e+6 rows=2691 height=1) (actual time=2905..2905 rows=0 loops=1)
+    -> Sort: ci.id  (cost=6.51e+6..6.51e+6 rows=2691 height=1) (actual time=2905..2905 rows=0 loops=1)
+        -> Inner hash join (it1.id = mi.info_type_id) (fill_ratio=5.72205e-06)  (cost=6.37e+6..6.51e+6 rows=2691 height=1) (actual time=2905..2905 rows=0 loops=1)
+            -> Nested loop inner join  (cost=6.37e+6..6.5e+6 rows=26915 height=1) (actual time=2905..2905 rows=0 loops=1)
+                -> Sort: ci.id  (cost=6.37e+6..6.37e+6 rows=4489 height=1) (actual time=2905..2905 rows=0 loops=1)
+                    -> Inner hash join (it2.id = mi_idx.info_type_id) (fill_ratio=5.24521e-06)  (cost=6.36e+6..6.37e+6 rows=4489 height=1) (actual time=2905..2905 rows=0 loops=1)
+                        -> Sort: ci.id  (cost=6.36e+6..6.36e+6 rows=44891 height=1) (actual time=2905..2905 rows=0 loops=1)
+                            -> Nested loop inner join  (cost=141..6.32e+6 rows=44891 height=1) (actual time=2905..2905 rows=0 loops=1)
+                                -> Nested loop inner join  (cost=75.3..5.99e+6 rows=79550 height=1) (actual time=2905..2905 rows=0 loops=1)
+                                    -> Filter: ((n.gender = 'm') and (n.`name` like '%Tim%'))  (cost=86.8..4.06e+6 rows=46804 height=1) (actual time=20..2904 rows=99 loops=1)
+                                        -> Table scan on n  (cost=0.901..3.8e+6 rows=4.21e+6 height=1) (actual time=0.00707..2610 rows=4.17e+6 loops=1)
+                                    -> Filter: (ci.note in ('(producer)','(executive producer)'))  (cost=24.2..41.1 rows=1.7 height=1) (actual time=0.00928..0.00928 rows=0 loops=99)
+                                        -> Index lookup on ci using person_id_cast_info (person_id = n.id)  (cost=4.78..40.6 rows=8.5 height=1) (actual time=0.00474..0.00876 rows=3.07 loops=99)
+                                -> Index lookup on mi_idx using movie_id_movie_info_idx (movie_id = ci.movie_id)  (cost=4.21..4.21 rows=0.564 height=1) (never executed)
+                        -> Hash
+                            -> Filter: (it2.info = 'votes')  (cost=6.94..78.4 rows=11.3 height=1) (actual time=0.0244..0.0262 rows=1 loops=1)
+                                -> Table scan on it2  (cost=0.636..71.9 rows=113 height=1) (actual time=0.00469..0.0208 rows=113 loops=1)
+                -> Index lookup on mi using movie_id_movie_info (movie_id = ci.movie_id)  (cost=4.71..28.2 rows=6 height=1) (never executed)
+            -> Hash
+                -> Filter: (it1.info = 'budget')  (cost=6.94..78.4 rows=11.3 height=1) (actual time=0.0399..0.0413 rows=1 loops=1)
+                    -> Table scan on it1  (cost=0.636..71.9 rows=113 height=1) (actual time=0.0166..0.0348 rows=113 loops=1)
+    -> Single-row index lookup on t using PRIMARY (id = ci.movie_id)  (cost=4.44..4.44 rows=1 height=1) (never executed)

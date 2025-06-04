@@ -1,0 +1,20 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 523 bytes
+EXPLAIN
+-> Sort: ci.id  (cost=32.6e+6..32.6e+6 rows=775205 height=1) (actual time=1396..1396 rows=0 loops=1)
+    -> Inner hash join (mc.movie_id = ci.movie_id) (fill_ratio=0)  (cost=7.84e+6..31.8e+6 rows=775205 height=1) (actual time=1396..1396 rows=0 loops=1)
+        -> Nested loop inner join  (cost=5.79..23e+6 rows=3.98e+6 height=1) (actual time=1109..1109 rows=1 loops=1)
+            -> Filter: (n.`name` like 'X%')  (cost=8.63..4.04e+6 rows=468035 height=1) (actual time=1109..1109 rows=1 loops=1)
+                -> Table scan on n  (cost=0.901..3.8e+6 rows=4.21e+6 height=1) (actual time=0.0173..1020 rows=1.71e+6 loops=1)
+            -> Index lookup on ci using person_id_cast_info (person_id = n.id)  (cost=4.78..40.6 rows=8.5 height=1) (actual time=0.0217..0.0217 rows=1 loops=1)
+        -> Hash
+            -> Inner hash join (mc.company_id = cn.id) (fill_ratio=8.93688)  (cost=574901..7.13e+6 rows=475407 height=1) (actual time=287..287 rows=0 loops=1)
+                -> Nested loop inner join  (cost=13.4..6.39e+6 rows=475407 height=1) (actual time=69.8..69.8 rows=0 loops=1)
+                    -> Nested loop inner join  (cost=8.15..3.68e+6 rows=451537 height=1) (actual time=69.8..69.8 rows=0 loops=1)
+                        -> Nested loop inner join  (cost=3.71..1.67e+6 rows=451537 height=1) (actual time=69.8..69.8 rows=0 loops=1)
+                            -> Filter: (k.keyword = 'character_name-name-in-title')  (cost=6.15..82143 rows=13352 height=1) (actual time=69.8..69.8 rows=0 loops=1)
+                                -> Table scan on k  (cost=0.558..74452 rows=133521 height=1) (actual time=0.0119..62.6 rows=134170 loops=1)
+                            -> Index lookup on mk using keyword_id_movie_keyword (keyword_id = k.id)  (cost=3.53..119 rows=33.8 height=1) (never executed)
+                        -> Single-row index lookup on t using PRIMARY (id = mk.movie_id)  (cost=4.44..4.44 rows=1 height=1) (never executed)
+                    -> Index lookup on mc using movie_id_movie_companies (movie_id = mk.movie_id)  (cost=5.71..6.01 rows=1.05 height=1) (never executed)
+                -> Hash
+                    -> Table scan on cn  (cost=0.935..221027 rows=236270 height=1) (actual time=0.00699..123 rows=234997 loops=1)

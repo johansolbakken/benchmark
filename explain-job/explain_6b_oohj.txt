@@ -1,0 +1,18 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 492 bytes
+EXPLAIN
+-> Sort: ci.id  (cost=34.3e+6..34.3e+6 rows=1.23e+6 height=1) (actual time=2942..2942 rows=0 loops=1)
+    -> Inner hash join (ci.movie_id = t.id) (fill_ratio=0)  (cost=9.03e+6..33.1e+6 rows=1.23e+6 height=1) (actual time=2942..2942 rows=0 loops=1)
+        -> Nested loop inner join  (cost=5.79..23e+6 rows=3.98e+6 height=1) (actual time=2942..2942 rows=0 loops=1)
+            -> Filter: (n.`name` like '%Downey%Robert%')  (cost=8.63..4.04e+6 rows=468035 height=1) (actual time=2942..2942 rows=0 loops=1)
+                -> Table scan on n  (cost=0.901..3.8e+6 rows=4.21e+6 height=1) (actual time=0.022..2502 rows=4.17e+6 loops=1)
+            -> Index lookup on ci using person_id_cast_info (person_id = n.id)  (cost=4.78..40.6 rows=8.5 height=1) (never executed)
+        -> Hash
+            -> Inner hash join (k.id = mk.keyword_id) (fill_ratio=0)  (cost=4.51e+6..7.9e+6 rows=752486 height=1) (never executed)
+                -> Inner hash join (mk.movie_id = t.id) (fill_ratio=0)  (cost=4.33e+6..7.3e+6 rows=1.5e+6 height=1) (never executed)
+                    -> Table scan on mk  (cost=0.406..1.83e+6 rows=4.52e+6 height=1) (never executed)
+                    -> Hash
+                        -> Filter: (t.production_year > 2014)  (cost=3.82..3.11e+6 rows=813005 height=1) (never executed)
+                            -> Table scan on t  (cost=1.22..2.97e+6 rows=2.44e+6 height=1) (never executed)
+                -> Hash
+                    -> Filter: (k.keyword in ('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence'))  (cost=1.23..82143 rows=66760 height=1) (never executed)
+                        -> Table scan on k  (cost=0.558..74452 rows=133521 height=1) (never executed)

@@ -1,0 +1,22 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 694 bytes
+EXPLAIN
+-> Nested loop inner join  (cost=8.66e+6..8.8e+6 rows=30282 height=1) (actual time=26387..26388 rows=114 loops=1)
+    -> Sort: ci.id  (cost=8.66e+6..8.66e+6 rows=30282 height=1) (actual time=26387..26387 rows=114 loops=1)
+        -> Nested loop inner join  (cost=380..8.64e+6 rows=30282 height=1) (actual time=4460..26387 rows=114 loops=1)
+            -> Nested loop inner join  (cost=120..7.37e+6 rows=302823 height=1) (actual time=19.8..26233 rows=54155 loops=1)
+                -> Inner hash join (it1.id = mi.info_type_id) (fill_ratio=5.72205e-06)  (cost=205..4.52e+6 rows=41265 height=1) (actual time=1.14..15447 rows=102516 loops=1)
+                    -> Nested loop inner join  (cost=10.7..4.43e+6 rows=412650 height=1) (actual time=1.09..15422 rows=104892 loops=1)
+                        -> Nested loop inner join  (cost=3.59..494249 rows=137651 height=1) (actual time=0.0473..895 rows=459925 loops=1)
+                            -> Filter: (it2.info = 'votes')  (cost=6.94..78.4 rows=11.3 height=1) (actual time=0.0301..0.0361 rows=1 loops=1)
+                                -> Table scan on it2  (cost=0.636..71.9 rows=113 height=1) (actual time=0.00489..0.0296 rows=113 loops=1)
+                            -> Index lookup on mi_idx using info_type_id_movie_info_idx (info_type_id = it2.id)  (cost=3.59..43732 rows=12181 height=1) (actual time=0.0167..879 rows=459925 loops=1)
+                        -> Filter: (mi.info in ('Horror','Action','Sci-Fi','Thriller','Crime','War'))  (cost=9.53..28.6 rows=3 height=1) (actual time=0.0271..0.0315 rows=0.228 loops=459925)
+                            -> Index lookup on mi using movie_id_movie_info (movie_id = mi_idx.movie_id)  (cost=4.71..28.2 rows=6 height=1) (actual time=0.00324..0.0293 rows=15.1 loops=459925)
+                    -> Hash
+                        -> Filter: (it1.info = 'genres')  (cost=6.94..78.4 rows=11.3 height=1) (actual time=0.0182..0.0414 rows=1 loops=1)
+                            -> Table scan on it1  (cost=0.636..71.9 rows=113 height=1) (actual time=0.0162..0.0348 rows=113 loops=1)
+                -> Filter: (ci.note in ('(writer)','(head writer)','(written by)','(story)','(story editor)'))  (cost=9.4..69 rows=7.34 height=1) (actual time=0.0887..0.105 rows=0.528 loops=102516)
+                    -> Index lookup on ci using movie_id_cast_info (movie_id = mi.movie_id)  (cost=4.64..68.2 rows=14.7 height=1) (actual time=0.00437..0.0991 rows=39.4 loops=102516)
+            -> Filter: (n.gender = 'm')  (cost=4.2..4.2 rows=0.1 height=1) (actual time=0.00276..0.00276 rows=0.00211 loops=54155)
+                -> Single-row index lookup on n using PRIMARY (id = ci.person_id)  (cost=4.14..4.14 rows=1 height=1) (actual time=0.00258..0.00259 rows=1 loops=54155)
+    -> Single-row index lookup on t using PRIMARY (id = ci.movie_id)  (cost=4.44..4.44 rows=1 height=1) (actual time=0.00203..0.00205 rows=1 loops=114)

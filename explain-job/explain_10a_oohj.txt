@@ -1,0 +1,22 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 563 bytes
+EXPLAIN
+-> Inner hash join (ct.id = mc.company_type_id)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=4.95911e-05)  (cost=8.3e+6..8.31e+6 rows=1551 height=1) (actual time=811..812 rows=104 loops=1)
+    -> Nested loop inner join  (cost=8.3e+6..8.31e+6 rows=1551 height=1) (actual time=811..812 rows=104 loops=1)
+        -> Inner hash join (rt.id = ci.role_id)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=5.24521e-06)  (cost=8.3e+6..8.3e+6 rows=1551 height=1) (actual time=811..811 rows=112 loops=1)
+            -> Sort: ci.id  (cost=8.3e+6..8.3e+6 rows=15507 height=1) (actual time=811..811 rows=151 loops=1)
+                -> Nested loop inner join  (cost=534..8.29e+6 rows=15507 height=1) (actual time=27.4..811 rows=151 loops=1)
+                    -> Nested loop inner join  (cost=27.7..2.37e+6 rows=85599 height=1) (actual time=0.188..202 rows=4419 loops=1)
+                        -> Nested loop inner join  (cost=4.74..1.22e+6 rows=256821 height=1) (actual time=0.18..176 rows=8771 loops=1)
+                            -> Filter: (cn.country_code = '[ru]')  (cost=9.93..234637 rows=23627 height=1) (actual time=0.165..151 rows=1352 loops=1)
+                                -> Table scan on cn  (cost=0.935..221027 rows=236270 height=1) (actual time=0.00684..135 rows=234997 loops=1)
+                            -> Index lookup on mc using company_id_movie_companies (company_id = cn.id)  (cost=3.83..41.6 rows=10.9 height=1) (actual time=0.0041..0.0184 rows=6.49 loops=1352)
+                        -> Filter: (t.production_year > 2005)  (cost=4.5..4.5 rows=0.333 height=1) (actual time=0.00279..0.00282 rows=0.504 loops=8771)
+                            -> Single-row index lookup on t using PRIMARY (id = mc.movie_id)  (cost=4.44..4.44 rows=1 height=1) (actual time=0.00266..0.00267 rows=1 loops=8771)
+                    -> Filter: ((ci.note like '%(voice)%') and (ci.note like '%(uncredited)%'))  (cost=69.1..69.1 rows=0.181 height=1) (actual time=0.13..0.138 rows=0.0342 loops=4419)
+                        -> Index lookup on ci using movie_id_cast_info (movie_id = mc.movie_id)  (cost=4.64..68.2 rows=14.7 height=1) (actual time=0.00476..0.129 rows=50.7 loops=4419)
+            -> Hash
+                -> Filter: (rt.`role` = 'actor')  (cost=6.94..8.32 rows=1.2 height=1) (actual time=0.00555..0.00814 rows=1 loops=1)
+                    -> Table scan on rt  (cost=0.636..7.63 rows=12 height=1) (actual time=0.00453..0.00605 rows=12 loops=1)
+        -> Single-row index lookup on chn using PRIMARY (id = ci.person_role_id)  (cost=4.12..4.12 rows=1 height=1) (actual time=0.00189..0.00191 rows=0.929 loops=112)
+    -> Hash
+        -> Table scan on ct  (cost=0.636..2.54 rows=4 height=1) (actual time=0.0143..0.0169 rows=4 loops=1)

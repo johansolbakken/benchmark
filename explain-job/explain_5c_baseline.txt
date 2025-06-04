@@ -1,0 +1,19 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 556 bytes
+EXPLAIN
+-> Sort: t.title  (cost=2.15e+6..2.15e+6 rows=25342 height=1) (actual time=1831..1831 rows=646 loops=1)
+    -> Inner hash join (it.id = mi.info_type_id) (fill_ratio=0.00102472)  (cost=1.88e+6..2.13e+6 rows=25342 height=1) (actual time=1808..1830 rows=646 loops=1)
+        -> Nested loop inner join  (cost=1.88e+6..2.12e+6 rows=25342 height=1) (actual time=1808..1830 rows=646 loops=1)
+            -> Sort: t.title  (cost=1.88e+6..1.88e+6 rows=8453 height=1) (actual time=1808..1808 rows=740 loops=1)
+                -> Nested loop inner join  (cost=225..1.87e+6 rows=8453 height=1) (actual time=1052..1808 rows=740 loops=1)
+                    -> Inner hash join (ct.id = mc.company_type_id) (fill_ratio=1.23978e-05)  (cost=72.7..1.76e+6 rows=25363 height=1) (actual time=1052..1805 rows=798 loops=1)
+                        -> Filter: ((mc.note like '%(USA)%') and (not((mc.note like '%(TV)%'))))  (cost=6.71..1.7e+6 rows=253628 height=1) (actual time=0.0149..1786 rows=295625 loops=1)
+                            -> Table scan on mc  (cost=0.599..1.54e+6 rows=2.57e+6 height=1) (actual time=0.00632..1311 rows=2.61e+6 loops=1)
+                        -> Hash
+                            -> Filter: (ct.kind = 'production companies')  (cost=2.77..2.77 rows=0.4 height=1) (actual time=0.00671..0.0081 rows=1 loops=1)
+                                -> Table scan on ct  (cost=0.636..2.54 rows=4 height=1) (actual time=0.00515..0.00635 rows=4 loops=1)
+                    -> Filter: (t.production_year > 1990)  (cost=4.5..4.5 rows=0.333 height=1) (actual time=0.0031..0.00314 rows=0.927 loops=798)
+                        -> Single-row index lookup on t using PRIMARY (id = mc.movie_id)  (cost=4.44..4.44 rows=1 height=1) (actual time=0.00296..0.00297 rows=1 loops=798)
+            -> Filter: (mi.info in ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','USA','American'))  (cost=9.53..28.6 rows=3 height=1) (actual time=0.0124..0.0294 rows=0.873 loops=740)
+                -> Index lookup on mi using movie_id_movie_info (movie_id = mc.movie_id)  (cost=4.71..28.2 rows=6 height=1) (actual time=0.00451..0.0275 rows=10.9 loops=740)
+        -> Hash
+            -> Table scan on it  (cost=0.636..71.9 rows=113 height=1) (actual time=0.0196..0.0553 rows=113 loops=1)

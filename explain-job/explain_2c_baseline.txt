@@ -1,0 +1,15 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 375 bytes
+EXPLAIN
+-> Sort: t.title  (cost=3.63e+6..3.63e+6 rows=47541 height=1) (actual time=71.1..71.1 rows=0 loops=1)
+    -> Nested loop inner join  (cost=1.6e+6..3.59e+6 rows=47541 height=1) (actual time=71..71 rows=0 loops=1)
+        -> Inner hash join (mk.movie_id = mc.movie_id) (fill_ratio=0)  (cost=1.6e+6..3.38e+6 rows=47541 height=1) (actual time=71..71 rows=0 loops=1)
+            -> Nested loop inner join  (cost=3.71..1.67e+6 rows=451537 height=1) (actual time=71..71 rows=0 loops=1)
+                -> Filter: (k.keyword = 'character_name-name-in-title')  (cost=6.15..82143 rows=13352 height=1) (actual time=71..71 rows=0 loops=1)
+                    -> Table scan on k  (cost=0.558..74452 rows=133521 height=1) (actual time=0.0162..63.6 rows=134170 loops=1)
+                -> Index lookup on mk using keyword_id_movie_keyword (keyword_id = k.id)  (cost=3.53..119 rows=33.8 height=1) (never executed)
+            -> Hash
+                -> Nested loop inner join  (cost=4.74..1.22e+6 rows=256821 height=1) (never executed)
+                    -> Filter: (cn.country_code = '[sm]')  (cost=9.93..234637 rows=23627 height=1) (never executed)
+                        -> Table scan on cn  (cost=0.935..221027 rows=236270 height=1) (never executed)
+                    -> Index lookup on mc using company_id_movie_companies (company_id = cn.id)  (cost=3.83..41.6 rows=10.9 height=1) (never executed)
+        -> Single-row index lookup on t using PRIMARY (id = mk.movie_id)  (cost=4.44..4.44 rows=1 height=1) (never executed)

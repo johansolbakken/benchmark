@@ -1,0 +1,17 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 383 bytes
+EXPLAIN
+-> Nested loop inner join  (cost=436678..461622 rows=5620 height=1) (actual time=65.1..65.1 rows=0 loops=1)
+    -> Sort: t1.title  (cost=436673..436673 rows=5620 height=1) (actual time=65.1..65.1 rows=0 loops=1)
+        -> Nested loop inner join  (cost=102238..432473 rows=5620 height=1) (actual time=65..65 rows=0 loops=1)
+            -> Inner hash join (lt.id = ml.link_type_id) (fill_ratio=0.000145912)  (cost=102233..407525 rows=5620 height=1) (actual time=65..65 rows=0 loops=1)
+                -> Inner hash join (mk.keyword_id = k.id) (fill_ratio=0)  (cost=102194..405544 rows=5620 height=1) (actual time=65..65 rows=0 loops=1)
+                    -> Nested loop inner join  (cost=5.18..290972 rows=56200 height=1) (actual time=0.425..0.425 rows=1 loops=1)
+                        -> Table scan on ml  (cost=0.47..14271 rows=30360 height=1) (actual time=0.41..0.41 rows=1 loops=1)
+                        -> Index lookup on mk using movie_id_movie_keyword (movie_id = ml.movie_id)  (cost=4.92..9.11 rows=1.85 height=1) (actual time=0.0144..0.0144 rows=1 loops=1)
+                    -> Hash
+                        -> Filter: (k.keyword = 'character_name-name-in-title')  (cost=6.15..82143 rows=13352 height=1) (actual time=64.6..64.6 rows=0 loops=1)
+                            -> Table scan on k  (cost=0.558..74452 rows=133521 height=1) (actual time=0.00412..56.9 rows=134170 loops=1)
+                -> Hash
+                    -> Table scan on lt  (cost=0.636..11.4 rows=18 height=1) (actual time=0.0156..0.0186 rows=18 loops=1)
+            -> Single-row index lookup on t1 using PRIMARY (id = ml.movie_id)  (cost=4.44..4.44 rows=1 height=1) (never executed)
+    -> Single-row index lookup on t2 using PRIMARY (id = ml.linked_movie_id)  (cost=4.44..4.44 rows=1 height=1) (never executed)

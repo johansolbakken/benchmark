@@ -1,0 +1,17 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 522 bytes
+EXPLAIN
+-> Inner hash join (ct.id = mc.company_type_id)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=1.23978e-05)  (cost=1.22e+6..1.22e+6 rows=1431 height=1) (actual time=0.359..0.384 rows=10 loops=1)
+    -> Sort: t.title  (cost=1.22e+6..1.22e+6 rows=14313 height=1) (actual time=0.334..0.354 rows=73 loops=1)
+        -> Nested loop inner join  (cost=84.3..1.21e+6 rows=14313 height=1) (actual time=0.103..0.303 rows=73 loops=1)
+            -> Nested loop inner join  (cost=72.8..1.11e+6 rows=15293 height=1) (actual time=0.0914..0.117 rows=4 loops=1)
+                -> Nested loop inner join  (cost=3.59..494249 rows=137651 height=1) (actual time=0.05..0.071 rows=10 loops=1)
+                    -> Filter: (it.info = 'bottom 10 rank')  (cost=6.94..78.4 rows=11.3 height=1) (actual time=0.0339..0.0347 rows=1 loops=1)
+                        -> Table scan on it  (cost=0.636..71.9 rows=113 height=1) (actual time=0.00667..0.0288 rows=113 loops=1)
+                    -> Index lookup on mi_idx using info_type_id_movie_info_idx (info_type_id = it.id)  (cost=3.59..43732 rows=12181 height=1) (actual time=0.0156..0.0352 rows=10 loops=1)
+                -> Filter: (t.production_year between 2005 and 2010)  (cost=4.5..4.5 rows=0.111 height=1) (actual time=0.00443..0.00445 rows=0.4 loops=10)
+                    -> Single-row index lookup on t using PRIMARY (id = mi_idx.movie_id)  (cost=4.44..4.44 rows=1 height=1) (actual time=0.00423..0.00425 rows=1 loops=10)
+            -> Filter: (not((mc.note like '%(as Metro-Goldwyn-Mayer Pictures)%')))  (cost=6.07..6.07 rows=0.936 height=1) (actual time=0.00786..0.0458 rows=18.2 loops=4)
+                -> Index lookup on mc using movie_id_movie_companies (movie_id = mi_idx.movie_id)  (cost=5.71..6.01 rows=1.05 height=1) (actual time=0.00717..0.0402 rows=18.2 loops=4)
+    -> Hash
+        -> Filter: (ct.kind = 'production companies')  (cost=2.77..2.77 rows=0.4 height=1) (actual time=0.0162..0.0182 rows=1 loops=1)
+            -> Table scan on ct  (cost=0.636..2.54 rows=4 height=1) (actual time=0.0141..0.0164 rows=4 loops=1)

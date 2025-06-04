@@ -1,0 +1,17 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 543 bytes
+EXPLAIN
+-> Sort: t.title  (cost=1.34e+6..1.34e+6 rows=477 height=1) (actual time=18.8..18.8 rows=3 loops=1)
+    -> Nested loop inner join  (cost=2813..1.34e+6 rows=477 height=1) (actual time=5.46..18.7 rows=3 loops=1)
+        -> Inner hash join (ct.id = mc.company_type_id) (fill_ratio=1.23978e-05)  (cost=935..1.33e+6 rows=1431 height=1) (actual time=0.573..18.7 rows=23 loops=1)
+            -> Nested loop inner join  (cost=93..1.33e+6 rows=14313 height=1) (actual time=0.548..18.7 rows=23 loops=1)
+                -> Nested loop inner join  (cost=3.59..494249 rows=137651 height=1) (actual time=0.0502..0.565 rows=250 loops=1)
+                    -> Filter: (it.info = 'top 250 rank')  (cost=6.94..78.4 rows=11.3 height=1) (actual time=0.0335..0.0355 rows=1 loops=1)
+                        -> Table scan on it  (cost=0.636..71.9 rows=113 height=1) (actual time=0.00616..0.0292 rows=113 loops=1)
+                    -> Index lookup on mi_idx using info_type_id_movie_info_idx (info_type_id = it.id)  (cost=3.59..43732 rows=12181 height=1) (actual time=0.0161..0.52 rows=250 loops=1)
+                -> Filter: ((mc.note like '%(co-production)%') and (not((mc.note like '%(as Metro-Goldwyn-Mayer Pictures)%'))))  (cost=6.08..6.08 rows=0.104 height=1) (actual time=0.0721..0.0724 rows=0.092 loops=250)
+                    -> Index lookup on mc using movie_id_movie_companies (movie_id = mi_idx.movie_id)  (cost=5.71..6.01 rows=1.05 height=1) (actual time=0.00469..0.062 rows=33.2 loops=250)
+            -> Hash
+                -> Filter: (ct.kind = 'production companies')  (cost=2.77..2.77 rows=0.4 height=1) (actual time=0.0164..0.0185 rows=1 loops=1)
+                    -> Table scan on ct  (cost=0.636..2.54 rows=4 height=1) (actual time=0.0145..0.0167 rows=4 loops=1)
+        -> Filter: (t.production_year > 2010)  (cost=4.5..4.5 rows=0.333 height=1) (actual time=0.00177..0.00178 rows=0.13 loops=23)
+            -> Single-row index lookup on t using PRIMARY (id = mi_idx.movie_id)  (cost=4.44..4.44 rows=1 height=1) (actual time=0.00162..0.00164 rows=1 loops=23)

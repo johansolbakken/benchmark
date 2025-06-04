@@ -1,0 +1,27 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 911 bytes
+EXPLAIN
+-> Inner hash join (it1.id = mi.info_type_id)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=7.15256e-06)  (cost=713079..725705 rows=50.5 height=1) (actual time=1420..1420 rows=1 loops=1)
+    -> Nested loop inner join  (cost=712754..725498 rows=505 height=1) (actual time=1420..1420 rows=1 loops=1)
+        -> Nested loop inner join  (cost=712776..720684 rows=169 height=1) (actual time=1420..1420 rows=1 loops=1)
+            -> Nested loop inner join  (cost=712735..717883 rows=843 height=1) (actual time=1420..1420 rows=4 loops=1)
+                -> Inner hash join (kt.id = t.kind_id)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=5.24521e-06)  (cost=712731..713735 rows=455 height=1) (actual time=1420..1420 rows=4 loops=1)
+                    -> Sort: t.title  (cost=712724..712724 rows=4551 height=1) (actual time=1420..1420 rows=52 loops=1)
+                        -> Nested loop inner join  (cost=156..709367 rows=4551 height=1) (actual time=27.7..1420 rows=52 loops=1)
+                            -> Nested loop inner join  (cost=10.9..502179 rows=45879 height=1) (actual time=0.0786..863 rows=259848 loops=1)
+                                -> Filter: (it2.info = 'rating')  (cost=6.94..78.4 rows=11.3 height=1) (actual time=0.0583..0.0645 rows=1 loops=1)
+                                    -> Table scan on it2  (cost=0.636..71.9 rows=113 height=1) (actual time=0.00508..0.0425 rows=113 loops=1)
+                                -> Filter: (mi_idx.info > '6.0')  (cost=10.9..44434 rows=4060 height=1) (actual time=0.0199..852 rows=259848 loops=1)
+                                    -> Index lookup on mi_idx using info_type_id_movie_info_idx (info_type_id = it2.id)  (cost=3.59..43732 rows=12181 height=1) (actual time=0.0155..811 rows=459925 loops=1)
+                            -> Filter: ((t.production_year > 2010) and ((t.title like '%murder%') or (t.title like '%Murder%') or (t.title like '%Mord%')))  (cost=4.52..4.52 rows=0.0992 height=1) (actual time=0.00208..0.00208 rows=200e-6 loops=259848)
+                                -> Single-row index lookup on t using PRIMARY (id = mi_idx.movie_id)  (cost=4.44..4.44 rows=1 height=1) (actual time=0.0019..0.00191 rows=1 loops=259848)
+                    -> Hash
+                        -> Filter: (kt.kind = 'movie')  (cost=3.82..3.82 rows=0.7 height=1) (actual time=0.00321..0.00449 rows=1 loops=1)
+                            -> Table scan on kt  (cost=0.488..3.42 rows=7 height=1) (actual time=0.00301..0.00389 rows=7 loops=1)
+                -> Index lookup on mk using movie_id_movie_keyword (movie_id = mi_idx.movie_id)  (cost=4.92..9.11 rows=1.85 height=1) (actual time=0.00628..0.00701 rows=1 loops=4)
+            -> Filter: (k.keyword in ('murder','murder-in-title'))  (cost=3.32..3.32 rows=0.2 height=1) (actual time=0.0038..0.00382 rows=0.25 loops=4)
+                -> Single-row index lookup on k using PRIMARY (id = mk.keyword_id)  (cost=3.27..3.27 rows=1 height=1) (actual time=0.00324..0.00325 rows=1 loops=4)
+        -> Filter: (mi.info in ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','USA','American'))  (cost=9.53..28.6 rows=3 height=1) (actual time=0.0202..0.0417 rows=1 loops=1)
+            -> Index lookup on mi using movie_id_movie_info (movie_id = mi_idx.movie_id)  (cost=4.71..28.2 rows=6 height=1) (actual time=0.0101..0.0393 rows=11 loops=1)
+    -> Hash
+        -> Filter: (it1.info = 'countries')  (cost=6.94..78.4 rows=11.3 height=1) (actual time=0.0194..0.0455 rows=1 loops=1)
+            -> Table scan on it1  (cost=0.636..71.9 rows=113 height=1) (actual time=0.0168..0.0391 rows=113 loops=1)

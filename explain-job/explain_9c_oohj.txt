@@ -1,0 +1,23 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 674 bytes
+EXPLAIN
+-> Nested loop inner join  (cost=4.64e+6..4.68e+6 rows=356 height=1) (actual time=3003..3005 rows=103 loops=1)
+    -> Nested loop inner join  (cost=4.64e+6..4.68e+6 rows=356 height=1) (actual time=3003..3005 rows=146 loops=1)
+        -> Nested loop inner join  (cost=4.64e+6..4.68e+6 rows=356 height=1) (actual time=3003..3004 rows=146 loops=1)
+            -> Nested loop inner join  (cost=4.64e+6..4.67e+6 rows=3564 height=1) (actual time=3003..3004 rows=290 loops=1)
+                -> Inner hash join (ci.role_id = rt.id)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=6.19888e-06)  (cost=4.64e+6..4.65e+6 rows=3385 height=1) (actual time=3003..3003 rows=86 loops=1)
+                    -> Sort: ci.id  (cost=4.64e+6..4.64e+6 rows=33853 height=1) (actual time=3003..3003 rows=86 loops=1)
+                        -> Nested loop inner join  (cost=136..4.61e+6 rows=33853 height=1) (actual time=1219..3003 rows=86 loops=1)
+                            -> Nested loop inner join  (cost=422..4.2e+6 rows=9959 height=1) (actual time=1212..2918 rows=1292 loops=1)
+                                -> Filter: ((n.gender = 'f') and (n.`name` like '%An%'))  (cost=86.8..4.06e+6 rows=46804 height=1) (actual time=1210..2906 rows=5039 loops=1)
+                                    -> Table scan on n  (cost=0.901..3.8e+6 rows=4.21e+6 height=1) (actual time=0.00789..2625 rows=4.17e+6 loops=1)
+                                -> Index lookup on an using person_id_aka_name (person_id = n.id)  (cost=3..3 rows=0.213 height=1) (actual time=0.00183..0.00214 rows=0.256 loops=5039)
+                            -> Filter: (ci.note in ('(voice)','(voice: Japanese version)','(voice) (uncredited)','(voice: English version)'))  (cost=12.1..41.1 rows=3.4 height=1) (actual time=0.0606..0.0661 rows=0.0666 loops=1292)
+                                -> Index lookup on ci using person_id_cast_info (person_id = an.person_id)  (cost=4.78..40.6 rows=8.5 height=1) (actual time=0.00369..0.0615 rows=32.6 loops=1292)
+                    -> Hash
+                        -> Filter: (rt.`role` = 'actress')  (cost=6.94..8.32 rows=1.2 height=1) (actual time=0.0166..0.0194 rows=1 loops=1)
+                            -> Table scan on rt  (cost=0.636..7.63 rows=12 height=1) (actual time=0.0149..0.0175 rows=12 loops=1)
+                -> Index lookup on mc using movie_id_movie_companies (movie_id = ci.movie_id)  (cost=5.71..6.01 rows=1.05 height=1) (actual time=0.00346..0.00861 rows=3.37 loops=86)
+            -> Filter: (cn.country_code = '[us]')  (cost=3.68..3.68 rows=0.1 height=1) (actual time=0.00197..0.00199 rows=0.503 loops=290)
+                -> Single-row index lookup on cn using PRIMARY (id = mc.company_id)  (cost=3.62..3.62 rows=1 height=1) (actual time=0.00181..0.00183 rows=1 loops=290)
+        -> Single-row index lookup on t using PRIMARY (id = mc.movie_id)  (cost=4.44..4.44 rows=1 height=1) (actual time=533e-6..547e-6 rows=1 loops=146)
+    -> Single-row index lookup on chn using PRIMARY (id = ci.person_role_id)  (cost=4.12..4.12 rows=1 height=1) (actual time=468e-6..477e-6 rows=0.705 loops=146)

@@ -1,0 +1,19 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 490 bytes
+EXPLAIN
+-> Nested loop inner join  (cost=19.6e+6..20.2e+6 rows=80203 height=1) (actual time=5247..5603 rows=315842 loops=1)
+    -> Nested loop inner join  (cost=19.6e+6..19.9e+6 rows=80203 height=1) (actual time=5247..5538 rows=315842 loops=1)
+        -> Sort: ci.id  (cost=19.6e+6..19.6e+6 rows=80203 height=1) (actual time=5247..5366 rows=315842 loops=1)
+            -> Nested loop inner join  (cost=1.6e+6..19.5e+6 rows=80203 height=1) (actual time=2855..5000 rows=315842 loops=1)
+                -> Inner hash join (mc.movie_id = ci.movie_id) (fill_ratio=62.9681)  (cost=1.6e+6..18.4e+6 rows=376936 height=1) (actual time=2844..3973 rows=278727 loops=1)
+                    -> Nested loop inner join  (cost=4.46..16e+6 rows=3.58e+6 height=1) (actual time=0.0366..511 rows=276495 loops=1)
+                        -> Filter: (rt.`role` = 'costume designer')  (cost=6.94..8.32 rows=1.2 height=1) (actual time=0.0186..0.0249 rows=1 loops=1)
+                            -> Table scan on rt  (cost=0.636..7.63 rows=12 height=1) (actual time=0.0156..0.0202 rows=12 loops=1)
+                        -> Index lookup on ci using role_id_cast_info (role_id = rt.id)  (cost=4.46..13.3e+6 rows=2.98e+6 height=1) (actual time=0.0174..502 rows=276495 loops=1)
+                    -> Hash
+                        -> Nested loop inner join  (cost=4.74..1.22e+6 rows=256821 height=1) (actual time=0.0161..2561 rows=1.13e+6 loops=1)
+                            -> Filter: (cn.country_code = '[us]')  (cost=9.93..234637 rows=23627 height=1) (actual time=0.00625..164 rows=83401 loops=1)
+                                -> Table scan on cn  (cost=0.935..221027 rows=236270 height=1) (actual time=0.006..142 rows=234997 loops=1)
+                            -> Index lookup on mc using company_id_movie_companies (company_id = cn.id)  (cost=3.83..41.6 rows=10.9 height=1) (actual time=0.00301..0.0282 rows=13.6 loops=83401)
+                -> Index lookup on an1 using person_id_aka_name (person_id = ci.person_id)  (cost=3..3 rows=0.213 height=1) (actual time=0.00233..0.00358 rows=1.13 loops=278727)
+        -> Single-row index lookup on t using PRIMARY (id = mc.movie_id)  (cost=4.44..4.44 rows=1 height=1) (actual time=437e-6..451e-6 rows=1 loops=315842)
+    -> Single-row index lookup on n1 using PRIMARY (id = ci.person_id)  (cost=4.14..4.14 rows=1 height=1) (actual time=99.6e-6..114e-6 rows=1 loops=315842)

@@ -1,0 +1,13 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 434 bytes
+EXPLAIN
+-> Nested loop inner join  (cost=4.26e+6..9.04e+6 rows=501241 height=1) (actual time=142..342 rows=206 loops=1)
+    -> Sort: t.title  (cost=4.26e+6..4.26e+6 rows=167202 height=1) (actual time=141..141 rows=2206 loops=1)
+        -> Nested loop inner join  (cost=24.6..4.11e+6 rows=167202 height=1) (actual time=0.719..139 rows=2206 loops=1)
+            -> Nested loop inner join  (cost=3.69..1.85e+6 rows=501657 height=1) (actual time=0.347..110 rows=12951 loops=1)
+                -> Filter: (k.keyword like '%sequel%')  (cost=5.54..82143 rows=14834 height=1) (actual time=0.26..84.3 rows=30 loops=1)
+                    -> Table scan on k  (cost=0.558..74452 rows=133521 height=1) (actual time=0.0155..61.8 rows=134170 loops=1)
+                -> Index lookup on mk using keyword_id_movie_keyword (keyword_id = k.id)  (cost=3.53..119 rows=33.8 height=1) (actual time=0.0409..0.829 rows=432 loops=30)
+            -> Filter: (t.production_year > 2005)  (cost=4.5..4.5 rows=0.333 height=1) (actual time=0.00222..0.00223 rows=0.17 loops=12951)
+                -> Single-row index lookup on t using PRIMARY (id = mk.movie_id)  (cost=4.44..4.44 rows=1 height=1) (actual time=0.00211..0.00212 rows=1 loops=12951)
+    -> Filter: (mi.info in ('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German'))  (cost=9.53..28.6 rows=3 height=1) (actual time=0.086..0.0911 rows=0.0934 loops=2206)
+        -> Index lookup on mi using movie_id_movie_info (movie_id = mk.movie_id)  (cost=4.71..28.2 rows=6 height=1) (actual time=0.00376..0.084 rows=45.1 loops=2206)

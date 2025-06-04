@@ -1,0 +1,37 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 1133 bytes
+EXPLAIN
+-> Nested loop inner join  (cost=103885..104021 rows=4.27 height=1) (actual time=2359..2602 rows=5339 loops=1)
+    -> Nested loop inner join  (cost=103881..104004 rows=4.27 height=1) (actual time=2359..2593 rows=5339 loops=1)
+        -> Sort: ci.id  (cost=103843..103843 rows=38.4 height=1) (actual time=2359..2443 rows=188106 loops=1)
+            -> Nested loop inner join  (cost=2806..103823 rows=38.4 height=1) (actual time=2.19..2184 rows=188106 loops=1)
+                -> Nested loop inner join  (cost=39656..103645 rows=2.62 height=1) (actual time=2.18..1691 rows=1249 loops=1)
+                    -> Nested loop inner join  (cost=19878..103628 rows=5.24 height=1) (actual time=1.33..1198 rows=289641 loops=1)
+                        -> Inner hash join (kt.id = t.kind_id) (fill_ratio=5.24521e-06)  (cost=36697..103602 rows=2.83 height=1) (actual time=1.31..702 rows=3958 loops=1)
+                            -> Nested loop inner join  (cost=3761..103591 rows=28.3 height=1) (actual time=1.23..701 rows=12642 loops=1)
+                                -> Inner hash join (it2.id = mi_idx.info_type_id) (fill_ratio=5.72205e-06)  (cost=1317..103209 rows=84.9 height=1) (actual time=1.11..553 rows=61559 loops=1)
+                                    -> Nested loop inner join  (cost=128..102926 rows=849 height=1) (actual time=1.07..535 rows=184902 loops=1)
+                                        -> Inner hash join (cct2.id = cc.status_id) (fill_ratio=1.7643e-05)  (cost=71..96588 rows=1504 height=1) (actual time=1.06..58.6 rows=85941 loops=1)
+                                            -> Inner hash join (cct1.id = cc.subject_id) (fill_ratio=4.76837e-06)  (cost=10.3..93570 rows=13536 height=1) (actual time=1.05..48.4 rows=85941 loops=1)
+                                                -> Table scan on cc  (cost=0.47..63625 rows=135359 height=1) (actual time=1.05..32.5 rows=135086 loops=1)
+                                                -> Hash
+                                                    -> Filter: (cct1.kind = 'cast')  (cost=2.77..2.77 rows=0.4 height=1) (actual time=0.00295..0.00396 rows=1 loops=1)
+                                                        -> Table scan on cct1  (cost=0.636..2.54 rows=4 height=1) (actual time=0.00242..0.00316 rows=4 loops=1)
+                                            -> Hash
+                                                -> Filter: (cct2.kind like '%complete%')  (cost=2.77..2.77 rows=0.444 height=1) (actual time=0.00415..0.00482 rows=2 loops=1)
+                                                    -> Table scan on cct2  (cost=0.636..2.54 rows=4 height=1) (actual time=0.00277..0.00342 rows=4 loops=1)
+                                        -> Index lookup on mi_idx using movie_id_movie_info_idx (movie_id = cc.movie_id)  (cost=4.21..4.21 rows=0.564 height=1) (actual time=0.00259..0.0054 rows=2.15 loops=85941)
+                                    -> Hash
+                                        -> Filter: (it2.info = 'rating')  (cost=6.94..78.4 rows=11.3 height=1) (actual time=0.0255..0.0273 rows=1 loops=1)
+                                            -> Table scan on it2  (cost=0.636..71.9 rows=113 height=1) (actual time=0.00561..0.0221 rows=113 loops=1)
+                                -> Filter: (t.production_year > 2000)  (cost=4.5..4.5 rows=0.333 height=1) (actual time=0.00229..0.0023 rows=0.205 loops=61559)
+                                    -> Single-row index lookup on t using PRIMARY (id = mi_idx.movie_id)  (cost=4.44..4.44 rows=1 height=1) (actual time=0.00216..0.00217 rows=1 loops=61559)
+                            -> Hash
+                                -> Filter: (kt.kind = 'movie')  (cost=3.82..3.82 rows=0.7 height=1) (actual time=0.016..0.0191 rows=1 loops=1)
+                                    -> Table scan on kt  (cost=0.488..3.42 rows=7 height=1) (actual time=0.015..0.0175 rows=7 loops=1)
+                        -> Index lookup on mk using movie_id_movie_keyword (movie_id = mi_idx.movie_id)  (cost=4.92..9.11 rows=1.85 height=1) (actual time=0.0066..0.123 rows=73.2 loops=3958)
+                    -> Filter: (k.keyword in ('superhero','marvel-comics','based-on-comic','tv-special','fight','violence','magnet','web','claw','laser'))  (cost=3.32..3.32 rows=0.5 height=1) (actual time=0.00163..0.00163 rows=0.00431 loops=289641)
+                        -> Single-row index lookup on k using PRIMARY (id = mk.keyword_id)  (cost=3.27..3.27 rows=1 height=1) (actual time=0.00141..0.00143 rows=1 loops=289641)
+                -> Index lookup on ci using movie_id_cast_info (movie_id = cc.movie_id)  (cost=4.64..68.2 rows=14.7 height=1) (actual time=0.00543..0.389 rows=151 loops=1249)
+        -> Filter: (chn.`name` like '%man%')  (cost=4.17..4.17 rows=0.111 height=1) (actual time=740e-6..741e-6 rows=0.0284 loops=188106)
+            -> Single-row index lookup on chn using PRIMARY (id = ci.person_role_id)  (cost=4.12..4.12 rows=1 height=1) (actual time=614e-6..620e-6 rows=0.391 loops=188106)
+    -> Single-row index lookup on n using PRIMARY (id = ci.person_id)  (cost=4.14..4.14 rows=1 height=1) (actual time=0.00164..0.00165 rows=1 loops=5339)

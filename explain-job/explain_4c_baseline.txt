@@ -1,0 +1,16 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 422 bytes
+EXPLAIN
+-> Sort: t.title  (cost=944194..944194 rows=3145 height=1) (actual time=8862..8864 rows=4581 loops=1)
+    -> Nested loop inner join  (cost=300..941928 rows=3145 height=1) (actual time=2.85..8850 rows=4581 loops=1)
+        -> Nested loop inner join  (cost=30..847852 rows=28306 height=1) (actual time=0.105..5635 rows=1.97e+6 loops=1)
+            -> Nested loop inner join  (cost=46.3..708486 rows=15291 height=1) (actual time=0.0956..1887 rows=285875 loops=1)
+                -> Nested loop inner join  (cost=10.9..502179 rows=45879 height=1) (actual time=0.086..910 rows=448969 loops=1)
+                    -> Filter: (it.info = 'rating')  (cost=6.94..78.4 rows=11.3 height=1) (actual time=0.0673..0.0729 rows=1 loops=1)
+                        -> Table scan on it  (cost=0.636..71.9 rows=113 height=1) (actual time=0.0183..0.0558 rows=113 loops=1)
+                    -> Filter: (mi_idx.info > '2.0')  (cost=10.9..44434 rows=4060 height=1) (actual time=0.018..893 rows=448969 loops=1)
+                        -> Index lookup on mi_idx using info_type_id_movie_info_idx (info_type_id = it.id)  (cost=3.59..43732 rows=12181 height=1) (actual time=0.0172..848 rows=459925 loops=1)
+                -> Filter: (t.production_year > 1990)  (cost=4.5..4.5 rows=0.333 height=1) (actual time=0.00206..0.00209 rows=0.637 loops=448969)
+                    -> Single-row index lookup on t using PRIMARY (id = mi_idx.movie_id)  (cost=4.44..4.44 rows=1 height=1) (actual time=0.00195..0.00196 rows=1 loops=448969)
+            -> Index lookup on mk using movie_id_movie_keyword (movie_id = mi_idx.movie_id)  (cost=4.92..9.11 rows=1.85 height=1) (actual time=0.00326..0.0128 rows=6.89 loops=285875)
+        -> Filter: (k.keyword like '%sequel%')  (cost=3.32..3.32 rows=0.111 height=1) (actual time=0.00157..0.00157 rows=0.00232 loops=1.97e+6)
+            -> Single-row index lookup on k using PRIMARY (id = mk.keyword_id)  (cost=3.27..3.27 rows=1 height=1) (actual time=0.00135..0.00137 rows=1 loops=1.97e+6)
