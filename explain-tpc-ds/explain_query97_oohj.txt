@@ -1,0 +1,32 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1901 bytes
+EXPLAIN
+-> Limit: 100 row(s)  (cost=2.66e+6..2.66e+6 rows=1 height=1) (actual time=0.424..0.424 rows=1 loops=1)
+    -> Aggregate: sum((case when ((u.store_customer_sk is not null) and (u.catalog_customer_sk is null)) then 1 else 0 end)), sum((case when ((u.store_customer_sk is null) and (u.catalog_customer_sk is not null)) then 1 else 0 end)), sum((case when ((u.store_customer_sk is not null) and (u.catalog_customer_sk is not null)) then 1 else 0 end))  (cost=2.66e+6..2.66e+6 rows=1 height=1) (actual time=0.424..0.424 rows=1 loops=1)
+        -> Table scan on u  (cost=2.64e+6..2.64e+6 rows=49011 height=1) (actual time=0.423..0.423 rows=0 loops=1)
+            -> Union all materialize  (cost=2.64e+6..2.64e+6 rows=49011 height=1) (actual time=0.423..0.423 rows=0 loops=1)
+                -> Left hash join (s.customer_sk = c.customer_sk), (s.item_sk = c.item_sk) (fill_ratio=0)  (cost=1.3e+6..1.32e+6 rows=49005 height=1) (actual time=0.413..0.413 rows=0 loops=1)
+                    -> Table scan on s  (cost=1.3e+6..1.31e+6 rows=49005 height=1) (actual time=0.412..0.412 rows=0 loops=1)
+                        -> Materialize CTE ssci if needed  (cost=1.3e+6..1.3e+6 rows=49005 height=1) (actual time=0.412..0.412 rows=0 loops=1)
+                            -> Table scan on <temporary>  (cost=1.28e+6..1.29e+6 rows=49005 height=1) (actual time=0.411..0.411 rows=0 loops=1)
+                                -> Temporary table with deduplication  (cost=1.28e+6..1.28e+6 rows=49005 height=1) (actual time=0.41..0.41 rows=0 loops=1)
+                                    -> Inner hash join (ss.ss_sold_date_sk = d.d_date_sk) (fill_ratio=0)  (cost=8.4..1.19e+6 rows=162698 height=1) (actual time=0.41..0.41 rows=0 loops=1)
+                                        -> Table scan on ss  (cost=0.59..863808 rows=1.46e+6 height=1) (actual time=0.401..0.401 rows=1 loops=1)
+                                        -> Hash
+                                            -> Filter: (d.d_month_seq between 1212 and <cache>((1212 + 11)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.007..0.007 rows=0 loops=1)
+                                                -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00354..0.00563 rows=1 loops=1)
+                    -> Hash
+                        -> Table scan on c  (cost=5.43..5.43 rows=0.111 height=1) (never executed)
+                            -> Materialize CTE csci if needed (query plan printed elsewhere)  (cost=5.41..5.41 rows=0.111 height=1) (never executed)
+                -> Filter: (s2.customer_sk is null)  (cost=1.3e+6..1.3e+6 rows=5.44 height=1) (actual time=0.00729..0.00729 rows=0 loops=1)
+                    -> Nested loop left join  (cost=1.3e+6..1.3e+6 rows=54.4 height=1) (actual time=0.00721..0.00721 rows=0 loops=1)
+                        -> Table scan on c2  (cost=5.43..5.43 rows=0.111 height=1) (actual time=0.00688..0.00688 rows=0 loops=1)
+                            -> Materialize CTE csci if needed  (cost=5.41..5.41 rows=0.111 height=1) (actual time=0.00675..0.00675 rows=0 loops=1)
+                                -> Group (no aggregates)  (cost=2.39..2.39 rows=0.111 height=1) (actual time=0.00446..0.00446 rows=0 loops=1)
+                                    -> Inner hash join (cs.cs_sold_date_sk = d.d_date_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=2.35..2.35 rows=0.111 height=1) (actual time=0.00417..0.00417 rows=0 loops=1)
+                                        -> Sort: cs.cs_bill_customer_sk, cs.cs_item_sk  (cost=1.05..1.05 rows=1 height=1) (never executed)
+                                            -> Table scan on cs  (cost=0.7..0.7 rows=1 height=1) (never executed)
+                                        -> Hash
+                                            -> Filter: (d.d_month_seq between 1212 and <cache>((1212 + 11)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.00325..0.00325 rows=0 loops=1)
+                                                -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00283..0.00304 rows=1 loops=1)
+                        -> Covering index lookup on s2 using <auto_key0> (customer_sk = c2.customer_sk, item_sk = c2.item_sk)  (cost=1.3e+6..1.3e+6 rows=490 height=1) (never executed)
+                            -> Materialize CTE ssci if needed (query plan printed elsewhere)  (cost=1.3e+6..1.3e+6 rows=49005 height=1) (never executed)

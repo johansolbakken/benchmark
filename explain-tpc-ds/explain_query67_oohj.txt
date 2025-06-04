@@ -1,0 +1,22 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1343 bytes
+EXPLAIN
+-> Sort: dw2.i_category, dw2.i_class, dw2.i_brand, dw2.i_product_name, dw2.d_year, dw2.d_qoy, dw2.d_moy, dw2.s_store_id, dw2.sumsales, dw2.rk, limit input to 100 row(s) per chunk  (cost=1.56e+6..1.56e+6 rows=100 height=1) (actual time=0.0609..0.0609 rows=1 loops=1)
+    -> Filter: (dw2.rk <= 100)  (cost=1.55e+6..1.55e+6 rows=4869 height=1) (actual time=0.0588..0.0589 rows=1 loops=1)
+        -> Table scan on dw2  (cost=1.55e+6..1.55e+6 rows=14608 height=1) (actual time=0.0585..0.0585 rows=1 loops=1)
+            -> Materialize  (cost=1.55e+6..1.55e+6 rows=14608 height=1) (actual time=0.0582..0.0582 rows=1 loops=1)
+                -> Window aggregate: rank() OVER (PARTITION BY dw1.i_category ORDER BY dw1.sumsales desc )   (cost=1.54e+6..1.54e+6 rows=14608 height=1) (actual time=0.0552..0.0554 rows=1 loops=1)
+                    -> Sort: dw1.i_category, dw1.sumsales DESC  (cost=1.54e+6..1.54e+6 rows=14608 height=1) (actual time=0.0545..0.0545 rows=1 loops=1)
+                        -> Table scan on dw1  (cost=1.53e+6..1.53e+6 rows=14608 height=1) (actual time=0.0525..0.0525 rows=1 loops=1)
+                            -> Materialize  (cost=1.53e+6..1.53e+6 rows=14608 height=1) (actual time=0.0519..0.0519 rows=1 loops=1)
+                                -> Group aggregate with rollup: sum(coalesce((store_sales.ss_sales_price * store_sales.ss_quantity),0))  (cost=1.48e+6..1.52e+6 rows=14608 height=1) (actual time=0.0483..0.0485 rows=1 loops=1)
+                                    -> Sort: item.i_category, item.i_class, item.i_brand, item.i_product_name, date_dim.d_year, date_dim.d_qoy, date_dim.d_moy, store.s_store_id  (cost=1.48e+6..1.48e+6 rows=162698 height=1) (actual time=0.0478..0.0478 rows=0 loops=1)
+                                        -> Inner hash join (store_sales.ss_store_sk = store.s_store_sk) (fill_ratio=2.09808e-05)  (cost=25.9..1.33e+6 rows=162698 height=1) (actual time=0.0456..0.0456 rows=0 loops=1)
+                                            -> Inner hash join (store_sales.ss_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=9.07..1.28e+6 rows=162698 height=1) (actual time=0.0245..0.0245 rows=0 loops=1)
+                                                -> Nested loop inner join  (cost=0.649..950924 rows=1.46e+6 height=1) (actual time=0.0201..0.0201 rows=1 loops=1)
+                                                    -> Table scan on item  (cost=5.6..1401 rows=250 height=1) (actual time=0.00883..0.00883 rows=1 loops=1)
+                                                    -> Index lookup on store_sales using PRIMARY (ss_item_sk = item.i_item_sk)  (cost=0.648..3798 rows=5858 height=1) (actual time=0.0111..0.0111 rows=1 loops=1)
+                                                -> Hash
+                                                    -> Filter: (date_dim.d_month_seq between 1212 and <cache>((1212 + 11)))  (cost=1.05..1.05 rows=0.111 height=1) (actual time=0.00358..0.00358 rows=0 loops=1)
+                                                        -> Table scan on date_dim  (cost=0.995..0.995 rows=1 height=1) (actual time=0.00213..0.0025 rows=1 loops=1)
+                                            -> Hash
+                                                -> Table scan on store  (cost=6.76..13.5 rows=2 height=1) (actual time=0.0155..0.0175 rows=2 loops=1)

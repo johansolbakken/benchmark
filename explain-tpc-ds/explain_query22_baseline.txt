@@ -1,0 +1,13 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 699 bytes
+EXPLAIN
+-> Sort: qoh, i_product_name, i_brand, i_class, i_category, limit input to 100 row(s) per chunk  (cost=4.38e+6..4.38e+6 rows=100 height=1) (actual time=0.0263..0.0264 rows=1 loops=1)
+    -> Stream results  (cost=4.23e+6..4.38e+6 rows=4820 height=1) (actual time=0.023..0.0233 rows=1 loops=1)
+        -> Group aggregate with rollup: avg(inventory.inv_quantity_on_hand)  (cost=4.23e+6..4.38e+6 rows=4820 height=1) (actual time=0.0213..0.0216 rows=1 loops=1)
+            -> Sort: item.i_product_name, item.i_brand, item.i_class, item.i_category  (cost=4.23e+6..4.23e+6 rows=853252 height=1) (actual time=0.0209..0.0209 rows=0 loops=1)
+                -> Inner hash join (inventory.inv_item_sk = item.i_item_sk) (fill_ratio=0)  (cost=1779..3.39e+6 rows=853252 height=1) (actual time=0.0188..0.0188 rows=0 loops=1)
+                    -> Nested loop inner join  (cost=3.63..3.09e+6 rows=853252 height=1) (actual time=0.0175..0.0175 rows=0 loops=1)
+                        -> Filter: (date_dim.d_month_seq between 1212 and <cache>((1212 + 11)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.0172..0.0172 rows=0 loops=1)
+                            -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0139..0.0161 rows=1 loops=1)
+                        -> Index lookup on inventory using PRIMARY (inv_date_sk = date_dim.d_date_sk)  (cost=0.403..3.09e+6 rows=7.68e+6 height=1) (never executed)
+                    -> Hash
+                        -> Table scan on item  (cost=5.6..1401 rows=250 height=1) (never executed)

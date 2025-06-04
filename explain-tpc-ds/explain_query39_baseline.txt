@@ -1,0 +1,35 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 2270 bytes
+EXPLAIN
+-> Sort: w_warehouse_sk, i_item_sk, d_moy, mean, cov, d_moy, mean, cov  (cost=7.14e+6..7.14e+6 rows=2517 height=1) (actual time=0.112..0.112 rows=0 loops=1)
+    -> Inner hash join (foo.i_item_sk = foo.i_item_sk), (foo.w_warehouse_sk = foo.w_warehouse_sk) (fill_ratio=0)  (cost=7.13e+6..7.13e+6 rows=2517 height=1) (actual time=0.105..0.105 rows=0 loops=1)
+        -> Table scan on foo  (cost=3.57e+6..3.57e+6 rows=502 height=1) (never executed)
+            -> Materialize  (cost=3.57e+6..3.57e+6 rows=502 height=1) (never executed)
+                -> Filter: ((case mean when 0 then 0 else (stdev / mean) end) > 1)  (cost=3.57e+6..3.57e+6 rows=502 height=1) (never executed)
+                    -> Table scan on <temporary>  (cost=3.57e+6..3.57e+6 rows=502 height=1) (never executed)
+                        -> Aggregate using temporary table  (cost=3.57e+6..3.57e+6 rows=502 height=1) (never executed)
+                            -> Inner hash join (inventory.inv_item_sk = item.i_item_sk) (fill_ratio=0)  (cost=1783..3.48e+6 rows=76800 height=1) (never executed)
+                                -> Inner hash join (inventory.inv_warehouse_sk = warehouse.w_warehouse_sk) (fill_ratio=0)  (cost=53.4..3.46e+6 rows=76800 height=1) (never executed)
+                                    -> Nested loop inner join  (cost=44.7..3.43e+6 rows=76800 height=1) (never executed)
+                                        -> Filter: ((date_dim.d_year = 1998) and (date_dim.d_moy = 4))  (cost=0.967..0.967 rows=0.01 height=1) (never executed)
+                                            -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (never executed)
+                                        -> Index lookup on inventory using PRIMARY (inv_date_sk = date_dim.d_date_sk)  (cost=0.447..3.43e+6 rows=7.68e+6 height=1) (never executed)
+                                    -> Hash
+                                        -> Table scan on warehouse  (cost=2.7..5.4 rows=2 height=1) (never executed)
+                                -> Hash
+                                    -> Table scan on item  (cost=5.42..1355 rows=250 height=1) (never executed)
+        -> Hash
+            -> Table scan on foo  (cost=3.57e+6..3.57e+6 rows=502 height=1) (actual time=0.105..0.105 rows=0 loops=1)
+                -> Materialize  (cost=3.57e+6..3.57e+6 rows=502 height=1) (actual time=0.105..0.105 rows=0 loops=1)
+                    -> Filter: ((case mean when 0 then 0 else (stdev / mean) end) > 1)  (cost=3.57e+6..3.57e+6 rows=502 height=1) (actual time=0.102..0.102 rows=0 loops=1)
+                        -> Table scan on <temporary>  (cost=3.57e+6..3.57e+6 rows=502 height=1) (actual time=0.102..0.102 rows=0 loops=1)
+                            -> Aggregate using temporary table  (cost=3.57e+6..3.57e+6 rows=502 height=1) (actual time=0.102..0.102 rows=0 loops=1)
+                                -> Inner hash join (inventory.inv_item_sk = item.i_item_sk) (fill_ratio=0.000596046)  (cost=1783..3.48e+6 rows=76800 height=1) (actual time=0.101..0.101 rows=0 loops=1)
+                                    -> Inner hash join (inventory.inv_warehouse_sk = warehouse.w_warehouse_sk) (fill_ratio=2.6226e-05)  (cost=53.4..3.46e+6 rows=76800 height=1) (actual time=0.00975..0.00975 rows=0 loops=1)
+                                        -> Nested loop inner join  (cost=44.7..3.43e+6 rows=76800 height=1) (actual time=0.0045..0.0045 rows=0 loops=1)
+                                            -> Filter: ((date_dim.d_year = 1998) and (date_dim.d_moy = <cache>((4 + 1))))  (cost=0.967..0.967 rows=0.01 height=1) (actual time=0.00421..0.00421 rows=0 loops=1)
+                                                -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (actual time=0.00308..0.0035 rows=1 loops=1)
+                                            -> Index lookup on inventory using PRIMARY (inv_date_sk = date_dim.d_date_sk)  (cost=0.447..3.43e+6 rows=7.68e+6 height=1) (never executed)
+                                        -> Hash
+                                            -> Table scan on warehouse  (cost=2.7..5.4 rows=2 height=1) (actual time=0.00287..0.00325 rows=2 loops=1)
+                                    -> Hash
+                                        -> Table scan on item  (cost=5.42..1355 rows=250 height=1) (actual time=0.055..0.0708 rows=250 loops=1)

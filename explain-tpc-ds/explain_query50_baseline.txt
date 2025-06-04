@@ -1,0 +1,18 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1720 bytes
+EXPLAIN
+-> Limit: 100 row(s)  (cost=96431..96488 rows=11.4 height=1) (actual time=0.409..0.409 rows=0 loops=1)
+    -> Group aggregate: sum((case when ((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) <= 30) then 1 else 0 end)), sum((case when (((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) > 30) and ((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) <= 60)) then 1 else 0 end)), sum((case when (((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) > 60) and ((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) <= 90)) then 1 else 0 end)), sum((case when (((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) > 90) and ((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) <= 120)) then 1 else 0 end)), sum((case when ((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) > 120) then 1 else 0 end))  (cost=96431..96488 rows=11.4 height=1) (actual time=0.409..0.409 rows=0 loops=1)
+        -> Sort: store.s_store_name, store.s_company_id, store.s_street_number, store.s_street_name, store.s_street_type, store.s_suite_number, store.s_city, store.s_county, store.s_state, store.s_zip  (cost=96426..96426 rows=111 height=1) (actual time=0.408..0.408 rows=0 loops=1)
+            -> Inner hash join (store_sales.ss_sold_date_sk = d1.d_date_sk) (fill_ratio=2.38419e-06)  (cost=873..96363 rows=111 height=1) (actual time=0.406..0.406 rows=0 loops=1)
+                -> Nested loop inner join  (cost=870..96322 rows=111 height=1) (actual time=0.386..0.386 rows=0 loops=1)
+                    -> Nested loop inner join  (cost=862..95385 rows=111 height=1) (actual time=0.386..0.386 rows=0 loops=1)
+                        -> Inner hash join (store_returns.sr_returned_date_sk = d2.d_date_sk) (fill_ratio=0)  (cost=83.6..91571 rows=1108 height=1) (actual time=0.386..0.386 rows=0 loops=1)
+                            -> Table scan on store_returns  (cost=0.618..68435 rows=110824 height=1) (actual time=0.382..0.382 rows=1 loops=1)
+                            -> Hash
+                                -> Filter: ((d2.d_year = 2000) and (d2.d_moy = 9))  (cost=0.967..0.967 rows=0.01 height=1) (actual time=0.00279..0.00279 rows=0 loops=1)
+                                    -> Table scan on d2  (cost=0.903..0.903 rows=1 height=1) (actual time=0.00175..0.00204 rows=1 loops=1)
+                        -> Filter: (store_sales.ss_customer_sk = store_returns.sr_customer_sk)  (cost=3.44..3.44 rows=0.1 height=1) (never executed)
+                            -> Single-row index lookup on store_sales using PRIMARY (ss_item_sk = store_returns.sr_item_sk, ss_ticket_number = store_returns.sr_ticket_number)  (cost=3.38..3.38 rows=1 height=1) (never executed)
+                    -> Single-row index lookup on store using PRIMARY (s_store_sk = store_sales.ss_store_sk)  (cost=8.45..8.45 rows=1 height=1) (never executed)
+                -> Hash
+                    -> Table scan on d1  (cost=0.811..0.811 rows=1 height=1) (actual time=0.0135..0.0158 rows=1 loops=1)

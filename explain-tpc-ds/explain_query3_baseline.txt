@@ -1,0 +1,13 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 617 bytes
+EXPLAIN
+-> Sort: dt.d_year, sum_agg DESC, item.brand_id, limit input to 100 row(s) per chunk  (cost=129281..129281 rows=100 height=1) (actual time=0.0992..0.0992 rows=0 loops=1)
+    -> Table scan on <temporary>  (cost=129208..129224 rows=101 height=1) (actual time=0.0966..0.0966 rows=0 loops=1)
+        -> Aggregate using temporary table  (cost=129208..129208 rows=101 height=1) (actual time=0.0964..0.0964 rows=0 loops=1)
+            -> Inner hash join (dt.d_date_sk = store_sales.ss_sold_date_sk) (fill_ratio=0)  (cost=9.03..115928 rows=14644 height=1) (actual time=0.0956..0.0956 rows=0 loops=1)
+                -> Nested loop inner join  (cost=0.57..83534 rows=146442 height=1) (actual time=0.0898..0.0898 rows=1 loops=1)
+                    -> Filter: (item.i_manufact_id = 436)  (cost=56.2..1404 rows=25 height=1) (actual time=0.0787..0.0787 rows=1 loops=1)
+                        -> Table scan on item  (cost=5.56..1389 rows=250 height=1) (actual time=0.0238..0.073 rows=231 loops=1)
+                    -> Index lookup on store_sales using PRIMARY (ss_item_sk = item.i_item_sk)  (cost=0.561..3285 rows=5858 height=1) (actual time=0.0106..0.0106 rows=1 loops=1)
+                -> Hash
+                    -> Filter: (dt.d_moy = 12)  (cost=0.961..0.961 rows=0.1 height=1) (actual time=0.00337..0.00337 rows=0 loops=1)
+                        -> Table scan on dt  (cost=0.903..0.903 rows=1 height=1) (actual time=0.00246..0.00317 rows=1 loops=1)

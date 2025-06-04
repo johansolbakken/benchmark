@@ -1,0 +1,33 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1264 bytes
+EXPLAIN
+-> Limit: 100 row(s)  (cost=21490..21490 rows=1 height=1) (actual time=0.0227..0.0228 rows=1 loops=1)
+    -> Aggregate: count(distinct ws1.ws_order_number), sum(ws1.ws_ext_ship_cost), sum(ws1.ws_net_profit)  (cost=21490..21490 rows=1 height=1) (actual time=0.0225..0.0226 rows=1 loops=1)
+        -> Inner hash join (ws1.ws_ship_date_sk = d.d_date_sk) (fill_ratio=0)  (cost=21489..21489 rows=0 height=1) (actual time=0.0217..0.0217 rows=0 loops=1)
+            -> Filter: (d.d_date between <cache>(cast('1999-05-01' as date)) and <cache>((cast('1999-05-01' as date) + interval 60 day)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.0195..0.0195 rows=0 loops=1)
+                -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0136..0.0158 rows=1 loops=1)
+            -> Hash
+                -> Hash semijoin (FirstMatch) (ws1.ws_order_number = ws_wh.ws_order_number) (fill_ratio=0)  (cost=21488..21488 rows=0 height=1) (never executed)
+                    -> Inner hash join (ws1.ws_web_site_sk = ws.web_site_sk) (fill_ratio=0)  (cost=21482..21482 rows=0 height=1) (never executed)
+                        -> Filter: (ws.web_company_name = 'pri')  (cost=6.15..6.15 rows=0.1 height=1) (never executed)
+                            -> Table scan on ws  (cost=6.09..6.09 rows=1 height=1) (never executed)
+                        -> Hash
+                            -> Nested loop inner join  (cost=21476..21476 rows=0 height=1) (never executed)
+                                -> Sort: ws_wh.ws_order_number  (cost=21470..21470 rows=0 height=1) (never executed)
+                                    -> Nested loop semijoin (FirstMatch)  (cost=21469..21469 rows=0 height=1) (never executed)
+                                        -> Table scan on ws1  (cost=0.839..0.839 rows=1 height=1) (never executed)
+                                        -> Inner hash join (wr.wr_order_number = ws_wh.ws_order_number) (fill_ratio=0)  (cost=810..21468 rows=26.7 height=1) (never executed)
+                                            -> Table scan on wr  (cost=0.516..15308 rows=29659 height=1) (never executed)
+                                            -> Hash
+                                                -> Covering index lookup on ws_wh using <auto_key0> (ws_order_number = ws1.ws_order_number)  (cost=6.42..6.42 rows=0.009 height=1) (never executed)
+                                                    -> Materialize CTE ws_wh if needed (query plan printed elsewhere)  (cost=6.42..6.42 rows=0.09 height=1) (never executed)
+                                -> Filter: (ca.ca_state = 'TX')  (cost=5.91..5.91 rows=0.1 height=1) (never executed)
+                                    -> Single-row index lookup on ca using PRIMARY (ca_address_sk = ws1.ws_ship_addr_sk)  (cost=5.85..5.85 rows=1 height=1) (never executed)
+                    -> Hash
+                        -> Table scan on ws_wh  (cost=6.44..6.44 rows=0.09 height=1) (never executed)
+                            -> Materialize CTE ws_wh if needed  (cost=6.42..6.42 rows=0.09 height=1) (never executed)
+                                -> Group (no aggregates)  (cost=3.41..3.41 rows=0.09 height=1) (never executed)
+                                    -> Sort: ws1.ws_order_number  (cost=3.38..3.38 rows=0.09 height=1) (never executed)
+                                        -> Inner hash join (ws1.ws_order_number = ws2.ws_order_number), extra conditions: (ws1.ws_warehouse_sk <> ws2.ws_warehouse_sk) (fill_ratio=0)  (cost=3.03..3.03 rows=0.09 height=1) (never executed)
+                                            -> Table scan on ws1  (cost=0.654..0.654 rows=1 height=1) (never executed)
+                                            -> Hash
+                                                -> Table scan on ws2  (cost=0.654..0.654 rows=1 height=1) (never executed)

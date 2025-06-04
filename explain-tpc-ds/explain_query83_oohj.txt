@@ -1,0 +1,59 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1942 bytes
+EXPLAIN
+-> Limit: 100 row(s)  (cost=136234..136251 rows=39.5 height=1) (actual time=0.287..0.287 rows=0 loops=1)
+    -> Inner hash join (sr_items.item_id = wr_items.item_id)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=136234..136251 rows=39.5 height=1) (actual time=0.287..0.287 rows=0 loops=1)
+        -> Inner hash join (sr_items.item_id = cr_items.item_id)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=111223..111229 rows=25 height=1) (never executed)
+            -> Sort: sr_items.item_id, sr_items.sr_item_qty  (cost=85461..85461 rows=15.8 height=1) (never executed)
+                -> Table scan on sr_items  (cost=85451..85454 rows=15.8 height=1) (never executed)
+                    -> Materialize CTE sr_items  (cost=85451..85451 rows=15.8 height=1) (never executed)
+                        -> Group aggregate: sum(store_returns.sr_return_quantity)  (cost=6828..85445 rows=15.8 height=1) (never executed)
+                            -> Inner hash join (store_returns.sr_returned_date_sk = date_dim.d_date_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=1773..85394 rows=332 height=1) (never executed)
+                                -> Nested loop inner join  (cost=1518..62363 rows=110824 height=1) (never executed)
+                                    -> Sort: item.i_item_id  (cost=1517..1517 rows=250 height=1) (never executed)
+                                        -> Table scan on item  (cost=5.47..1366 rows=250 height=1) (never executed)
+                                    -> Index lookup on store_returns using PRIMARY (sr_item_sk = item.i_item_sk)  (cost=0.549..243 rows=443 height=1) (never executed)
+                                -> Hash
+                                    -> Hash semijoin (FirstMatch) (date_dim.d_date = date_dim.d_date) (fill_ratio=0)  (cost=3.54..3.54 rows=0.003 height=1) (never executed)
+                                        -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (never executed)
+                                        -> Hash
+                                            -> Inner hash join (date_dim.d_week_seq = date_dim.d_week_seq) (fill_ratio=0)  (cost=2.43..2.43 rows=0.03 height=1) (never executed)
+                                                -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (never executed)
+                                                -> Hash
+                                                    -> Filter: (date_dim.d_date in ('1998-01-02','1998-10-15','1998-11-10'))  (cost=0.915..0.915 rows=0.3 height=1) (never executed)
+                                                        -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (never executed)
+            -> Hash
+                -> Table scan on cr_items  (cost=25735..25738 rows=15.8 height=1) (never executed)
+                    -> Materialize CTE cr_items  (cost=25735..25735 rows=15.8 height=1) (never executed)
+                        -> Group aggregate: sum(catalog_returns.cr_return_quantity)  (cost=25713..25729 rows=15.8 height=1) (never executed)
+                            -> Sort: item.i_item_id  (cost=25712..25712 rows=87.8 height=1) (never executed)
+                                -> Nested loop inner join  (cost=296..25664 rows=87.8 height=1) (never executed)
+                                    -> Inner hash join (catalog_returns.cr_returned_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=288..24968 rows=87.8 height=1) (never executed)
+                                        -> Table scan on catalog_returns  (cost=0.645..18883 rows=29268 height=1) (never executed)
+                                        -> Hash
+                                            -> Hash semijoin (FirstMatch) (date_dim.d_date = date_dim.d_date) (fill_ratio=0)  (cost=3.54..3.54 rows=0.003 height=1) (never executed)
+                                                -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (never executed)
+                                                -> Hash
+                                                    -> Inner hash join (date_dim.d_week_seq = date_dim.d_week_seq) (fill_ratio=0)  (cost=2.43..2.43 rows=0.03 height=1) (never executed)
+                                                        -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (never executed)
+                                                        -> Hash
+                                                            -> Filter: (date_dim.d_date in ('1998-01-02','1998-10-15','1998-11-10'))  (cost=0.915..0.915 rows=0.3 height=1) (never executed)
+                                                                -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (never executed)
+                                    -> Single-row index lookup on item using PRIMARY (i_item_sk = catalog_returns.cr_item_sk)  (cost=7.93..7.93 rows=1 height=1) (never executed)
+        -> Hash
+            -> Table scan on wr_items  (cost=24985..24988 rows=15.8 height=1) (actual time=0.286..0.286 rows=0 loops=1)
+                -> Materialize CTE wr_items  (cost=24985..24985 rows=15.8 height=1) (actual time=0.286..0.286 rows=0 loops=1)
+                    -> Group aggregate: sum(web_returns.wr_return_quantity)  (cost=24964..24979 rows=15.8 height=1) (actual time=0.281..0.281 rows=0 loops=1)
+                        -> Sort: item.i_item_id  (cost=24963..24963 rows=89 height=1) (actual time=0.28..0.28 rows=0 loops=1)
+                            -> Nested loop inner join  (cost=284..24913 rows=89 height=1) (actual time=0.278..0.278 rows=0 loops=1)
+                                -> Inner hash join (web_returns.wr_returned_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=276..24208 rows=89 height=1) (actual time=0.278..0.278 rows=0 loops=1)
+                                    -> Table scan on web_returns  (cost=0.608..18041 rows=29659 height=1) (actual time=0.267..0.267 rows=1 loops=1)
+                                    -> Hash
+                                        -> Hash semijoin (FirstMatch) (date_dim.d_date = date_dim.d_date) (fill_ratio=0)  (cost=3.54..3.54 rows=0.003 height=1) (actual time=0.00975..0.00975 rows=0 loops=1)
+                                            -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00254..0.00254 rows=1 loops=1)
+                                            -> Hash
+                                                -> Inner hash join (date_dim.d_week_seq = date_dim.d_week_seq) (fill_ratio=0)  (cost=2.43..2.43 rows=0.03 height=1) (actual time=0.00667..0.00667 rows=0 loops=1)
+                                                    -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00117..0.00117 rows=1 loops=1)
+                                                    -> Hash
+                                                        -> Filter: (date_dim.d_date in ('1998-01-02','1998-10-15','1998-11-10'))  (cost=0.915..0.915 rows=0.3 height=1) (actual time=0.00462..0.00462 rows=0 loops=1)
+                                                            -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00213..0.00392 rows=1 loops=1)
+                                -> Single-row index lookup on item using PRIMARY (i_item_sk = web_returns.wr_item_sk)  (cost=7.93..7.93 rows=1 height=1) (never executed)

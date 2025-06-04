@@ -1,0 +1,15 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 798 bytes
+EXPLAIN
+-> Sort: lochierarchy DESC, `(case when (lochierarchy = 0) then rollup_group_item(item.i_category,0) end)`, rank_within_parent, limit input to 100 row(s) per chunk  (cost=11.1..11.1 rows=0.111 height=1) (actual time=0.03..0.0301 rows=1 loops=1)
+    -> Window aggregate: rank() OVER (PARTITION BY (grouping(rollup_group_item(item.i_category,0)) + grouping(rollup_group_item(item.i_class,1))),(case when (grouping(rollup_group_item(item.i_class,1)) = 0) then rollup_group_item(item.i_category,0) end) ORDER BY total_sum desc )   (cost=10.8..10.8 rows=0.111 height=1) (actual time=0.0282..0.0283 rows=1 loops=1)
+        -> Sort: lochierarchy, `(case when (grouping(rollup_group_item(item.i_class,1)) = 0) then rollup_group_item(item.i_category,0) end)`, total_sum DESC  (cost=10.8..10.8 rows=0.111 height=1) (actual time=0.027..0.027 rows=1 loops=1)
+            -> Stream results  (cost=10.4..10.4 rows=0.111 height=1) (actual time=0.024..0.0244 rows=1 loops=1)
+                -> Group aggregate with rollup: sum(web_sales.ws_net_paid)  (cost=10.4..10.4 rows=0.111 height=1) (actual time=0.0217..0.022 rows=1 loops=1)
+                    -> Sort: item.i_category, item.i_class  (cost=10.3..10.3 rows=0.111 height=1) (actual time=0.0212..0.0212 rows=0 loops=1)
+                        -> Inner hash join (d1.d_date_sk = web_sales.ws_sold_date_sk) (fill_ratio=0)  (cost=9.98..9.98 rows=0.111 height=1) (actual time=0.0189..0.0189 rows=0 loops=1)
+                            -> Nested loop inner join  (cost=8.67..8.67 rows=1 height=1) (never executed)
+                                -> Table scan on web_sales  (cost=0.7..0.7 rows=1 height=1) (never executed)
+                                -> Single-row index lookup on item using PRIMARY (i_item_sk = web_sales.ws_item_sk)  (cost=7.97..7.97 rows=1 height=1) (never executed)
+                            -> Hash
+                                -> Filter: (d1.d_month_seq between 1212 and <cache>((1212 + 11)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.017..0.017 rows=0 loops=1)
+                                    -> Table scan on d1  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0138..0.016 rows=1 loops=1)

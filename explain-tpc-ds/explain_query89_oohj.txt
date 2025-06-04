@@ -1,0 +1,22 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1156 bytes
+EXPLAIN
+-> Sort: (tmp1.sum_sales - tmp1.avg_monthly_sales), tmp1.s_store_name, limit input to 100 row(s) per chunk  (cost=248199..248199 rows=100 height=1) (actual time=0.068..0.068 rows=0 loops=1)
+    -> Filter: ((case when (tmp1.avg_monthly_sales <> 0.000000) then (abs((tmp1.sum_sales - tmp1.avg_monthly_sales)) / tmp1.avg_monthly_sales) else NULL end) > 0.1)  (cost=247599..247827 rows=1017 height=1) (actual time=0.0648..0.0648 rows=0 loops=1)
+        -> Table scan on tmp1  (cost=247540..247768 rows=1017 height=1) (actual time=0.0645..0.0645 rows=0 loops=1)
+            -> Materialize  (cost=247540..247540 rows=1017 height=1) (actual time=0.0642..0.0642 rows=0 loops=1)
+                -> Window aggregate with buffering: avg(`sum(store_sales.ss_sales_price)`) OVER (PARTITION BY item.i_category,item.i_brand,store.s_store_name,store.s_company_name )   (cost=246983..247217 rows=1017 height=1) (actual time=0.0617..0.0617 rows=0 loops=1)
+                    -> Sort: item.i_category, item.i_brand, store.s_store_name, store.s_company_name  (cost=246983..246983 rows=1017 height=1) (actual time=0.0606..0.0606 rows=0 loops=1)
+                        -> Stream results  (cost=238587..246304 rows=1017 height=1) (actual time=0.06..0.06 rows=0 loops=1)
+                            -> Group aggregate: sum(store_sales.ss_sales_price), sum(store_sales.ss_sales_price)  (cost=238587..245750 rows=1017 height=1) (actual time=0.0598..0.0598 rows=0 loops=1)
+                                -> Sort: item.i_category, item.i_class, item.i_brand, store.s_store_name, store.s_company_name, date_dim.d_moy  (cost=238580..238580 rows=25173 height=1) (actual time=0.0595..0.0595 rows=0 loops=1)
+                                    -> Inner hash join (store_sales.ss_store_sk = store.s_store_sk) (fill_ratio=2.19345e-05)  (cost=26.4..218008 rows=25173 height=1) (actual time=0.0575..0.0575 rows=0 loops=1)
+                                        -> Inner hash join (store_sales.ss_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=9.42..209290 rows=25173 height=1) (actual time=0.0332..0.0332 rows=0 loops=1)
+                                            -> Nested loop inner join  (cost=0.61..153606 rows=251734 height=1) (actual time=0.0284..0.0284 rows=1 loops=1)
+                                                -> Filter: (((item.i_category in ('Home','Books','Electronics')) and (item.i_class in ('wallpaper','parenting','musical'))) or ((item.i_category in ('Shoes','Jewelry','Men')) and (item.i_class in ('womens','birdal','pants'))))  (cost=32.7..1404 rows=43 height=1) (actual time=0.014..0.014 rows=1 loops=1)
+                                                    -> Table scan on item  (cost=5.56..1389 rows=250 height=1) (actual time=0.0107..0.0113 rows=5 loops=1)
+                                                -> Index lookup on store_sales using PRIMARY (ss_item_sk = item.i_item_sk)  (cost=0.605..3542 rows=5858 height=1) (actual time=0.014..0.014 rows=1 loops=1)
+                                            -> Hash
+                                                -> Filter: (date_dim.d_year = 2000)  (cost=0.961..0.961 rows=0.1 height=1) (actual time=0.00371..0.00371 rows=0 loops=1)
+                                                    -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (actual time=0.00275..0.00321 rows=1 loops=1)
+                                        -> Hash
+                                            -> Table scan on store  (cost=6.8..13.6 rows=2 height=1) (actual time=0.0179..0.0202 rows=2 loops=1)

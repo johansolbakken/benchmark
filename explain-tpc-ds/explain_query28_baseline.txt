@@ -1,0 +1,43 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 2317 bytes
+EXPLAIN
+-> Limit: 100 row(s)  (cost=6.23e+6..6.23e+6 rows=1 height=1) (actual time=1632..1632 rows=1 loops=1)
+    -> Inner hash join (no condition) (fill_ratio=1.14441e-05)  (cost=6.23e+6..6.23e+6 rows=1 height=1) (actual time=1632..1632 rows=1 loops=1)
+        -> Inner hash join (no condition) (fill_ratio=1.14441e-05)  (cost=5.19e+6..5.19e+6 rows=1 height=1) (actual time=1367..1367 rows=1 loops=1)
+            -> Inner hash join (no condition) (fill_ratio=1.14441e-05)  (cost=4.15e+6..4.15e+6 rows=1 height=1) (actual time=1097..1097 rows=1 loops=1)
+                -> Inner hash join (no condition) (fill_ratio=1.14441e-05)  (cost=3.11e+6..3.11e+6 rows=1 height=1) (actual time=825..825 rows=1 loops=1)
+                    -> Inner hash join (no condition) (fill_ratio=1.14441e-05)  (cost=2.08e+6..2.08e+6 rows=1 height=1) (actual time=553..553 rows=1 loops=1)
+                        -> Table scan on B1  (cost=1.04e+6..1.04e+6 rows=1 height=1) (actual time=283..283 rows=1 loops=1)
+                            -> Materialize  (cost=1.04e+6..1.04e+6 rows=1 height=1) (actual time=283..283 rows=1 loops=1)
+                                -> Aggregate: avg(store_sales.ss_list_price), count(store_sales.ss_list_price), count(distinct store_sales.ss_list_price)  (cost=1.04e+6..1.04e+6 rows=1 height=1) (actual time=283..283 rows=1 loops=1)
+                                    -> Filter: ((store_sales.ss_quantity between 0 and 5) and ((store_sales.ss_list_price between 11 and <cache>((11 + 10))) or (store_sales.ss_coupon_amt between 460 and <cache>((460 + 1000))) or (store_sales.ss_wholesale_cost between 14 and <cache>((14 + 20)))))  (cost=21.2..1.03e+6 rows=48426 height=1) (actual time=0.238..278 rows=24541 loops=1)
+                                        -> Table scan on store_sales  (cost=0.636..931293 rows=1.46e+6 height=1) (actual time=0.229..231 rows=1.3e+6 loops=1)
+                        -> Hash
+                            -> Table scan on B2  (cost=1.04e+6..1.04e+6 rows=1 height=1) (actual time=270..270 rows=1 loops=1)
+                                -> Materialize  (cost=1.04e+6..1.04e+6 rows=1 height=1) (actual time=270..270 rows=1 loops=1)
+                                    -> Aggregate: avg(store_sales.ss_list_price), count(store_sales.ss_list_price), count(distinct store_sales.ss_list_price)  (cost=1.04e+6..1.04e+6 rows=1 height=1) (actual time=270..270 rows=1 loops=1)
+                                        -> Filter: ((store_sales.ss_quantity between 6 and 10) and ((store_sales.ss_list_price between 91 and <cache>((91 + 10))) or (store_sales.ss_coupon_amt between 1430 and <cache>((1430 + 1000))) or (store_sales.ss_wholesale_cost between 32 and <cache>((32 + 20)))))  (cost=21.2..1.03e+6 rows=48426 height=1) (actual time=0.242..267 rows=15754 loops=1)
+                                            -> Table scan on store_sales  (cost=0.636..931293 rows=1.46e+6 height=1) (actual time=0.236..228 rows=1.3e+6 loops=1)
+                    -> Hash
+                        -> Table scan on B3  (cost=1.04e+6..1.04e+6 rows=1 height=1) (actual time=273..273 rows=1 loops=1)
+                            -> Materialize  (cost=1.04e+6..1.04e+6 rows=1 height=1) (actual time=273..273 rows=1 loops=1)
+                                -> Aggregate: avg(store_sales.ss_list_price), count(store_sales.ss_list_price), count(distinct store_sales.ss_list_price)  (cost=1.04e+6..1.04e+6 rows=1 height=1) (actual time=273..273 rows=1 loops=1)
+                                    -> Filter: ((store_sales.ss_quantity between 11 and 15) and ((store_sales.ss_list_price between 66 and <cache>((66 + 10))) or (store_sales.ss_coupon_amt between 920 and <cache>((920 + 1000))) or (store_sales.ss_wholesale_cost between 4 and <cache>((4 + 20)))))  (cost=21.2..1.03e+6 rows=48426 height=1) (actual time=0.258..269 rows=16994 loops=1)
+                                        -> Table scan on store_sales  (cost=0.636..931293 rows=1.46e+6 height=1) (actual time=0.247..230 rows=1.3e+6 loops=1)
+                -> Hash
+                    -> Table scan on B4  (cost=1.04e+6..1.04e+6 rows=1 height=1) (actual time=271..271 rows=1 loops=1)
+                        -> Materialize  (cost=1.04e+6..1.04e+6 rows=1 height=1) (actual time=271..271 rows=1 loops=1)
+                            -> Aggregate: avg(store_sales.ss_list_price), count(store_sales.ss_list_price), count(distinct store_sales.ss_list_price)  (cost=1.04e+6..1.04e+6 rows=1 height=1) (actual time=271..271 rows=1 loops=1)
+                                -> Filter: ((store_sales.ss_quantity between 16 and 20) and ((store_sales.ss_list_price between 142 and <cache>((142 + 10))) or (store_sales.ss_coupon_amt between 3054 and <cache>((3054 + 1000))) or (store_sales.ss_wholesale_cost between 80 and <cache>((80 + 20)))))  (cost=21.2..1.03e+6 rows=48426 height=1) (actual time=0.227..268 rows=12585 loops=1)
+                                    -> Table scan on store_sales  (cost=0.636..931293 rows=1.46e+6 height=1) (actual time=0.221..230 rows=1.3e+6 loops=1)
+            -> Hash
+                -> Table scan on B5  (cost=1.04e+6..1.04e+6 rows=1 height=1) (actual time=270..270 rows=1 loops=1)
+                    -> Materialize  (cost=1.04e+6..1.04e+6 rows=1 height=1) (actual time=270..270 rows=1 loops=1)
+                        -> Aggregate: avg(store_sales.ss_list_price), count(store_sales.ss_list_price), count(distinct store_sales.ss_list_price)  (cost=1.04e+6..1.04e+6 rows=1 height=1) (actual time=270..270 rows=1 loops=1)
+                            -> Filter: ((store_sales.ss_quantity between 21 and 25) and ((store_sales.ss_list_price between 135 and <cache>((135 + 10))) or (store_sales.ss_coupon_amt between 14180 and <cache>((14180 + 1000))) or (store_sales.ss_wholesale_cost between 38 and <cache>((38 + 20)))))  (cost=21.2..1.03e+6 rows=48426 height=1) (actual time=0.249..267 rows=14494 loops=1)
+                                -> Table scan on store_sales  (cost=0.636..931293 rows=1.46e+6 height=1) (actual time=0.232..229 rows=1.3e+6 loops=1)
+        -> Hash
+            -> Table scan on B6  (cost=1.04e+6..1.04e+6 rows=1 height=1) (actual time=265..265 rows=1 loops=1)
+                -> Materialize  (cost=1.04e+6..1.04e+6 rows=1 height=1) (actual time=265..265 rows=1 loops=1)
+                    -> Aggregate: avg(store_sales.ss_list_price), count(store_sales.ss_list_price), count(distinct store_sales.ss_list_price)  (cost=1.04e+6..1.04e+6 rows=1 height=1) (actual time=265..265 rows=1 loops=1)
+                        -> Filter: ((store_sales.ss_quantity between 26 and 30) and ((store_sales.ss_list_price between 28 and <cache>((28 + 10))) or (store_sales.ss_coupon_amt between 2513 and <cache>((2513 + 1000))) or (store_sales.ss_wholesale_cost between 42 and <cache>((42 + 20)))))  (cost=21.2..1.03e+6 rows=48426 height=1) (actual time=0.24..261 rows=16458 loops=1)
+                            -> Table scan on store_sales  (cost=0.636..931293 rows=1.46e+6 height=1) (actual time=0.236..224 rows=1.3e+6 loops=1)

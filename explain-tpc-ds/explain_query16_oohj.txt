@@ -1,0 +1,22 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1199 bytes
+EXPLAIN
+-> Limit: 100 row(s)  (cost=60037..60037 rows=1 height=1) (actual time=0.0228..0.0229 rows=1 loops=1)
+    -> Aggregate: count(distinct cs1.cs_order_number), sum(cs1.cs_ext_ship_cost), sum(cs1.cs_net_profit)  (cost=60037..60037 rows=1 height=1) (actual time=0.0225..0.0226 rows=1 loops=1)
+        -> Inner hash join (cs1.cs_ship_date_sk = d.d_date_sk) (fill_ratio=0)  (cost=60037..60037 rows=50e-6 height=1) (actual time=0.0219..0.0219 rows=0 loops=1)
+            -> Filter: (d.d_date between <cache>(cast('1999-02-01' as date)) and <cache>((cast('1999-02-01' as date) + interval 60 day)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.0201..0.0201 rows=0 loops=1)
+                -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (actual time=0.014..0.0161 rows=1 loops=1)
+            -> Hash
+                -> Inner hash join (cs1.cs_call_center_sk = cc.cc_call_center_sk) (fill_ratio=0)  (cost=60036..60036 rows=450e-6 height=1) (never executed)
+                    -> Filter: (cc.cc_county in ('Williamson County','Williamson County','Williamson County','Williamson County','Williamson County'))  (cost=6.81..6.81 rows=0.5 height=1) (never executed)
+                        -> Table scan on cc  (cost=6.76..6.76 rows=1 height=1) (never executed)
+                    -> Hash
+                        -> Hash semijoin (FirstMatch) (cs1.cs_order_number = cs2.cs_order_number), extra conditions: (cs2.cs_warehouse_sk <> cs1.cs_warehouse_sk) (fill_ratio=0)  (cost=60029..60029 rows=900e-6 height=1) (never executed)
+                            -> Nested loop inner join  (cost=60027..60027 rows=0.01 height=1) (never executed)
+                                -> Hash antijoin (cs1.cs_order_number = cr1.cr_order_number) (fill_ratio=0)  (cost=60021..60021 rows=0.1 height=1) (never executed)
+                                    -> Table scan on cs1  (cost=0.885..0.885 rows=1 height=1) (never executed)
+                                    -> Hash
+                                        -> Table scan on cr1  (cost=0.553..16185 rows=29268 height=1) (never executed)
+                                -> Filter: (ca.ca_state = 'IL')  (cost=5.91..5.91 rows=0.1 height=1) (never executed)
+                                    -> Single-row index lookup on ca using PRIMARY (ca_address_sk = cs1.cs_ship_addr_sk)  (cost=5.85..5.85 rows=1 height=1) (never executed)
+                            -> Hash
+                                -> Table scan on cs2  (cost=0.654..0.654 rows=1 height=1) (never executed)

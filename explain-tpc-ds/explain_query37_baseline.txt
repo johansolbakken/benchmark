@@ -1,0 +1,16 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 739 bytes
+EXPLAIN
+-> Limit: 100 row(s)  (cost=3.56e+6..3.56e+6 rows=12.7 height=1) (actual time=0.0305..0.0305 rows=0 loops=1)
+    -> Group (no aggregates)  (cost=3.56e+6..3.56e+6 rows=12.7 height=1) (actual time=0.0302..0.0302 rows=0 loops=1)
+        -> Sort: i.i_item_id, i.i_item_desc, i.i_current_price  (cost=3.56e+6..3.56e+6 rows=16.9 height=1) (actual time=0.0299..0.0299 rows=0 loops=1)
+            -> Inner hash join (i.i_item_sk = inv.inv_item_sk) (fill_ratio=0)  (cost=210994..3.56e+6 rows=16.9 height=1) (actual time=0.027..0.027 rows=0 loops=1)
+                -> Nested loop inner join  (cost=37.3..3.54e+6 rows=94796 height=1) (never executed)
+                    -> Filter: (d.d_date between <cache>(cast('2001-06-02' as date)) and <cache>((cast('2001-06-02' as date) + interval 60 day)))  (cost=0.915..0.915 rows=0.111 height=1) (never executed)
+                        -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (never executed)
+                    -> Filter: (inv.inv_quantity_on_hand between 100 and 500)  (cost=4.14..3.54e+6 rows=853252 height=1) (never executed)
+                        -> Index lookup on inv using PRIMARY (inv_date_sk = d.d_date_sk)  (cost=0.403..3.09e+6 rows=7.68e+6 height=1) (never executed)
+                -> Hash
+                    -> Nested loop inner join  (cost=8.73..8.73 rows=0.0444 height=1) (actual time=0.0251..0.0251 rows=0 loops=1)
+                        -> Table scan on cs  (cost=0.608..0.608 rows=1 height=1) (actual time=0.0144..0.0163 rows=1 loops=1)
+                        -> Filter: ((i.i_current_price between 22 and <cache>((22 + 30))) and (i.i_manufact_id in (678,964,918,849)))  (cost=8.12..8.12 rows=0.0444 height=1) (actual time=0.00854..0.00854 rows=0 loops=1)
+                            -> Single-row index lookup on i using PRIMARY (i_item_sk = cs.cs_item_sk)  (cost=8.06..8.06 rows=1 height=1) (actual time=0.0085..0.0085 rows=0 loops=1)

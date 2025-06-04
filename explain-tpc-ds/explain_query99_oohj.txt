@@ -1,0 +1,18 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1344 bytes
+EXPLAIN
+-> Limit: 100 row(s)  (cost=15.5..15.5 rows=0.111 height=1) (actual time=0.0275..0.0275 rows=0 loops=1)
+    -> Group aggregate: sum((case when ((catalog_sales.cs_ship_date_sk - catalog_sales.cs_sold_date_sk) <= 30) then 1 else 0 end)), sum((case when (((catalog_sales.cs_ship_date_sk - catalog_sales.cs_sold_date_sk) > 30) and ((catalog_sales.cs_ship_date_sk - catalog_sales.cs_sold_date_sk) <= 60)) then 1 else 0 end)), sum((case when (((catalog_sales.cs_ship_date_sk - catalog_sales.cs_sold_date_sk) > 60) and ((catalog_sales.cs_ship_date_sk - catalog_sales.cs_sold_date_sk) <= 90)) then 1 else 0 end)), sum((case when (((catalog_sales.cs_ship_date_sk - catalog_sales.cs_sold_date_sk) > 90) and ((catalog_sales.cs_ship_date_sk - catalog_sales.cs_sold_date_sk) <= 120)) then 1 else 0 end)), sum((case when ((catalog_sales.cs_ship_date_sk - catalog_sales.cs_sold_date_sk) > 120) then 1 else 0 end))  (cost=15.5..15.5 rows=0.111 height=1) (actual time=0.0273..0.0273 rows=0 loops=1)
+        -> Sort: substr(w_warehouse_name,1,20), ship_mode.sm_type, call_center.cc_name  (cost=15.4..15.4 rows=0.111 height=1) (actual time=0.0269..0.0269 rows=0 loops=1)
+            -> Inner hash join (catalog_sales.cs_ship_mode_sk = ship_mode.sm_ship_mode_sk) (fill_ratio=0)  (cost=15.1..15.1 rows=0.111 height=1) (actual time=0.0246..0.0246 rows=0 loops=1)
+                -> Table scan on ship_mode  (cost=1.23..1.23 rows=1 height=1) (actual time=0.014..0.014 rows=1 loops=1)
+                -> Hash
+                    -> Inner hash join (catalog_sales.cs_call_center_sk = call_center.cc_call_center_sk) (fill_ratio=0)  (cost=13.4..13.4 rows=0.111 height=1) (actual time=0.00913..0.00913 rows=0 loops=1)
+                        -> Table scan on call_center  (cost=6.76..6.76 rows=1 height=1) (never executed)
+                        -> Hash
+                            -> Inner hash join (catalog_sales.cs_ship_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=6.3..6.3 rows=0.111 height=1) (actual time=0.00721..0.00721 rows=0 loops=1)
+                                -> Nested loop inner join  (cost=5..5 rows=1 height=1) (never executed)
+                                    -> Table scan on catalog_sales  (cost=0.793..0.793 rows=1 height=1) (never executed)
+                                    -> Single-row index lookup on warehouse using PRIMARY (w_warehouse_sk = catalog_sales.cs_warehouse_sk)  (cost=4.21..4.21 rows=1 height=1) (never executed)
+                                -> Hash
+                                    -> Filter: (date_dim.d_month_seq between 1212 and <cache>((1212 + 11)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.00587..0.00587 rows=0 loops=1)
+                                        -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00233..0.00458 rows=1 loops=1)

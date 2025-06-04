@@ -1,0 +1,25 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1430 bytes
+EXPLAIN
+-> Sort: customer.c_customer_id, customer.c_salutation, customer.c_first_name, customer.c_last_name, customer_address.ca_street_number, customer_address.ca_street_name, customer_address.ca_street_type, customer_address.ca_suite_number, customer_address.ca_city, customer_address.ca_county, customer_address.ca_zip, customer_address.ca_country, customer_address.ca_gmt_offset, customer_address.ca_location_type, ctr1.ctr_total_return, limit input to 100 row(s) per chunk  (cost=6.82e+6..6.82e+6 rows=100 height=1) (actual time=8.21..8.21 rows=0 loops=1)
+    -> Nested loop inner join  (cost=123780..6.82e+6 rows=132 height=1) (actual time=8.21..8.21 rows=0 loops=1)
+        -> Inner hash join (customer_address.ca_address_sk = customer.c_current_addr_sk) (fill_ratio=0.0119915)  (cost=25564..66055 rows=1751 height=1) (actual time=4.07..7.93 rows=20 loops=1)
+            -> Table scan on customer  (cost=2.09..36640 rows=17513 height=1) (actual time=0.0825..4.17 rows=17666 loops=1)
+            -> Hash
+                -> Filter: (customer_address.ca_state = 'IL')  (cost=32.2..24406 rows=758 height=1) (actual time=0.0435..3.17 rows=250 loops=1)
+                    -> Table scan on customer_address  (cost=3.16..23969 rows=7582 height=1) (actual time=0.039..2.91 rows=7540 loops=1)
+        -> Filter: (ctr1.ctr_total_return > (select #3))  (cost=50554..50554 rows=0.0752 height=1) (actual time=0.0136..0.0136 rows=0 loops=20)
+            -> Index lookup on ctr1 using <auto_key1> (ctr_customer_sk = customer.c_customer_sk)  (cost=47016..47016 rows=0.0752 height=1) (actual time=0.0135..0.0135 rows=0 loops=20)
+                -> Materialize CTE customer_total_return if needed  (cost=43478..43478 rows=1318 height=1) (actual time=0.264..0.264 rows=0 loops=1)
+                    -> Group aggregate: sum(catalog_returns.cr_return_amt_inc_tax)  (cost=45924..46724 rows=1318 height=1) (actual time=0.256..0.256 rows=0 loops=1)
+                        -> Sort: catalog_returns.cr_returning_customer_sk, customer_address.ca_state  (cost=45924..45924 rows=2927 height=1) (actual time=0.256..0.256 rows=0 loops=1)
+                            -> Nested loop inner join  (cost=16..43825 rows=2927 height=1) (actual time=0.254..0.254 rows=0 loops=1)
+                                -> Inner hash join (catalog_returns.cr_returned_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=10.2..26706 rows=2927 height=1) (actual time=0.254..0.254 rows=0 loops=1)
+                                    -> Table scan on catalog_returns  (cost=0.691..20231 rows=29268 height=1) (actual time=0.25..0.25 rows=1 loops=1)
+                                    -> Hash
+                                        -> Filter: (date_dim.d_year = 1998)  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.003..0.003 rows=0 loops=1)
+                                            -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00229..0.00279 rows=1 loops=1)
+                                -> Single-row index lookup on customer_address using PRIMARY (ca_address_sk = catalog_returns.cr_returning_addr_sk)  (cost=5.85..5.85 rows=1 height=1) (never executed)
+            -> Select #3 (subquery in condition; dependent)
+                -> Aggregate: avg(ctr2.ctr_total_return)  (cost=47033..47033 rows=1 height=1) (never executed)
+                    -> Index lookup on ctr2 using <auto_key0> (ctr_state = ctr1.ctr_state)  (cost=47016..47016 rows=132 height=1) (never executed)
+                        -> Materialize CTE customer_total_return if needed (query plan printed elsewhere)  (cost=47016..47016 rows=1318 height=1) (never executed)

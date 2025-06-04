@@ -1,0 +1,28 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1807 bytes
+EXPLAIN
+-> Limit: 100 row(s)  (cost=328..328 rows=0.0399 height=1) (actual time=0.0203..0.0203 rows=0 loops=1)
+    -> Group aggregate: avg(catalog_sales.cs_quantity), stddev_samp(catalog_sales.cs_quantity), avg(store_returns.sr_return_quantity), stddev_samp(store_returns.sr_return_quantity), avg(store_sales.ss_quantity), stddev_samp(store_sales.ss_quantity), count(store_sales.ss_quantity), avg(store_sales.ss_quantity), stddev_samp(store_sales.ss_quantity), count(store_returns.sr_return_quantity), avg(store_returns.sr_return_quantity), stddev_samp(store_returns.sr_return_quantity), count(catalog_sales.cs_quantity), avg(catalog_sales.cs_quantity), stddev_samp(catalog_sales.cs_quantity)  (cost=328..328 rows=0.0399 height=1) (actual time=0.0203..0.0203 rows=0 loops=1)
+        -> Inner hash join (d1.d_date_sk = store_sales.ss_sold_date_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=328..328 rows=0.0399 height=1) (actual time=0.0198..0.0198 rows=0 loops=1)
+            -> Sort: item.i_item_id, item.i_item_desc, store.s_state  (cost=327..327 rows=0.399 height=1) (never executed)
+                -> Nested loop inner join  (cost=327..327 rows=0.399 height=1) (never executed)
+                    -> Nested loop inner join  (cost=319..319 rows=0.399 height=1) (never executed)
+                        -> Inner hash join (store_returns.sr_returned_date_sk = d2.d_date_sk) (fill_ratio=0)  (cost=78.5..305 rows=3.99 height=1) (never executed)
+                            -> Filter: (store_returns.sr_customer_sk = catalog_sales.cs_bill_customer_sk)  (cost=23.8..300 rows=13.3 height=1) (never executed)
+                                -> Nested loop inner join  (cost=2.2..293 rows=133 height=1) (never executed)
+                                    -> Inner hash join (catalog_sales.cs_sold_date_sk = d3.d_date_sk) (fill_ratio=0)  (cost=10.3..10.3 rows=0.3 height=1) (never executed)
+                                        -> Nested loop inner join  (cost=8.72..8.72 rows=1 height=1) (never executed)
+                                            -> Table scan on catalog_sales  (cost=0.747..0.747 rows=1 height=1) (never executed)
+                                            -> Single-row index lookup on item using PRIMARY (i_item_sk = catalog_sales.cs_item_sk)  (cost=7.97..7.97 rows=1 height=1) (never executed)
+                                        -> Hash
+                                            -> Filter: (d3.d_quarter_name in ('1998Q1','1998Q2','1998Q3'))  (cost=0.915..0.915 rows=0.3 height=1) (never executed)
+                                                -> Table scan on d3  (cost=0.857..0.857 rows=1 height=1) (never executed)
+                                    -> Index lookup on store_returns using PRIMARY (sr_item_sk = item.i_item_sk)  (cost=0.637..282 rows=443 height=1) (never executed)
+                            -> Hash
+                                -> Filter: (d2.d_quarter_name in ('1998Q1','1998Q2','1998Q3'))  (cost=0.915..0.915 rows=0.3 height=1) (never executed)
+                                    -> Table scan on d2  (cost=0.857..0.857 rows=1 height=1) (never executed)
+                        -> Filter: (store_sales.ss_customer_sk = store_returns.sr_customer_sk)  (cost=3.49..3.49 rows=0.1 height=1) (never executed)
+                            -> Single-row index lookup on store_sales using PRIMARY (ss_item_sk = store_returns.sr_item_sk, ss_ticket_number = store_returns.sr_ticket_number)  (cost=3.43..3.43 rows=1 height=1) (never executed)
+                    -> Single-row index lookup on store using PRIMARY (s_store_sk = store_sales.ss_store_sk)  (cost=8.06..8.06 rows=1 height=1) (never executed)
+            -> Hash
+                -> Filter: (d1.d_quarter_name = '1998Q1')  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.0178..0.0178 rows=0 loops=1)
+                    -> Table scan on d1  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0149..0.0169 rows=1 loops=1)

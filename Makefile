@@ -138,6 +138,14 @@ stq-plans:
 	  ruby bin/print-plan-as-graphwiz.rb --oohj     --truncate --database imdbload -o stq-plans/$${base}_oohj.pdf     $$f; \
 	done
 
+tpc-ds-plans:
+	mkdir -p tpc-ds-plans && \
+	for f in tpc-ds-queries/*.sql; do \
+	  base=$$(basename $$f .sql); \
+	  ruby bin/print-plan-as-graphwiz.rb --baseline --truncate --database tpcds_s10 -o tpc-ds-plans/$${base}_baseline.pdf $$f; \
+	  ruby bin/print-plan-as-graphwiz.rb --oohj     --truncate --database tpcds_s10 -o tpc-ds-plans/$${base}_oohj.pdf     $$f; \
+	done
+
 
 explain-job:
 	mkdir -p explain-job && \
@@ -169,6 +177,18 @@ explain-stq:
 	  base=$$(basename $$f .sql); \
 	  ruby bin/benchmark.rb --run $$f --analyze --hint "/*+ DISABLE_OPTIMISTIC_HASH_JOIN */" --database imdbload > explain-stq/explain_$${base}_baseline.txt; \
 	  ruby bin/benchmark.rb --run $$f --analyze --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(0.8) */" --database imdbload > explain-stq/explain_$${base}_oohj.txt; \
+	  i=$$((i+1)); \
+	done
+
+explain-tpc-ds:
+	mkdir -p explain-tpc-ds && \
+	total=$$(ls tpc-ds-queries/*.sql | wc -l); \
+	i=1; \
+	for f in tpc-ds-queries/*.sql; do \
+	  echo "Processing file $$i of $$total: $$f"; \
+	  base=$$(basename $$f .sql); \
+	  ruby bin/benchmark.rb --run $$f --analyze --hint "/*+ DISABLE_OPTIMISTIC_HASH_JOIN */" --database tpcds_s10 > explain-tpc-ds/explain_$${base}_baseline.txt; \
+	  ruby bin/benchmark.rb --run $$f --analyze --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(0.8) */" --database tpcds_s10 > explain-tpc-ds/explain_$${base}_oohj.txt; \
 	  i=$$((i+1)); \
 	done
 

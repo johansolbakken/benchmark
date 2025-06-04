@@ -1,0 +1,24 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1532 bytes
+EXPLAIN
+-> Sort: customer.c_last_name, customer.c_first_name, customer.c_salutation, customer.c_preferred_cust_flag DESC, dn.ss_ticket_number  (cost=1.35e+6..1.35e+6 rows=1314 height=1) (actual time=0.0298..0.0298 rows=0 loops=1)
+    -> Nested loop inner join  (cost=1.34e+6..1.35e+6 rows=1314 height=1) (actual time=0.0285..0.0285 rows=0 loops=1)
+        -> Table scan on dn  (cost=1.34e+6..1.34e+6 rows=1314 height=1) (actual time=0.028..0.028 rows=0 loops=1)
+            -> Materialize  (cost=1.34e+6..1.34e+6 rows=1314 height=1) (actual time=0.0277..0.0277 rows=0 loops=1)
+                -> Filter: (count(0) between 15 and 20)  (cost=1.34e+6..1.34e+6 rows=1314 height=1) (actual time=0.023..0.023 rows=0 loops=1)
+                    -> Group aggregate: count(0)  (cost=1.34e+6..1.34e+6 rows=1314 height=1) (actual time=0.0228..0.0228 rows=0 loops=1)
+                        -> Sort: store_sales.ss_ticket_number, store_sales.ss_customer_sk  (cost=1.34e+6..1.34e+6 rows=2919 height=1) (actual time=0.0225..0.0225 rows=0 loops=1)
+                            -> Inner hash join (store_sales.ss_store_sk = store.s_store_sk) (fill_ratio=0)  (cost=1.34e+6..1.34e+6 rows=2919 height=1) (actual time=0.0205..0.0205 rows=0 loops=1)
+                                -> Sort: store_sales.ss_ticket_number, store_sales.ss_customer_sk  (cost=1.34e+6..1.34e+6 rows=5838 height=1) (never executed)
+                                    -> Inner hash join (store_sales.ss_hdemo_sk = household_demographics.hd_demo_sk) (fill_ratio=0)  (cost=231..1.34e+6 rows=5838 height=1) (never executed)
+                                        -> Inner hash join (store_sales.ss_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=15.3..1.32e+6 rows=92196 height=1) (never executed)
+                                            -> Table scan on store_sales  (cost=0.682..998778 rows=1.46e+6 height=1) (never executed)
+                                            -> Hash
+                                                -> Filter: ((date_dim.d_year in (1998,<cache>((1998 + 1)),<cache>((1998 + 2)))) and ((date_dim.d_dom between 1 and 3) or (date_dim.d_dom between 25 and 28)))  (cost=0.978..0.978 rows=0.063 height=1) (never executed)
+                                                    -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (never executed)
+                                        -> Hash
+                                            -> Filter: ((household_demographics.hd_vehicle_count > 0) and ((household_demographics.hd_buy_potential = '>10000') or (household_demographics.hd_buy_potential = 'Unknown')) and ((case when (household_demographics.hd_vehicle_count > 0) then (household_demographics.hd_dep_count / household_demographics.hd_vehicle_count) else NULL end) > 1.2))  (cost=0.68..0.68 rows=0.0633 height=1) (never executed)
+                                                -> Table scan on household_demographics  (cost=0.599..0.599 rows=1 height=1) (never executed)
+                                -> Hash
+                                    -> Filter: (store.s_county in ('Williamson County','Williamson County','Williamson County','Williamson County','Williamson County','Williamson County','Williamson County','Williamson County'))  (cost=13.6..13.6 rows=1 height=1) (actual time=0.019..0.019 rows=0 loops=1)
+                                        -> Table scan on store  (cost=6.76..13.5 rows=2 height=1) (actual time=0.0161..0.0182 rows=2 loops=1)
+        -> Single-row index lookup on customer using PRIMARY (c_customer_sk = dn.ss_customer_sk)  (cost=5.23..5.23 rows=1 height=1) (never executed)

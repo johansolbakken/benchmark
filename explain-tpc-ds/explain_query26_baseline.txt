@@ -1,0 +1,19 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 774 bytes
+EXPLAIN
+-> Limit: 100 row(s)  (cost=14.8..14.8 rows=19e-6 height=1) (actual time=0.0146..0.0146 rows=0 loops=1)
+    -> Group aggregate: avg(catalog_sales.cs_quantity), avg(catalog_sales.cs_list_price), avg(catalog_sales.cs_coupon_amt), avg(catalog_sales.cs_sales_price)  (cost=14.8..14.8 rows=19e-6 height=1) (actual time=0.0145..0.0145 rows=0 loops=1)
+        -> Sort: item.i_item_id  (cost=14.8..14.8 rows=19e-6 height=1) (actual time=0.0141..0.0141 rows=0 loops=1)
+            -> Inner hash join (catalog_sales.cs_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=14.5..14.5 rows=19e-6 height=1) (actual time=0.0115..0.0115 rows=0 loops=1)
+                -> Filter: (date_dim.d_year = 1998)  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.0101..0.0101 rows=0 loops=1)
+                    -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00842..0.00958 rows=1 loops=1)
+                -> Hash
+                    -> Inner hash join (catalog_sales.cs_bill_cdemo_sk = customer_demographics.cd_demo_sk) (fill_ratio=0)  (cost=13.5..13.5 rows=190e-6 height=1) (never executed)
+                        -> Nested loop inner join  (cost=12.7..12.7 rows=0.19 height=1) (never executed)
+                            -> Nested loop inner join  (cost=8.86..8.86 rows=1 height=1) (never executed)
+                                -> Table scan on catalog_sales  (cost=0.931..0.931 rows=1 height=1) (never executed)
+                                -> Single-row index lookup on item using PRIMARY (i_item_sk = catalog_sales.cs_item_sk)  (cost=7.93..7.93 rows=1 height=1) (never executed)
+                            -> Filter: ((promotion.p_channel_email = 'N') or (promotion.p_channel_event = 'N'))  (cost=3.8..3.8 rows=0.19 height=1) (never executed)
+                                -> Single-row index lookup on promotion using PRIMARY (p_promo_sk = catalog_sales.cs_promo_sk)  (cost=3.74..3.74 rows=1 height=1) (never executed)
+                        -> Hash
+                            -> Filter: ((customer_demographics.cd_gender = 'F') and (customer_demographics.cd_marital_status = 'W') and (customer_demographics.cd_education_status = 'Primary'))  (cost=0.829..0.829 rows=0.001 height=1) (never executed)
+                                -> Table scan on customer_demographics  (cost=0.765..0.765 rows=1 height=1) (never executed)
