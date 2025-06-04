@@ -1,19 +1,19 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1741 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=95515..95607 rows=11.4 height=1) (actual time=0.403..0.403 rows=0 loops=1)
-    -> Group aggregate: sum((case when ((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) <= 30) then 1 else 0 end)), sum((case when (((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) > 30) and ((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) <= 60)) then 1 else 0 end)), sum((case when (((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) > 60) and ((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) <= 90)) then 1 else 0 end)), sum((case when (((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) > 90) and ((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) <= 120)) then 1 else 0 end)), sum((case when ((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) > 120) then 1 else 0 end))  (cost=95515..95607 rows=11.4 height=1) (actual time=0.403..0.403 rows=0 loops=1)
-        -> Inner hash join (store_sales.ss_sold_date_sk = d1.d_date_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=2.38419e-06)  (cost=95506..95544 rows=111 height=1) (actual time=0.403..0.403 rows=0 loops=1)
-            -> Sort: store.s_store_name, store.s_company_id, store.s_street_number, store.s_street_name, store.s_street_type, store.s_suite_number, store.s_city, store.s_county, store.s_state, store.s_zip  (cost=95504..95504 rows=111 height=1) (actual time=0.381..0.381 rows=0 loops=1)
-                -> Inner hash join (store_sales.ss_store_sk = store.s_store_sk) (fill_ratio=7.96318e-05)  (cost=879..95441 rows=111 height=1) (actual time=0.378..0.378 rows=0 loops=1)
-                    -> Nested loop inner join  (cost=862..95385 rows=111 height=1) (actual time=0.369..0.369 rows=0 loops=1)
-                        -> Inner hash join (store_returns.sr_returned_date_sk = d2.d_date_sk) (fill_ratio=0)  (cost=83.6..91571 rows=1108 height=1) (actual time=0.368..0.368 rows=0 loops=1)
-                            -> Table scan on store_returns  (cost=0.618..68435 rows=110824 height=1) (actual time=0.365..0.365 rows=1 loops=1)
+-> Limit: 100 row(s)  (cost=87998..88083 rows=11.4 height=1) (actual time=0.675..0.675 rows=0 loops=1)
+    -> Group aggregate: sum((case when ((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) <= 30) then 1 else 0 end)), sum((case when (((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) > 30) and ((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) <= 60)) then 1 else 0 end)), sum((case when (((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) > 60) and ((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) <= 90)) then 1 else 0 end)), sum((case when (((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) > 90) and ((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) <= 120)) then 1 else 0 end)), sum((case when ((store_returns.sr_returned_date_sk - store_sales.ss_sold_date_sk) > 120) then 1 else 0 end))  (cost=87998..88083 rows=11.4 height=1) (actual time=0.675..0.675 rows=0 loops=1)
+        -> Inner hash join (store_sales.ss_sold_date_sk = d1.d_date_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=2.38419e-06)  (cost=87990..88025 rows=102 height=1) (actual time=0.674..0.674 rows=0 loops=1)
+            -> Sort: store.s_store_name, store.s_company_id, store.s_street_number, store.s_street_name, store.s_street_type, store.s_suite_number, store.s_city, store.s_county, store.s_state, store.s_zip  (cost=87988..87988 rows=102 height=1) (actual time=0.653..0.653 rows=0 loops=1)
+                -> Inner hash join (store_sales.ss_store_sk = store.s_store_sk) (fill_ratio=7.96318e-05)  (cost=879..87930 rows=102 height=1) (actual time=0.65..0.65 rows=0 loops=1)
+                    -> Nested loop inner join  (cost=862..87878 rows=102 height=1) (actual time=0.638..0.638 rows=0 loops=1)
+                        -> Inner hash join (store_returns.sr_returned_date_sk = d2.d_date_sk) (fill_ratio=0)  (cost=83.6..84364 rows=1021 height=1) (actual time=0.638..0.638 rows=0 loops=1)
+                            -> Table scan on store_returns  (cost=0.618..63049 rows=102101 height=1) (actual time=0.632..0.632 rows=1 loops=1)
                             -> Hash
-                                -> Filter: ((d2.d_year = 2000) and (d2.d_moy = 9))  (cost=0.967..0.967 rows=0.01 height=1) (actual time=0.00254..0.00254 rows=0 loops=1)
-                                    -> Table scan on d2  (cost=0.903..0.903 rows=1 height=1) (actual time=0.00167..0.00192 rows=1 loops=1)
+                                -> Filter: ((d2.d_year = 2000) and (d2.d_moy = 9))  (cost=0.967..0.967 rows=0.01 height=1) (actual time=0.00469..0.00469 rows=0 loops=1)
+                                    -> Table scan on d2  (cost=0.903..0.903 rows=1 height=1) (actual time=0.00297..0.00351 rows=1 loops=1)
                         -> Filter: (store_sales.ss_customer_sk = store_returns.sr_customer_sk)  (cost=3.44..3.44 rows=0.1 height=1) (never executed)
                             -> Single-row index lookup on store_sales using PRIMARY (ss_item_sk = store_returns.sr_item_sk, ss_ticket_number = store_returns.sr_ticket_number)  (cost=3.38..3.38 rows=1 height=1) (never executed)
                     -> Hash
-                        -> Table scan on store  (cost=7.17..14.3 rows=2 height=1) (actual time=0.00558..0.00633 rows=2 loops=1)
+                        -> Table scan on store  (cost=7.17..14.3 rows=2 height=1) (actual time=0.00669..0.00767 rows=2 loops=1)
             -> Hash
-                -> Table scan on d1  (cost=0.811..0.811 rows=1 height=1) (actual time=0.0144..0.0168 rows=1 loops=1)
+                -> Table scan on d1  (cost=0.811..0.811 rows=1 height=1) (actual time=0.0142..0.0161 rows=1 loops=1)

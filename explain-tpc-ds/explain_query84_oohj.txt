@@ -1,20 +1,20 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 786 bytes
 EXPLAIN
--> Sort: customer.c_customer_id, limit input to 100 row(s) per chunk  (cost=10.6e+6..10.6e+6 rows=100 height=1) (actual time=0.296..0.296 rows=0 loops=1)
-    -> Inner hash join (customer_demographics.cd_demo_sk = store_returns.sr_cdemo_sk) (fill_ratio=0)  (cost=52394..3.11e+6 rows=21.6e+6 height=1) (actual time=0.292..0.292 rows=0 loops=1)
-        -> Table scan on store_returns  (cost=0.479..53114 rows=110824 height=1) (actual time=0.279..0.279 rows=1 loops=1)
+-> Sort: customer.c_customer_id, limit input to 100 row(s) per chunk  (cost=9.74e+6..9.74e+6 rows=100 height=1) (actual time=0.525..0.525 rows=0 loops=1)
+    -> Inner hash join (customer_demographics.cd_demo_sk = store_returns.sr_cdemo_sk) (fill_ratio=0)  (cost=52433..2.87e+6 rows=19.9e+6 height=1) (actual time=0.521..0.521 rows=0 loops=1)
+        -> Table scan on store_returns  (cost=0.479..48933 rows=102101 height=1) (actual time=0.502..0.502 rows=1 loops=1)
         -> Hash
-            -> Inner hash join (customer.c_current_cdemo_sk = customer_demographics.cd_demo_sk) (fill_ratio=2.38419e-06)  (cost=271..52103 rows=195 height=1) (actual time=0.0115..0.0115 rows=0 loops=1)
-                -> Nested loop inner join  (cost=269..52033 rows=195 height=1) (actual time=0.00425..0.00425 rows=0 loops=1)
-                    -> Inner hash join (household_demographics.hd_demo_sk = customer.c_current_hdemo_sk) (fill_ratio=0)  (cost=22.4..40542 rows=1945 height=1) (actual time=0.00413..0.00413 rows=0 loops=1)
-                        -> Table scan on customer  (cost=2.09..36640 rows=17513 height=1) (never executed)
+            -> Inner hash join (customer.c_current_cdemo_sk = customer_demographics.cd_demo_sk) (fill_ratio=2.38419e-06)  (cost=271..52141 rows=195 height=1) (actual time=0.0159..0.0159 rows=0 loops=1)
+                -> Nested loop inner join  (cost=269..52072 rows=195 height=1) (actual time=0.00618..0.00618 rows=0 loops=1)
+                    -> Inner hash join (household_demographics.hd_demo_sk = customer.c_current_hdemo_sk) (fill_ratio=0)  (cost=22.4..40572 rows=1947 height=1) (actual time=0.00569..0.00569 rows=0 loops=1)
+                        -> Table scan on customer  (cost=2.09..36667 rows=17526 height=1) (never executed)
                         -> Hash
-                            -> Inner hash join (income_band.ib_income_band_sk = household_demographics.hd_income_band_sk) (fill_ratio=0)  (cost=1.38..1.38 rows=0.111 height=1) (actual time=0.00367..0.00367 rows=0 loops=1)
+                            -> Inner hash join (income_band.ib_income_band_sk = household_demographics.hd_income_band_sk) (fill_ratio=0)  (cost=1.38..1.38 rows=0.111 height=1) (actual time=0.00492..0.00492 rows=0 loops=1)
                                 -> Table scan on household_demographics  (cost=0.507..0.507 rows=1 height=1) (never executed)
                                 -> Hash
-                                    -> Filter: ((income_band.ib_lower_bound >= 32287) and (income_band.ib_upper_bound <= <cache>((32287 + 50000))))  (cost=0.482..0.482 rows=0.111 height=1) (actual time=0.00304..0.00304 rows=0 loops=1)
-                                        -> Table scan on income_band  (cost=0.406..0.406 rows=1 height=1) (actual time=0.00188..0.00225 rows=1 loops=1)
+                                    -> Filter: ((income_band.ib_lower_bound >= 32287) and (income_band.ib_upper_bound <= <cache>((32287 + 50000))))  (cost=0.482..0.482 rows=0.111 height=1) (actual time=0.00393..0.00393 rows=0 loops=1)
+                                        -> Table scan on income_band  (cost=0.406..0.406 rows=1 height=1) (actual time=0.00254..0.00296 rows=1 loops=1)
                     -> Filter: (customer_address.ca_city = 'Hopewell')  (cost=5.91..5.91 rows=0.1 height=1) (never executed)
                         -> Single-row index lookup on customer_address using PRIMARY (ca_address_sk = customer.c_current_addr_sk)  (cost=5.85..5.85 rows=1 height=1) (never executed)
                 -> Hash
-                    -> Table scan on customer_demographics  (cost=0.627..0.627 rows=1 height=1) (actual time=0.00225..0.00425 rows=1 loops=1)
+                    -> Table scan on customer_demographics  (cost=0.627..0.627 rows=1 height=1) (actual time=0.00371..0.00529 rows=1 loops=1)

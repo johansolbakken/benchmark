@@ -1,8 +1,8 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1105 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=17.8..17.8 rows=0.0123 height=1) (actual time=0.0196..0.0196 rows=0 loops=1)
-    -> Group aggregate: sum((case when (d.d_date < '1998-04-08') then (cs.cs_sales_price - coalesce(cr.cr_refunded_cash,0)) else 0 end)), sum((case when (d.d_date >= '1998-04-08') then (cs.cs_sales_price - coalesce(cr.cr_refunded_cash,0)) else 0 end))  (cost=17.8..17.8 rows=0.0123 height=1) (actual time=0.0194..0.0194 rows=0 loops=1)
-        -> Inner hash join (cs.cs_sold_date_sk = d.d_date_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=17.8..17.8 rows=0.0123 height=1) (actual time=0.0189..0.0189 rows=0 loops=1)
+-> Limit: 100 row(s)  (cost=17.8..17.8 rows=0.0123 height=1) (actual time=0.0227..0.0227 rows=0 loops=1)
+    -> Group aggregate: sum((case when (d.d_date < '1998-04-08') then (cs.cs_sales_price - coalesce(cr.cr_refunded_cash,0)) else 0 end)), sum((case when (d.d_date >= '1998-04-08') then (cs.cs_sales_price - coalesce(cr.cr_refunded_cash,0)) else 0 end))  (cost=17.8..17.8 rows=0.0123 height=1) (actual time=0.0224..0.0224 rows=0 loops=1)
+        -> Inner hash join (cs.cs_sold_date_sk = d.d_date_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=17.8..17.8 rows=0.0123 height=1) (actual time=0.0218..0.0218 rows=0 loops=1)
             -> Sort: w.w_state, i.i_item_id  (cost=16.7..16.7 rows=0.111 height=1) (never executed)
                 -> Nested loop inner join  (cost=16.4..16.4 rows=0.111 height=1) (never executed)
                     -> Nested loop inner join  (cost=12.2..12.2 rows=0.111 height=1) (never executed)
@@ -13,5 +13,5 @@ EXPLAIN
                             -> Single-row index lookup on i using PRIMARY (i_item_sk = cs.cs_item_sk)  (cost=7.97..7.97 rows=1 height=1) (never executed)
                     -> Single-row index lookup on w using PRIMARY (w_warehouse_sk = cs.cs_warehouse_sk)  (cost=4.21..4.21 rows=1 height=1) (never executed)
             -> Hash
-                -> Filter: (d.d_date between '1998-03-09' and '1998-05-08')  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.017..0.017 rows=0 loops=1)
-                    -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0136..0.0159 rows=1 loops=1)
+                -> Filter: (d.d_date between '1998-03-09' and '1998-05-08')  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.0188..0.0188 rows=0 loops=1)
+                    -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0144..0.0165 rows=1 loops=1)

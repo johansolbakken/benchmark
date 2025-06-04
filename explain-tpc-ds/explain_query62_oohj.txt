@@ -1,18 +1,18 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1333 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=14.8..14.8 rows=0.111 height=1) (actual time=0.0275..0.0275 rows=0 loops=1)
-    -> Group aggregate: sum((case when ((web_sales.ws_ship_date_sk - web_sales.ws_sold_date_sk) <= 30) then 1 else 0 end)), sum((case when (((web_sales.ws_ship_date_sk - web_sales.ws_sold_date_sk) > 30) and ((web_sales.ws_ship_date_sk - web_sales.ws_sold_date_sk) <= 60)) then 1 else 0 end)), sum((case when (((web_sales.ws_ship_date_sk - web_sales.ws_sold_date_sk) > 60) and ((web_sales.ws_ship_date_sk - web_sales.ws_sold_date_sk) <= 90)) then 1 else 0 end)), sum((case when (((web_sales.ws_ship_date_sk - web_sales.ws_sold_date_sk) > 90) and ((web_sales.ws_ship_date_sk - web_sales.ws_sold_date_sk) <= 120)) then 1 else 0 end)), sum((case when ((web_sales.ws_ship_date_sk - web_sales.ws_sold_date_sk) > 120) then 1 else 0 end))  (cost=14.8..14.8 rows=0.111 height=1) (actual time=0.0272..0.0272 rows=0 loops=1)
-        -> Sort: substr(w_warehouse_name,1,20), ship_mode.sm_type, web_site.web_name  (cost=14.7..14.7 rows=0.111 height=1) (actual time=0.0268..0.0268 rows=0 loops=1)
-            -> Inner hash join (web_sales.ws_ship_mode_sk = ship_mode.sm_ship_mode_sk) (fill_ratio=0)  (cost=14.4..14.4 rows=0.111 height=1) (actual time=0.0243..0.0243 rows=0 loops=1)
-                -> Table scan on ship_mode  (cost=1.23..1.23 rows=1 height=1) (actual time=0.0133..0.0133 rows=1 loops=1)
+-> Limit: 100 row(s)  (cost=14.8..14.8 rows=0.111 height=1) (actual time=0.0332..0.0332 rows=0 loops=1)
+    -> Group aggregate: sum((case when ((web_sales.ws_ship_date_sk - web_sales.ws_sold_date_sk) <= 30) then 1 else 0 end)), sum((case when (((web_sales.ws_ship_date_sk - web_sales.ws_sold_date_sk) > 30) and ((web_sales.ws_ship_date_sk - web_sales.ws_sold_date_sk) <= 60)) then 1 else 0 end)), sum((case when (((web_sales.ws_ship_date_sk - web_sales.ws_sold_date_sk) > 60) and ((web_sales.ws_ship_date_sk - web_sales.ws_sold_date_sk) <= 90)) then 1 else 0 end)), sum((case when (((web_sales.ws_ship_date_sk - web_sales.ws_sold_date_sk) > 90) and ((web_sales.ws_ship_date_sk - web_sales.ws_sold_date_sk) <= 120)) then 1 else 0 end)), sum((case when ((web_sales.ws_ship_date_sk - web_sales.ws_sold_date_sk) > 120) then 1 else 0 end))  (cost=14.8..14.8 rows=0.111 height=1) (actual time=0.0329..0.0329 rows=0 loops=1)
+        -> Sort: substr(w_warehouse_name,1,20), ship_mode.sm_type, web_site.web_name  (cost=14.7..14.7 rows=0.111 height=1) (actual time=0.0322..0.0322 rows=0 loops=1)
+            -> Inner hash join (web_sales.ws_ship_mode_sk = ship_mode.sm_ship_mode_sk) (fill_ratio=0)  (cost=14.4..14.4 rows=0.111 height=1) (actual time=0.0291..0.0291 rows=0 loops=1)
+                -> Table scan on ship_mode  (cost=1.23..1.23 rows=1 height=1) (actual time=0.0141..0.0141 rows=1 loops=1)
                 -> Hash
-                    -> Inner hash join (web_sales.ws_web_site_sk = web_site.web_site_sk) (fill_ratio=0)  (cost=12.8..12.8 rows=0.111 height=1) (actual time=0.00971..0.00971 rows=0 loops=1)
-                        -> Table scan on web_site  (cost=6.09..6.09 rows=1 height=1) (actual time=0.00296..0.00296 rows=1 loops=1)
+                    -> Inner hash join (web_sales.ws_web_site_sk = web_site.web_site_sk) (fill_ratio=0)  (cost=12.8..12.8 rows=0.111 height=1) (actual time=0.0129..0.0129 rows=0 loops=1)
+                        -> Table scan on web_site  (cost=6.09..6.09 rows=1 height=1) (actual time=0.00382..0.00382 rows=1 loops=1)
                         -> Hash
-                            -> Inner hash join (web_sales.ws_ship_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=6.3..6.3 rows=0.111 height=1) (actual time=0.00621..0.00621 rows=0 loops=1)
+                            -> Inner hash join (web_sales.ws_ship_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=6.3..6.3 rows=0.111 height=1) (actual time=0.00795..0.00795 rows=0 loops=1)
                                 -> Nested loop inner join  (cost=5..5 rows=1 height=1) (never executed)
                                     -> Table scan on web_sales  (cost=0.793..0.793 rows=1 height=1) (never executed)
                                     -> Single-row index lookup on warehouse using PRIMARY (w_warehouse_sk = web_sales.ws_warehouse_sk)  (cost=4.21..4.21 rows=1 height=1) (never executed)
                                 -> Hash
-                                    -> Filter: (date_dim.d_month_seq between 1212 and <cache>((1212 + 11)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.00517..0.00517 rows=0 loops=1)
-                                        -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00204..0.00421 rows=1 loops=1)
+                                    -> Filter: (date_dim.d_month_seq between 1212 and <cache>((1212 + 11)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.00649..0.00649 rows=0 loops=1)
+                                        -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00291..0.00464 rows=1 loops=1)

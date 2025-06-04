@@ -1,14 +1,14 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1148 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=1.24e+6..1.24e+6 rows=1.78 height=1) (actual time=0.0203..0.0203 rows=0 loops=1)
-    -> Group aggregate: sum((case when (date_dim.d_day_name = 'Sunday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Monday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Tuesday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Wednesday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Thursday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Friday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Saturday') then store_sales.ss_sales_price else NULL end))  (cost=1.24e+6..1.24e+6 rows=1.78 height=1) (actual time=0.0201..0.0201 rows=0 loops=1)
-        -> Sort: store.s_store_name, store.s_store_id  (cost=1.23e+6..1.23e+6 rows=14644 height=1) (actual time=0.0198..0.0198 rows=0 loops=1)
-            -> Inner hash join (date_dim.d_date_sk = store_sales.ss_sold_date_sk) (fill_ratio=0)  (cost=98.5..1.22e+6 rows=14644 height=1) (actual time=0.0175..0.0175 rows=0 loops=1)
-                -> Inner hash join (store.s_store_sk = store_sales.ss_store_sk) (fill_ratio=0)  (cost=22.2..1.19e+6 rows=146442 height=1) (never executed)
-                    -> Table scan on store_sales  (cost=0.59..863808 rows=1.46e+6 height=1) (never executed)
+-> Limit: 100 row(s)  (cost=1.32e+6..1.32e+6 rows=1.78 height=1) (actual time=0.673..0.673 rows=0 loops=1)
+    -> Group aggregate: sum((case when (date_dim.d_day_name = 'Sunday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Monday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Tuesday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Wednesday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Thursday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Friday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Saturday') then store_sales.ss_sales_price else NULL end))  (cost=1.32e+6..1.32e+6 rows=1.78 height=1) (actual time=0.673..0.673 rows=0 loops=1)
+        -> Sort: store.s_store_name, store.s_store_id  (cost=1.31e+6..1.31e+6 rows=15588 height=1) (actual time=0.672..0.672 rows=0 loops=1)
+            -> Inner hash join (store.s_store_sk = store_sales.ss_store_sk) (fill_ratio=0)  (cost=98.5..1.3e+6 rows=15588 height=1) (actual time=0.669..0.669 rows=0 loops=1)
+                -> Inner hash join (date_dim.d_date_sk = store_sales.ss_sold_date_sk) (fill_ratio=0)  (cost=9.22..1.26e+6 rows=155880 height=1) (actual time=0.667..0.667 rows=0 loops=1)
+                    -> Table scan on store_sales  (cost=0.59..919479 rows=1.56e+6 height=1) (actual time=0.657..0.657 rows=1 loops=1)
                     -> Hash
-                        -> Filter: (store.s_gmt_offset = -5.00)  (cost=13.8..13.8 rows=0.2 height=1) (never executed)
-                            -> Table scan on store  (cost=6.85..13.7 rows=2 height=1) (never executed)
+                        -> Filter: (date_dim.d_year = 1998)  (cost=0.961..0.961 rows=0.1 height=1) (actual time=0.00714..0.00714 rows=0 loops=1)
+                            -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (actual time=0.00455..0.00622 rows=1 loops=1)
                 -> Hash
-                    -> Filter: (date_dim.d_year = 1998)  (cost=0.961..0.961 rows=0.1 height=1) (actual time=0.0163..0.0163 rows=0 loops=1)
-                        -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (actual time=0.0138..0.016 rows=1 loops=1)
+                    -> Filter: (store.s_gmt_offset = -5.00)  (cost=13.8..13.8 rows=0.2 height=1) (never executed)
+                        -> Table scan on store  (cost=6.85..13.7 rows=2 height=1) (never executed)

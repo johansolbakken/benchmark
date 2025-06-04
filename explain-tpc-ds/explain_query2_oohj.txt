@@ -1,6 +1,6 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 2718 bytes
 EXPLAIN
--> Inner hash join (wswscs.d_week_seq = (wswscs.d_week_seq - 53))  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=30..30 rows=20e-6 height=1) (actual time=0.0181..0.0181 rows=0 loops=1)
+-> Inner hash join (wswscs.d_week_seq = (wswscs.d_week_seq - 53))  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=30..30 rows=20e-6 height=1) (actual time=0.0219..0.0219 rows=0 loops=1)
     -> Nested loop inner join  (cost=15.2..15.2 rows=0.0141 height=1) (never executed)
         -> Sort: date_dim.d_week_seq  (cost=1.26..1.26 rows=0.1 height=1) (never executed)
             -> Filter: (date_dim.d_year = 2001)  (cost=0.915..0.915 rows=0.1 height=1) (never executed)
@@ -17,8 +17,8 @@ EXPLAIN
                             -> Hash
                                 -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (never executed)
     -> Hash
-        -> Nested loop inner join  (cost=14.8..14.8 rows=0.0141 height=1) (actual time=0.0161..0.0161 rows=0 loops=1)
-            -> Filter: (date_dim.d_year = 2002)  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.0159..0.0159 rows=0 loops=1)
-                -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0136..0.0155 rows=1 loops=1)
+        -> Nested loop inner join  (cost=14.8..14.8 rows=0.0141 height=1) (actual time=0.0186..0.0186 rows=0 loops=1)
+            -> Filter: (date_dim.d_year = 2002)  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.0181..0.0181 rows=0 loops=1)
+                -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0152..0.0171 rows=1 loops=1)
             -> Index lookup on wswscs using <auto_key0> (d_week_seq = date_dim.d_week_seq)  (cost=13.9..13.9 rows=0.141 height=1) (never executed)
                 -> Materialize CTE wswscs if needed (query plan printed elsewhere)  (cost=13.9..13.9 rows=1.41 height=1) (never executed)

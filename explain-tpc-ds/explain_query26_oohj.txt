@@ -1,8 +1,8 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 795 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=14.9..14.9 rows=19e-6 height=1) (actual time=0.0197..0.0197 rows=0 loops=1)
-    -> Group aggregate: avg(catalog_sales.cs_quantity), avg(catalog_sales.cs_list_price), avg(catalog_sales.cs_coupon_amt), avg(catalog_sales.cs_sales_price)  (cost=14.9..14.9 rows=19e-6 height=1) (actual time=0.0196..0.0196 rows=0 loops=1)
-        -> Inner hash join (catalog_sales.cs_bill_cdemo_sk = customer_demographics.cd_demo_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=14.9..14.9 rows=19e-6 height=1) (actual time=0.0192..0.0192 rows=0 loops=1)
+-> Limit: 100 row(s)  (cost=14.9..14.9 rows=19e-6 height=1) (actual time=0.0223..0.0223 rows=0 loops=1)
+    -> Group aggregate: avg(catalog_sales.cs_quantity), avg(catalog_sales.cs_list_price), avg(catalog_sales.cs_coupon_amt), avg(catalog_sales.cs_sales_price)  (cost=14.9..14.9 rows=19e-6 height=1) (actual time=0.022..0.022 rows=0 loops=1)
+        -> Inner hash join (catalog_sales.cs_bill_cdemo_sk = customer_demographics.cd_demo_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=14.9..14.9 rows=19e-6 height=1) (actual time=0.0214..0.0214 rows=0 loops=1)
             -> Inner hash join (catalog_sales.cs_sold_date_sk = date_dim.d_date_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=14.1..14.1 rows=0.019 height=1) (never executed)
                 -> Nested loop inner join  (cost=13..13 rows=0.19 height=1) (never executed)
                     -> Sort: item.i_item_id  (cost=9.2..9.2 rows=1 height=1) (never executed)
@@ -15,5 +15,5 @@ EXPLAIN
                     -> Filter: (date_dim.d_year = 1998)  (cost=0.915..0.915 rows=0.1 height=1) (never executed)
                         -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (never executed)
             -> Hash
-                -> Filter: ((customer_demographics.cd_gender = 'F') and (customer_demographics.cd_marital_status = 'W') and (customer_demographics.cd_education_status = 'Primary'))  (cost=0.829..0.829 rows=0.001 height=1) (actual time=0.0174..0.0174 rows=0 loops=1)
-                    -> Table scan on customer_demographics  (cost=0.765..0.765 rows=1 height=1) (actual time=0.0135..0.0156 rows=1 loops=1)
+                -> Filter: ((customer_demographics.cd_gender = 'F') and (customer_demographics.cd_marital_status = 'W') and (customer_demographics.cd_education_status = 'Primary'))  (cost=0.829..0.829 rows=0.001 height=1) (actual time=0.0179..0.0179 rows=0 loops=1)
+                    -> Table scan on customer_demographics  (cost=0.765..0.765 rows=1 height=1) (actual time=0.0139..0.0163 rows=1 loops=1)

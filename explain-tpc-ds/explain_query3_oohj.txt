@@ -1,13 +1,13 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 638 bytes
 EXPLAIN
--> Sort: dt.d_year, sum_agg DESC, item.brand_id, limit input to 100 row(s) per chunk  (cost=129281..129281 rows=100 height=1) (actual time=0.0961..0.0961 rows=0 loops=1)
-    -> Table scan on <temporary>  (cost=129208..129224 rows=101 height=1) (actual time=0.0936..0.0936 rows=0 loops=1)
-        -> Aggregate using temporary table  (cost=129208..129208 rows=101 height=1) (actual time=0.0933..0.0933 rows=0 loops=1)
-            -> Inner hash join (dt.d_date_sk = store_sales.ss_sold_date_sk) (fill_ratio=0)  (cost=9.03..115928 rows=14644 height=1) (actual time=0.0925..0.0925 rows=0 loops=1)
-                -> Nested loop inner join  (cost=0.57..83534 rows=146442 height=1) (actual time=0.0872..0.0872 rows=1 loops=1)
-                    -> Filter: (item.i_manufact_id = 436)  (cost=56.2..1404 rows=25 height=1) (actual time=0.0752..0.0752 rows=1 loops=1)
-                        -> Table scan on item  (cost=5.56..1389 rows=250 height=1) (actual time=0.023..0.07 rows=231 loops=1)
-                    -> Index lookup on store_sales using PRIMARY (ss_item_sk = item.i_item_sk)  (cost=0.561..3285 rows=5858 height=1) (actual time=0.0115..0.0115 rows=1 loops=1)
+-> Sort: dt.d_year, sum_agg DESC, item.brand_id, limit input to 100 row(s) per chunk  (cost=137508..137508 rows=100 height=1) (actual time=0.141..0.141 rows=0 loops=1)
+    -> Table scan on <temporary>  (cost=137435..137452 rows=101 height=1) (actual time=0.138..0.138 rows=0 loops=1)
+        -> Aggregate using temporary table  (cost=137435..137435 rows=101 height=1) (actual time=0.137..0.137 rows=0 loops=1)
+            -> Inner hash join (dt.d_date_sk = store_sales.ss_sold_date_sk) (fill_ratio=0)  (cost=9.02..123304 rows=15588 height=1) (actual time=0.136..0.136 rows=0 loops=1)
+                -> Nested loop inner join  (cost=0.57..88823 rows=155880 height=1) (actual time=0.129..0.129 rows=1 loops=1)
+                    -> Filter: (item.i_manufact_id = 436)  (cost=56.2..1404 rows=25 height=1) (actual time=0.116..0.116 rows=1 loops=1)
+                        -> Table scan on item  (cost=5.56..1389 rows=250 height=1) (actual time=0.0255..0.107 rows=231 loops=1)
+                    -> Index lookup on store_sales using PRIMARY (ss_item_sk = item.i_item_sk)  (cost=0.561..3497 rows=6235 height=1) (actual time=0.0115..0.0115 rows=1 loops=1)
                 -> Hash
-                    -> Filter: (dt.d_moy = 12)  (cost=0.961..0.961 rows=0.1 height=1) (actual time=0.003..0.003 rows=0 loops=1)
-                        -> Table scan on dt  (cost=0.903..0.903 rows=1 height=1) (actual time=0.00225..0.00287 rows=1 loops=1)
+                    -> Filter: (dt.d_moy = 12)  (cost=0.961..0.961 rows=0.1 height=1) (actual time=0.0044..0.0044 rows=0 loops=1)
+                        -> Table scan on dt  (cost=0.903..0.903 rows=1 height=1) (actual time=0.00332..0.00419 rows=1 loops=1)

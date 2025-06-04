@@ -1,29 +1,30 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 2190 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=7.41e+6..7.41e+6 rows=1.81 height=1) (actual time=0.0196..0.0196 rows=0 loops=1)
-    -> Inner hash join (d.d_week_seq = wss.d_week_seq)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=7.41e+6..7.41e+6 rows=1.81 height=1) (actual time=0.0193..0.0193 rows=0 loops=1)
-        -> Inner hash join (wss.ss_store_sk = store.s_store_sk), (wss.d_week_seq = (wss.d_week_seq - 52))  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=7.41e+6..7.41e+6 rows=163 height=1) (never executed)
-            -> Sort: s_store_name1, s_store_id1, d_week_seq1  (cost=3.71e+6..3.71e+6 rows=242 height=1) (never executed)
-                -> Nested loop inner join  (cost=3.71e+6..3.71e+6 rows=242 height=1) (never executed)
-                    -> Inner hash join (store.s_store_id = store.s_store_id) (fill_ratio=0)  (cost=30.6..30.6 rows=0.4 height=1) (never executed)
-                        -> Table scan on store  (cost=6.8..13.6 rows=2 height=1) (never executed)
-                        -> Hash
-                            -> Table scan on store  (cost=6.76..13.5 rows=2 height=1) (never executed)
-                    -> Index lookup on wss using <auto_key1> (ss_store_sk = store.s_store_sk)  (cost=3.71e+6..3.71e+6 rows=605 height=1) (never executed)
-                        -> Materialize CTE wss if needed  (cost=3.71e+6..3.71e+6 rows=1210 height=1) (never executed)
-                            -> Group aggregate: sum((case when (date_dim.d_day_name = 'Sunday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Monday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Tuesday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Wednesday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Thursday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Friday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Saturday') then store_sales.ss_sales_price else NULL end))  (cost=2.84e+6..3.71e+6 rows=1210 height=1) (never executed)
-                                -> Sort: date_dim.d_week_seq, store_sales.ss_store_sk  (cost=2.84e+6..2.84e+6 rows=1.46e+6 height=1) (never executed)
-                                    -> Inner hash join (date_dim.d_date_sk = store_sales.ss_sold_date_sk) (fill_ratio=0)  (cost=3.34..1.37e+6 rows=1.46e+6 height=1) (never executed)
-                                        -> Table scan on store_sales  (cost=0.59..863808 rows=1.46e+6 height=1) (never executed)
+-> Limit: 100 row(s)  (cost=7.9e+6..7.9e+6 rows=1.92 height=1) (actual time=0.0321..0.0321 rows=0 loops=1)
+    -> Inner hash join (store.s_store_id = store.s_store_id), (wss.d_week_seq = (wss.d_week_seq - 52))  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=7.9e+6..7.9e+6 rows=1.92 height=1) (actual time=0.0317..0.0317 rows=0 loops=1)
+        -> Sort: s_store_name1, s_store_id1, d_week_seq1  (cost=3.95e+6..3.95e+6 rows=13.9 height=1) (never executed)
+            -> Inner hash join (wss.ss_store_sk = store.s_store_sk) (fill_ratio=0)  (cost=3.95e+6..3.95e+6 rows=13.9 height=1) (never executed)
+                -> Inner hash join (d.d_week_seq = wss.d_week_seq) (fill_ratio=0)  (cost=3.95e+6..3.95e+6 rows=13.9 height=1) (never executed)
+                    -> Table scan on wss  (cost=3.95e+6..3.95e+6 rows=1249 height=1) (never executed)
+                        -> Materialize CTE wss if needed  (cost=3.95e+6..3.95e+6 rows=1249 height=1) (never executed)
+                            -> Group aggregate: sum((case when (date_dim.d_day_name = 'Sunday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Monday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Tuesday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Wednesday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Thursday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Friday') then store_sales.ss_sales_price else NULL end)), sum((case when (date_dim.d_day_name = 'Saturday') then store_sales.ss_sales_price else NULL end))  (cost=3.03e+6..3.95e+6 rows=1249 height=1) (never executed)
+                                -> Sort: date_dim.d_week_seq, store_sales.ss_store_sk  (cost=3.03e+6..3.03e+6 rows=1.56e+6 height=1) (never executed)
+                                    -> Inner hash join (date_dim.d_date_sk = store_sales.ss_sold_date_sk) (fill_ratio=0)  (cost=3.34..1.46e+6 rows=1.56e+6 height=1) (never executed)
+                                        -> Table scan on store_sales  (cost=0.59..919479 rows=1.56e+6 height=1) (never executed)
                                         -> Hash
                                             -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (never executed)
-            -> Hash
-                -> Inner hash join (d.d_week_seq = wss.d_week_seq) (fill_ratio=0)  (cost=3.71e+6..3.71e+6 rows=13.4 height=1) (never executed)
-                    -> Table scan on wss  (cost=3.71e+6..3.71e+6 rows=1210 height=1) (never executed)
-                        -> Materialize CTE wss if needed (query plan printed elsewhere)  (cost=3.71e+6..3.71e+6 rows=1210 height=1) (never executed)
                     -> Hash
-                        -> Filter: (d.d_month_seq between <cache>((1185 + 12)) and <cache>((1185 + 23)))  (cost=0.915..0.915 rows=0.111 height=1) (never executed)
+                        -> Filter: (d.d_month_seq between 1185 and <cache>((1185 + 11)))  (cost=0.915..0.915 rows=0.111 height=1) (never executed)
                             -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (never executed)
+                -> Hash
+                    -> Table scan on store  (cost=6.8..13.6 rows=2 height=1) (never executed)
         -> Hash
-            -> Filter: (d.d_month_seq between 1185 and <cache>((1185 + 11)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.0168..0.0168 rows=0 loops=1)
-                -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (actual time=0.014..0.0158 rows=1 loops=1)
+            -> Inner hash join (wss.ss_store_sk = store.s_store_sk) (fill_ratio=2.09808e-05)  (cost=3.95e+6..3.95e+6 rows=13.9 height=1) (actual time=0.0295..0.0295 rows=0 loops=1)
+                -> Inner hash join (d.d_week_seq = wss.d_week_seq) (fill_ratio=0)  (cost=3.95e+6..3.95e+6 rows=13.9 height=1) (actual time=0.00658..0.00658 rows=0 loops=1)
+                    -> Table scan on wss  (cost=3.95e+6..3.95e+6 rows=1249 height=1) (never executed)
+                        -> Materialize CTE wss if needed (query plan printed elsewhere)  (cost=3.95e+6..3.95e+6 rows=1249 height=1) (never executed)
+                    -> Hash
+                        -> Filter: (d.d_month_seq between <cache>((1185 + 12)) and <cache>((1185 + 23)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.00562..0.00562 rows=0 loops=1)
+                            -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00356..0.00419 rows=1 loops=1)
+                -> Hash
+                    -> Table scan on store  (cost=6.76..13.5 rows=2 height=1) (actual time=0.0162..0.0179 rows=2 loops=1)
