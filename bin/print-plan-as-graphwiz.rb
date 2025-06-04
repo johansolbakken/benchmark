@@ -99,7 +99,7 @@ def run(input_sql_file, output_pdf, hint, show_json, keep_dot, truncate, databas
   File.write(dot_file, dot_output)
   puts "DOT file written to #{dot_file}"
 
-  system("dot -Tpdf -Gdpi=600 -o #{output_pdf} #{dot_file}")
+  system("dot -Tpdf -Gdpi=300 -o #{output_pdf} #{dot_file}")
   puts "PDF file written to #{output_pdf}"
 
   File.delete(dot_file) unless keep_dot
