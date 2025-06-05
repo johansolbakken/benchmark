@@ -151,4 +151,15 @@ abort('Error: -o/--output is required.')     if options[:output_pdf].nil?
 hint =
   case options[:mode]
   when :baseline then '/*+ DISABLE_OPTIMISTIC_HASH_JOIN */'
-  when :oohj     then '/*+ SET_OPTIMISM_FUNC(LINEAR) SET*
+  when :oohj     then '/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(0.8) */'
+  end
+
+run(
+  ARGV[0],
+  options[:output_pdf],
+  hint,
+  options[:show_json],
+  options[:keep_dot],
+  options[:truncate],
+  options[:database]
+)
