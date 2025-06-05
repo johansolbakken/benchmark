@@ -1,11 +1,11 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 774 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 775 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=14.8..14.8 rows=19e-6 height=1) (actual time=0.0243..0.0243 rows=0 loops=1)
-    -> Group aggregate: avg(catalog_sales.cs_quantity), avg(catalog_sales.cs_list_price), avg(catalog_sales.cs_coupon_amt), avg(catalog_sales.cs_sales_price)  (cost=14.8..14.8 rows=19e-6 height=1) (actual time=0.024..0.024 rows=0 loops=1)
-        -> Sort: item.i_item_id  (cost=14.8..14.8 rows=19e-6 height=1) (actual time=0.0233..0.0233 rows=0 loops=1)
-            -> Inner hash join (catalog_sales.cs_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=14.5..14.5 rows=19e-6 height=1) (actual time=0.0202..0.0202 rows=0 loops=1)
-                -> Filter: (date_dim.d_year = 1998)  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.0179..0.0179 rows=0 loops=1)
-                    -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0149..0.017 rows=1 loops=1)
+-> Limit: 100 row(s)  (cost=14.8..14.8 rows=19e-6 height=1) (actual time=0.0241..0.0241 rows=0 loops=1)
+    -> Group aggregate: avg(catalog_sales.cs_quantity), avg(catalog_sales.cs_list_price), avg(catalog_sales.cs_coupon_amt), avg(catalog_sales.cs_sales_price)  (cost=14.8..14.8 rows=19e-6 height=1) (actual time=0.0238..0.0238 rows=0 loops=1)
+        -> Sort: item.i_item_id  (cost=14.8..14.8 rows=19e-6 height=1) (actual time=0.0232..0.0232 rows=0 loops=1)
+            -> Inner hash join (catalog_sales.cs_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=14.5..14.5 rows=19e-6 height=1) (actual time=0.02..0.02 rows=0 loops=1)
+                -> Filter: (date_dim.d_year = 1998)  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.0177..0.0177 rows=0 loops=1)
+                    -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0148..0.0167 rows=1 loops=1)
                 -> Hash
                     -> Inner hash join (catalog_sales.cs_bill_cdemo_sk = customer_demographics.cd_demo_sk) (fill_ratio=0)  (cost=13.5..13.5 rows=190e-6 height=1) (never executed)
                         -> Nested loop inner join  (cost=12.7..12.7 rows=0.19 height=1) (never executed)

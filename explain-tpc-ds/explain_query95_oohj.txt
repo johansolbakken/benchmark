@@ -1,10 +1,10 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1285 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1284 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=22975..22975 rows=1 height=1) (actual time=0.0252..0.0254 rows=1 loops=1)
-    -> Aggregate: count(distinct ws1.ws_order_number), sum(ws1.ws_ext_ship_cost), sum(ws1.ws_net_profit)  (cost=22975..22975 rows=1 height=1) (actual time=0.0249..0.0251 rows=1 loops=1)
-        -> Inner hash join (ws1.ws_ship_date_sk = d.d_date_sk) (fill_ratio=0)  (cost=22975..22975 rows=0 height=1) (actual time=0.0237..0.0237 rows=0 loops=1)
-            -> Filter: (d.d_date between <cache>(cast('1999-05-01' as date)) and <cache>((cast('1999-05-01' as date) + interval 60 day)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.0211..0.0211 rows=0 loops=1)
-                -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0141..0.0161 rows=1 loops=1)
+-> Limit: 100 row(s)  (cost=22975..22975 rows=1 height=1) (actual time=0.0239..0.0241 rows=1 loops=1)
+    -> Aggregate: count(distinct ws1.ws_order_number), sum(ws1.ws_ext_ship_cost), sum(ws1.ws_net_profit)  (cost=22975..22975 rows=1 height=1) (actual time=0.0237..0.0238 rows=1 loops=1)
+        -> Inner hash join (ws1.ws_ship_date_sk = d.d_date_sk) (fill_ratio=0)  (cost=22975..22975 rows=0 height=1) (actual time=0.0225..0.0225 rows=0 loops=1)
+            -> Filter: (d.d_date between <cache>(cast('1999-05-01' as date)) and <cache>((cast('1999-05-01' as date) + interval 60 day)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.0203..0.0203 rows=0 loops=1)
+                -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0134..0.0153 rows=1 loops=1)
             -> Hash
                 -> Hash semijoin (FirstMatch) (ws1.ws_order_number = ws_wh.ws_order_number) (fill_ratio=0)  (cost=22974..22974 rows=0 height=1) (never executed)
                     -> Inner hash join (ws1.ws_web_site_sk = ws.web_site_sk) (fill_ratio=0)  (cost=22967..22967 rows=0 height=1) (never executed)

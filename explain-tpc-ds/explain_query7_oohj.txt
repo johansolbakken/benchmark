@@ -1,8 +1,8 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 786 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 787 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=98906..1.54e+6 rows=15.8 height=1) (actual time=0.0216..0.0216 rows=0 loops=1)
-    -> Group aggregate: avg(store_sales.ss_quantity), avg(store_sales.ss_list_price), avg(store_sales.ss_coupon_amt), avg(store_sales.ss_sales_price)  (cost=98906..1.54e+6 rows=15.8 height=1) (actual time=0.0213..0.0213 rows=0 loops=1)
-        -> Nested loop inner join  (cost=53509..1.54e+6 rows=29.6 height=1) (actual time=0.0207..0.0207 rows=0 loops=1)
+-> Limit: 100 row(s)  (cost=98906..1.54e+6 rows=15.8 height=1) (actual time=0.0218..0.0218 rows=0 loops=1)
+    -> Group aggregate: avg(store_sales.ss_quantity), avg(store_sales.ss_list_price), avg(store_sales.ss_coupon_amt), avg(store_sales.ss_sales_price)  (cost=98906..1.54e+6 rows=15.8 height=1) (actual time=0.0216..0.0216 rows=0 loops=1)
+        -> Nested loop inner join  (cost=53509..1.54e+6 rows=29.6 height=1) (actual time=0.021..0.021 rows=0 loops=1)
             -> Inner hash join (store_sales.ss_sold_date_sk = date_dim.d_date_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=11393..1.54e+6 rows=156 height=1) (actual time=0.0204..0.0204 rows=0 loops=1)
                 -> Inner hash join (store_sales.ss_cdemo_sk = customer_demographics.cd_demo_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=2505..1.54e+6 rows=1559 height=1) (never executed)
                     -> Nested loop inner join  (cost=1518..1.22e+6 rows=1.56e+6 height=1) (never executed)
@@ -13,7 +13,7 @@ EXPLAIN
                         -> Filter: ((customer_demographics.cd_gender = 'F') and (customer_demographics.cd_marital_status = 'W') and (customer_demographics.cd_education_status = 'Primary'))  (cost=0.829..0.829 rows=0.001 height=1) (never executed)
                             -> Table scan on customer_demographics  (cost=0.765..0.765 rows=1 height=1) (never executed)
                 -> Hash
-                    -> Filter: (date_dim.d_year = 1998)  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.0171..0.0171 rows=0 loops=1)
-                        -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0138..0.0157 rows=1 loops=1)
+                    -> Filter: (date_dim.d_year = 1998)  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.017..0.017 rows=0 loops=1)
+                        -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0141..0.016 rows=1 loops=1)
             -> Filter: ((promotion.p_channel_email = 'N') or (promotion.p_channel_event = 'N'))  (cost=3.8..3.8 rows=0.19 height=1) (never executed)
                 -> Single-row index lookup on promotion using PRIMARY (p_promo_sk = store_sales.ss_promo_sk)  (cost=3.74..3.74 rows=1 height=1) (never executed)

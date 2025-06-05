@@ -1,11 +1,11 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1154 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1155 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=285..285 rows=5.04e-6 height=1) (actual time=0.0241..0.0241 rows=0 loops=1)
-    -> Group aggregate: sum(store_sales.ss_net_profit), sum(store_returns.sr_net_loss), sum(catalog_sales.cs_net_profit)  (cost=285..285 rows=5.04e-6 height=1) (actual time=0.0239..0.0239 rows=0 loops=1)
-        -> Sort: item.i_item_id, item.i_item_desc, store.s_store_id, store.s_store_name  (cost=285..285 rows=5.04e-6 height=1) (actual time=0.0233..0.0233 rows=0 loops=1)
+-> Limit: 100 row(s)  (cost=285..285 rows=5.04e-6 height=1) (actual time=0.0244..0.0244 rows=0 loops=1)
+    -> Group aggregate: sum(store_sales.ss_net_profit), sum(store_returns.sr_net_loss), sum(catalog_sales.cs_net_profit)  (cost=285..285 rows=5.04e-6 height=1) (actual time=0.0242..0.0242 rows=0 loops=1)
+        -> Sort: item.i_item_id, item.i_item_desc, store.s_store_id, store.s_store_name  (cost=285..285 rows=5.04e-6 height=1) (actual time=0.0235..0.0235 rows=0 loops=1)
             -> Inner hash join (d1.d_date_sk = store_sales.ss_sold_date_sk) (fill_ratio=0)  (cost=284..284 rows=5.04e-6 height=1) (actual time=0.02..0.02 rows=0 loops=1)
-                -> Filter: ((d1.d_moy = 4) and (d1.d_year = 2000))  (cost=0.967..0.967 rows=0.01 height=1) (actual time=0.0178..0.0178 rows=0 loops=1)
-                    -> Table scan on d1  (cost=0.903..0.903 rows=1 height=1) (actual time=0.0146..0.0164 rows=1 loops=1)
+                -> Filter: ((d1.d_moy = 4) and (d1.d_year = 2000))  (cost=0.967..0.967 rows=0.01 height=1) (actual time=0.0175..0.0175 rows=0 loops=1)
+                    -> Table scan on d1  (cost=0.903..0.903 rows=1 height=1) (actual time=0.0142..0.016 rows=1 loops=1)
                 -> Hash
                     -> Sort: item.i_item_id, item.i_item_desc, store.s_store_id, store.s_store_name  (cost=283..283 rows=504e-6 height=1) (never executed)
                         -> Nested loop inner join  (cost=283..283 rows=504e-6 height=1) (never executed)

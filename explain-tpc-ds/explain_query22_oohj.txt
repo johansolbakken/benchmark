@@ -1,13 +1,13 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 720 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 721 bytes
 EXPLAIN
--> Sort: qoh, i_product_name, i_brand, i_class, i_category, limit input to 100 row(s) per chunk  (cost=3.68e+6..3.68e+6 rows=100 height=1) (actual time=0.0297..0.0297 rows=1 loops=1)
-    -> Stream results  (cost=3.54e+6..3.67e+6 rows=4820 height=1) (actual time=0.0258..0.0259 rows=1 loops=1)
-        -> Group aggregate with rollup: avg(inventory.inv_quantity_on_hand)  (cost=3.54e+6..3.67e+6 rows=4820 height=1) (actual time=0.0238..0.0238 rows=1 loops=1)
-            -> Sort: item.i_product_name, item.i_brand, item.i_class, item.i_category  (cost=3.54e+6..3.54e+6 rows=716378 height=1) (actual time=0.0233..0.0233 rows=0 loops=1)
-                -> Inner hash join (inventory.inv_item_sk = item.i_item_sk) (fill_ratio=0)  (cost=1779..2.85e+6 rows=716378 height=1) (actual time=0.0209..0.0209 rows=0 loops=1)
-                    -> Nested loop inner join  (cost=3.63..2.6e+6 rows=716378 height=1) (actual time=0.019..0.019 rows=0 loops=1)
-                        -> Filter: (date_dim.d_month_seq between 1212 and <cache>((1212 + 11)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.0187..0.0187 rows=0 loops=1)
-                            -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0148..0.0166 rows=1 loops=1)
+-> Sort: qoh, i_product_name, i_brand, i_class, i_category, limit input to 100 row(s) per chunk  (cost=3.68e+6..3.68e+6 rows=100 height=1) (actual time=0.0294..0.0295 rows=1 loops=1)
+    -> Stream results  (cost=3.54e+6..3.67e+6 rows=4820 height=1) (actual time=0.0256..0.0257 rows=1 loops=1)
+        -> Group aggregate with rollup: avg(inventory.inv_quantity_on_hand)  (cost=3.54e+6..3.67e+6 rows=4820 height=1) (actual time=0.0239..0.024 rows=1 loops=1)
+            -> Sort: item.i_product_name, item.i_brand, item.i_class, item.i_category  (cost=3.54e+6..3.54e+6 rows=716378 height=1) (actual time=0.0234..0.0234 rows=0 loops=1)
+                -> Inner hash join (inventory.inv_item_sk = item.i_item_sk) (fill_ratio=0)  (cost=1779..2.85e+6 rows=716378 height=1) (actual time=0.0203..0.0203 rows=0 loops=1)
+                    -> Nested loop inner join  (cost=3.63..2.6e+6 rows=716378 height=1) (actual time=0.0184..0.0184 rows=0 loops=1)
+                        -> Filter: (date_dim.d_month_seq between 1212 and <cache>((1212 + 11)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.018..0.018 rows=0 loops=1)
+                            -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0143..0.0162 rows=1 loops=1)
                         -> Index lookup on inventory using PRIMARY (inv_date_sk = date_dim.d_date_sk)  (cost=0.403..2.6e+6 rows=6.45e+6 height=1) (never executed)
                     -> Hash
                         -> Table scan on item  (cost=5.6..1401 rows=250 height=1) (never executed)

@@ -1,7 +1,7 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 2697 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 2696 bytes
 EXPLAIN
--> Sort: d_week_seq1  (cost=30..30 rows=20e-6 height=1) (actual time=0.0224..0.0224 rows=0 loops=1)
-    -> Inner hash join (wswscs.d_week_seq = (wswscs.d_week_seq - 53)) (fill_ratio=0)  (cost=29.7..29.7 rows=20e-6 height=1) (actual time=0.0195..0.0195 rows=0 loops=1)
+-> Sort: d_week_seq1  (cost=30..30 rows=20e-6 height=1) (actual time=0.0234..0.0234 rows=0 loops=1)
+    -> Inner hash join (wswscs.d_week_seq = (wswscs.d_week_seq - 53)) (fill_ratio=0)  (cost=29.7..29.7 rows=20e-6 height=1) (actual time=0.0202..0.0202 rows=0 loops=1)
         -> Nested loop inner join  (cost=14.8..14.8 rows=0.0141 height=1) (never executed)
             -> Filter: (date_dim.d_year = 2001)  (cost=0.915..0.915 rows=0.1 height=1) (never executed)
                 -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (never executed)
@@ -17,8 +17,8 @@ EXPLAIN
                                 -> Hash
                                     -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (never executed)
         -> Hash
-            -> Nested loop inner join  (cost=14.8..14.8 rows=0.0141 height=1) (actual time=0.0168..0.0168 rows=0 loops=1)
-                -> Filter: (date_dim.d_year = 2002)  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.0163..0.0163 rows=0 loops=1)
-                    -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0135..0.0154 rows=1 loops=1)
+            -> Nested loop inner join  (cost=14.8..14.8 rows=0.0141 height=1) (actual time=0.0175..0.0175 rows=0 loops=1)
+                -> Filter: (date_dim.d_year = 2002)  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.0171..0.0171 rows=0 loops=1)
+                    -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0142..0.0161 rows=1 loops=1)
                 -> Index lookup on wswscs using <auto_key0> (d_week_seq = date_dim.d_week_seq)  (cost=13.9..13.9 rows=0.141 height=1) (never executed)
                     -> Materialize CTE wswscs if needed (query plan printed elsewhere)  (cost=13.9..13.9 rows=1.41 height=1) (never executed)

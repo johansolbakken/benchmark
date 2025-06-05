@@ -1,19 +1,19 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 948 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 949 bytes
 EXPLAIN
--> Sort: lochierarchy DESC, `(case when (lochierarchy = 0) then rollup_group_item(item.i_category,0) end)`, rank_within_parent, limit input to 100 row(s) per chunk  (cost=1.49e+6..1.49e+6 rows=100 height=1) (actual time=0.0658..0.0658 rows=1 loops=1)
-    -> Window aggregate: rank() OVER (PARTITION BY (grouping(rollup_group_item(item.i_category,0)) + grouping(rollup_group_item(item.i_class,1))),(case when (grouping(rollup_group_item(item.i_class,1)) = 0) then rollup_group_item(item.i_category,0) end) ORDER BY gross_margin )   (cost=1.49e+6..1.49e+6 rows=117 height=1) (actual time=0.0621..0.0622 rows=1 loops=1)
-        -> Sort: lochierarchy, `(case when (grouping(rollup_group_item(item.i_class,1)) = 0) then rollup_group_item(item.i_category,0) end)`, gross_margin  (cost=1.49e+6..1.49e+6 rows=117 height=1) (actual time=0.0603..0.0604 rows=1 loops=1)
-            -> Stream results  (cost=1.47e+6..1.49e+6 rows=117 height=1) (actual time=0.0572..0.0573 rows=1 loops=1)
-                -> Group aggregate with rollup: sum(store_sales.ss_ext_sales_price), sum(store_sales.ss_net_profit)  (cost=1.47e+6..1.49e+6 rows=117 height=1) (actual time=0.0533..0.0534 rows=1 loops=1)
-                    -> Sort: item.i_category, item.i_class  (cost=1.47e+6..1.47e+6 rows=77940 height=1) (actual time=0.0525..0.0525 rows=0 loops=1)
-                        -> Inner hash join (store.s_store_sk = store_sales.ss_store_sk) (fill_ratio=0)  (cost=34.2..1.4e+6 rows=77940 height=1) (actual time=0.05..0.05 rows=0 loops=1)
-                            -> Inner hash join (d1.d_date_sk = store_sales.ss_sold_date_sk) (fill_ratio=0)  (cost=9.77..1.36e+6 rows=155880 height=1) (actual time=0.0482..0.0482 rows=0 loops=1)
-                                -> Nested loop inner join  (cost=0.649..1.01e+6 rows=1.56e+6 height=1) (actual time=0.0404..0.0404 rows=1 loops=1)
-                                    -> Table scan on item  (cost=5.51..1378 rows=250 height=1) (actual time=0.0241..0.0241 rows=1 loops=1)
-                                    -> Index lookup on store_sales using PRIMARY (ss_item_sk = item.i_item_sk)  (cost=0.648..4043 rows=6235 height=1) (actual time=0.0157..0.0157 rows=1 loops=1)
+-> Sort: lochierarchy DESC, `(case when (lochierarchy = 0) then rollup_group_item(item.i_category,0) end)`, rank_within_parent, limit input to 100 row(s) per chunk  (cost=1.49e+6..1.49e+6 rows=100 height=1) (actual time=0.0646..0.0647 rows=1 loops=1)
+    -> Window aggregate: rank() OVER (PARTITION BY (grouping(rollup_group_item(item.i_category,0)) + grouping(rollup_group_item(item.i_class,1))),(case when (grouping(rollup_group_item(item.i_class,1)) = 0) then rollup_group_item(item.i_category,0) end) ORDER BY gross_margin )   (cost=1.49e+6..1.49e+6 rows=117 height=1) (actual time=0.0611..0.0612 rows=1 loops=1)
+        -> Sort: lochierarchy, `(case when (grouping(rollup_group_item(item.i_class,1)) = 0) then rollup_group_item(item.i_category,0) end)`, gross_margin  (cost=1.49e+6..1.49e+6 rows=117 height=1) (actual time=0.0593..0.0593 rows=1 loops=1)
+            -> Stream results  (cost=1.47e+6..1.49e+6 rows=117 height=1) (actual time=0.056..0.0561 rows=1 loops=1)
+                -> Group aggregate with rollup: sum(store_sales.ss_ext_sales_price), sum(store_sales.ss_net_profit)  (cost=1.47e+6..1.49e+6 rows=117 height=1) (actual time=0.0518..0.0519 rows=1 loops=1)
+                    -> Sort: item.i_category, item.i_class  (cost=1.47e+6..1.47e+6 rows=77940 height=1) (actual time=0.0513..0.0513 rows=0 loops=1)
+                        -> Inner hash join (store.s_store_sk = store_sales.ss_store_sk) (fill_ratio=0)  (cost=34.2..1.4e+6 rows=77940 height=1) (actual time=0.0488..0.0488 rows=0 loops=1)
+                            -> Inner hash join (d1.d_date_sk = store_sales.ss_sold_date_sk) (fill_ratio=0)  (cost=9.77..1.36e+6 rows=155880 height=1) (actual time=0.0472..0.0472 rows=0 loops=1)
+                                -> Nested loop inner join  (cost=0.649..1.01e+6 rows=1.56e+6 height=1) (actual time=0.0396..0.0396 rows=1 loops=1)
+                                    -> Table scan on item  (cost=5.51..1378 rows=250 height=1) (actual time=0.0239..0.0239 rows=1 loops=1)
+                                    -> Index lookup on store_sales using PRIMARY (ss_item_sk = item.i_item_sk)  (cost=0.648..4043 rows=6235 height=1) (actual time=0.0152..0.0152 rows=1 loops=1)
                                 -> Hash
-                                    -> Filter: (d1.d_year = 2000)  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.0061..0.0061 rows=0 loops=1)
-                                        -> Table scan on d1  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00358..0.00523 rows=1 loops=1)
+                                    -> Filter: (d1.d_year = 2000)  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.00561..0.00561 rows=0 loops=1)
+                                        -> Table scan on d1  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00311..0.00469 rows=1 loops=1)
                             -> Hash
                                 -> Filter: (store.s_state in ('TN','TN','TN','TN','TN','TN','TN','TN'))  (cost=13.6..13.6 rows=1 height=1) (never executed)
                                     -> Table scan on store  (cost=6.76..13.5 rows=2 height=1) (never executed)

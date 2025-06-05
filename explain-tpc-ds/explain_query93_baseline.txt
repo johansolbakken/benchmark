@@ -1,12 +1,12 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 950 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 951 bytes
 EXPLAIN
--> Sort: sumsales, store_sales.ss_customer_sk, limit input to 100 row(s) per chunk  (cost=126458..126458 rows=100 height=1) (actual time=0.614..0.614 rows=0 loops=1)
-    -> Table scan on <temporary>  (cost=126385..126402 rows=101 height=1) (actual time=0.61..0.61 rows=0 loops=1)
-        -> Aggregate using temporary table  (cost=126385..126385 rows=101 height=1) (actual time=0.61..0.61 rows=0 loops=1)
-            -> Nested loop inner join  (cost=13.4..120187 rows=10210 height=1) (actual time=0.608..0.608 rows=0 loops=1)
-                -> Inner hash join (store_returns.sr_reason_sk = reason.r_reason_sk) (fill_ratio=0)  (cost=10..85635 rows=10210 height=1) (actual time=0.608..0.608 rows=0 loops=1)
-                    -> Table scan on store_returns  (cost=0.618..63049 rows=102101 height=1) (actual time=0.598..0.598 rows=1 loops=1)
+-> Sort: sumsales, store_sales.ss_customer_sk, limit input to 100 row(s) per chunk  (cost=126458..126458 rows=100 height=1) (actual time=0.599..0.599 rows=0 loops=1)
+    -> Table scan on <temporary>  (cost=126385..126402 rows=101 height=1) (actual time=0.595..0.595 rows=0 loops=1)
+        -> Aggregate using temporary table  (cost=126385..126385 rows=101 height=1) (actual time=0.595..0.595 rows=0 loops=1)
+            -> Nested loop inner join  (cost=13.4..120187 rows=10210 height=1) (actual time=0.593..0.593 rows=0 loops=1)
+                -> Inner hash join (store_returns.sr_reason_sk = reason.r_reason_sk) (fill_ratio=0)  (cost=10..85635 rows=10210 height=1) (actual time=0.593..0.593 rows=0 loops=1)
+                    -> Table scan on store_returns  (cost=0.618..63049 rows=102101 height=1) (actual time=0.583..0.583 rows=1 loops=1)
                     -> Hash
-                        -> Filter: (reason.r_reason_desc = 'Did not like the warranty')  (cost=1.47..1.47 rows=0.1 height=1) (actual time=0.00689..0.00689 rows=0 loops=1)
-                            -> Table scan on reason  (cost=1.41..1.41 rows=1 height=1) (actual time=0.00359..0.00522 rows=1 loops=1)
+                        -> Filter: (reason.r_reason_desc = 'Did not like the warranty')  (cost=1.47..1.47 rows=0.1 height=1) (actual time=0.00673..0.00673 rows=0 loops=1)
+                            -> Table scan on reason  (cost=1.41..1.41 rows=1 height=1) (actual time=0.00318..0.00483 rows=1 loops=1)
                 -> Single-row index lookup on store_sales using PRIMARY (ss_item_sk = store_returns.sr_item_sk, ss_ticket_number = store_returns.sr_ticket_number)  (cost=3.38..3.38 rows=1 height=1) (never executed)

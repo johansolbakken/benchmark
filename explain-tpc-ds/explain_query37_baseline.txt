@@ -1,8 +1,8 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 739 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 738 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=2.99e+6..2.99e+6 rows=10.9 height=1) (actual time=0.0337..0.0337 rows=0 loops=1)
-    -> Group (no aggregates)  (cost=2.99e+6..2.99e+6 rows=10.9 height=1) (actual time=0.0334..0.0334 rows=0 loops=1)
-        -> Sort: i.i_item_id, i.i_item_desc, i.i_current_price  (cost=2.99e+6..2.99e+6 rows=14.1 height=1) (actual time=0.0324..0.0324 rows=0 loops=1)
+-> Limit: 100 row(s)  (cost=2.99e+6..2.99e+6 rows=10.9 height=1) (actual time=0.0328..0.0328 rows=0 loops=1)
+    -> Group (no aggregates)  (cost=2.99e+6..2.99e+6 rows=10.9 height=1) (actual time=0.0326..0.0326 rows=0 loops=1)
+        -> Sort: i.i_item_id, i.i_item_desc, i.i_current_price  (cost=2.99e+6..2.99e+6 rows=14.1 height=1) (actual time=0.0319..0.0319 rows=0 loops=1)
             -> Inner hash join (i.i_item_sk = inv.inv_item_sk) (fill_ratio=0)  (cost=210994..2.98e+6 rows=14.1 height=1) (actual time=0.0287..0.0287 rows=0 loops=1)
                 -> Nested loop inner join  (cost=37.3..2.97e+6 rows=79590 height=1) (never executed)
                     -> Filter: (d.d_date between <cache>(cast('2001-06-02' as date)) and <cache>((cast('2001-06-02' as date) + interval 60 day)))  (cost=0.915..0.915 rows=0.111 height=1) (never executed)
@@ -10,7 +10,7 @@ EXPLAIN
                     -> Filter: (inv.inv_quantity_on_hand between 100 and 500)  (cost=4.14..2.97e+6 rows=716378 height=1) (never executed)
                         -> Index lookup on inv using PRIMARY (inv_date_sk = d.d_date_sk)  (cost=0.403..2.6e+6 rows=6.45e+6 height=1) (never executed)
                 -> Hash
-                    -> Nested loop inner join  (cost=8.73..8.73 rows=0.0444 height=1) (actual time=0.0262..0.0262 rows=0 loops=1)
-                        -> Table scan on cs  (cost=0.608..0.608 rows=1 height=1) (actual time=0.0147..0.0164 rows=1 loops=1)
-                        -> Filter: ((i.i_current_price between 22 and <cache>((22 + 30))) and (i.i_manufact_id in (678,964,918,849)))  (cost=8.12..8.12 rows=0.0444 height=1) (actual time=0.00912..0.00912 rows=0 loops=1)
-                            -> Single-row index lookup on i using PRIMARY (i_item_sk = cs.cs_item_sk)  (cost=8.06..8.06 rows=1 height=1) (actual time=0.0089..0.0089 rows=0 loops=1)
+                    -> Nested loop inner join  (cost=8.73..8.73 rows=0.0444 height=1) (actual time=0.0261..0.0261 rows=0 loops=1)
+                        -> Table scan on cs  (cost=0.608..0.608 rows=1 height=1) (actual time=0.0143..0.0163 rows=1 loops=1)
+                        -> Filter: ((i.i_current_price between 22 and <cache>((22 + 30))) and (i.i_manufact_id in (678,964,918,849)))  (cost=8.12..8.12 rows=0.0444 height=1) (actual time=0.00895..0.00895 rows=0 loops=1)
+                            -> Single-row index lookup on i using PRIMARY (i_item_sk = cs.cs_item_sk)  (cost=8.06..8.06 rows=1 height=1) (actual time=0.00872..0.00872 rows=0 loops=1)

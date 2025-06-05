@@ -1,12 +1,12 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 475 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 476 bytes
 EXPLAIN
--> Sort: ext_price DESC, item.brand_id, limit input to 100 row(s) per chunk  (cost=122684..122684 rows=100 height=1) (actual time=0.131..0.131 rows=0 loops=1)
-    -> Table scan on <temporary>  (cost=122611..122628 rows=101 height=1) (actual time=0.128..0.128 rows=0 loops=1)
-        -> Aggregate using temporary table  (cost=122611..122611 rows=101 height=1) (actual time=0.127..0.127 rows=0 loops=1)
-            -> Inner hash join (date_dim.d_date_sk = store_sales.ss_sold_date_sk) (fill_ratio=0)  (cost=78.8..121365 rows=1559 height=1) (actual time=0.126..0.126 rows=0 loops=1)
-                -> Nested loop inner join  (cost=0.57..88823 rows=155880 height=1) (actual time=0.124..0.124 rows=0 loops=1)
-                    -> Filter: (item.i_manager_id = 36)  (cost=56.2..1404 rows=25 height=1) (actual time=0.123..0.123 rows=0 loops=1)
-                        -> Table scan on item  (cost=5.56..1389 rows=250 height=1) (actual time=0.0259..0.113 rows=250 loops=1)
+-> Sort: ext_price DESC, item.brand_id, limit input to 100 row(s) per chunk  (cost=122684..122684 rows=100 height=1) (actual time=0.134..0.134 rows=0 loops=1)
+    -> Table scan on <temporary>  (cost=122611..122628 rows=101 height=1) (actual time=0.131..0.131 rows=0 loops=1)
+        -> Aggregate using temporary table  (cost=122611..122611 rows=101 height=1) (actual time=0.13..0.13 rows=0 loops=1)
+            -> Inner hash join (date_dim.d_date_sk = store_sales.ss_sold_date_sk) (fill_ratio=0)  (cost=78.8..121365 rows=1559 height=1) (actual time=0.129..0.129 rows=0 loops=1)
+                -> Nested loop inner join  (cost=0.57..88823 rows=155880 height=1) (actual time=0.127..0.127 rows=0 loops=1)
+                    -> Filter: (item.i_manager_id = 36)  (cost=56.2..1404 rows=25 height=1) (actual time=0.126..0.126 rows=0 loops=1)
+                        -> Table scan on item  (cost=5.56..1389 rows=250 height=1) (actual time=0.0315..0.116 rows=250 loops=1)
                     -> Index lookup on store_sales using PRIMARY (ss_item_sk = item.i_item_sk)  (cost=0.561..3497 rows=6235 height=1) (never executed)
                 -> Hash
                     -> Filter: ((date_dim.d_moy = 12) and (date_dim.d_year = 2001))  (cost=0.967..0.967 rows=0.01 height=1) (never executed)

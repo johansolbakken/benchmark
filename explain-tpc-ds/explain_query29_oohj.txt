@@ -1,8 +1,8 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1397 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1398 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=294..294 rows=136e-6 height=1) (actual time=0.0221..0.0221 rows=0 loops=1)
-    -> Group aggregate: sum(store_sales.ss_quantity), sum(store_returns.sr_return_quantity), sum(catalog_sales.cs_quantity)  (cost=294..294 rows=136e-6 height=1) (actual time=0.0219..0.0219 rows=0 loops=1)
-        -> Inner hash join (d1.d_date_sk = store_sales.ss_sold_date_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=294..294 rows=136e-6 height=1) (actual time=0.0213..0.0213 rows=0 loops=1)
+-> Limit: 100 row(s)  (cost=294..294 rows=136e-6 height=1) (actual time=0.0227..0.0227 rows=0 loops=1)
+    -> Group aggregate: sum(store_sales.ss_quantity), sum(store_returns.sr_return_quantity), sum(catalog_sales.cs_quantity)  (cost=294..294 rows=136e-6 height=1) (actual time=0.0224..0.0224 rows=0 loops=1)
+        -> Inner hash join (d1.d_date_sk = store_sales.ss_sold_date_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=294..294 rows=136e-6 height=1) (actual time=0.0217..0.0217 rows=0 loops=1)
             -> Sort: item.i_item_id, item.i_item_desc, store.s_store_id, store.s_store_name  (cost=293..293 rows=0.0136 height=1) (never executed)
                 -> Nested loop inner join  (cost=293..293 rows=0.0136 height=1) (never executed)
                     -> Nested loop inner join  (cost=285..285 rows=0.0136 height=1) (never executed)
@@ -24,5 +24,5 @@ EXPLAIN
                             -> Single-row index lookup on store_sales using PRIMARY (ss_item_sk = store_returns.sr_item_sk, ss_ticket_number = store_returns.sr_ticket_number)  (cost=3.43..3.43 rows=1 height=1) (never executed)
                     -> Single-row index lookup on store using PRIMARY (s_store_sk = store_sales.ss_store_sk)  (cost=8.1..8.1 rows=1 height=1) (never executed)
             -> Hash
-                -> Filter: ((d1.d_moy = 4) and (d1.d_year = 1999))  (cost=0.967..0.967 rows=0.01 height=1) (actual time=0.0173..0.0173 rows=0 loops=1)
-                    -> Table scan on d1  (cost=0.903..0.903 rows=1 height=1) (actual time=0.0144..0.0159 rows=1 loops=1)
+                -> Filter: ((d1.d_moy = 4) and (d1.d_year = 1999))  (cost=0.967..0.967 rows=0.01 height=1) (actual time=0.0175..0.0175 rows=0 loops=1)
+                    -> Table scan on d1  (cost=0.903..0.903 rows=1 height=1) (actual time=0.0146..0.0164 rows=1 loops=1)

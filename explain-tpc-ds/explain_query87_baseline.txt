@@ -1,18 +1,18 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1069 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1070 bytes
 EXPLAIN
--> Aggregate: count(0)  (cost=1.4e+6..1.4e+6 rows=1 height=1) (actual time=7.71..7.71 rows=1 loops=1)
-    -> Table scan on cool_cust  (cost=1.4e+6..1.4e+6 rows=3495 height=1) (actual time=7.71..7.71 rows=0 loops=1)
-        -> Except materialize with deduplication  (cost=1.4e+6..1.4e+6 rows=3495 height=1) (actual time=7.71..7.71 rows=0 loops=1)
-            -> Table scan on <temporary>  (cost=1.4e+6..1.4e+6 rows=3495 height=1) (actual time=7.71..7.71 rows=0 loops=1)
-                -> Temporary table with deduplication  (cost=1.4e+6..1.4e+6 rows=3495 height=1) (actual time=7.71..7.71 rows=0 loops=1)
-                    -> Inner hash join (store_sales.ss_customer_sk = customer.c_customer_sk) (fill_ratio=0.17316)  (cost=60501..1.32e+6 rows=173183 height=1) (actual time=7.71..7.71 rows=0 loops=1)
-                        -> Inner hash join (store_sales.ss_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=8.03..1.19e+6 rows=173183 height=1) (actual time=0.591..0.591 rows=0 loops=1)
-                            -> Table scan on store_sales  (cost=0.544..847645 rows=1.56e+6 height=1) (actual time=0.583..0.583 rows=1 loops=1)
+-> Aggregate: count(0)  (cost=1.4e+6..1.4e+6 rows=1 height=1) (actual time=7.67..7.67 rows=1 loops=1)
+    -> Table scan on cool_cust  (cost=1.4e+6..1.4e+6 rows=3495 height=1) (actual time=7.66..7.66 rows=0 loops=1)
+        -> Except materialize with deduplication  (cost=1.4e+6..1.4e+6 rows=3495 height=1) (actual time=7.66..7.66 rows=0 loops=1)
+            -> Table scan on <temporary>  (cost=1.4e+6..1.4e+6 rows=3495 height=1) (actual time=7.66..7.66 rows=0 loops=1)
+                -> Temporary table with deduplication  (cost=1.4e+6..1.4e+6 rows=3495 height=1) (actual time=7.66..7.66 rows=0 loops=1)
+                    -> Inner hash join (store_sales.ss_customer_sk = customer.c_customer_sk) (fill_ratio=0.17316)  (cost=60501..1.32e+6 rows=173183 height=1) (actual time=7.66..7.66 rows=0 loops=1)
+                        -> Inner hash join (store_sales.ss_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=8.03..1.19e+6 rows=173183 height=1) (actual time=0.609..0.609 rows=0 loops=1)
+                            -> Table scan on store_sales  (cost=0.544..847645 rows=1.56e+6 height=1) (actual time=0.601..0.601 rows=1 loops=1)
                             -> Hash
-                                -> Filter: (date_dim.d_month_seq between 1212 and <cache>((1212 + 11)))  (cost=0.961..0.961 rows=0.111 height=1) (actual time=0.00588..0.00588 rows=0 loops=1)
-                                    -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (actual time=0.00351..0.00409 rows=1 loops=1)
+                                -> Filter: (date_dim.d_month_seq between 1212 and <cache>((1212 + 11)))  (cost=0.961..0.961 rows=0.111 height=1) (actual time=0.00642..0.00642 rows=0 loops=1)
+                                    -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (actual time=0.00429..0.00503 rows=1 loops=1)
                         -> Hash
-                            -> Table scan on customer  (cost=1.95..34244 rows=17526 height=1) (actual time=0.088..4.41 rows=17666 loops=1)
+                            -> Table scan on customer  (cost=1.95..34244 rows=17526 height=1) (actual time=0.089..4.38 rows=17666 loops=1)
             -> Sort with duplicate removal: customer.c_last_name, customer.c_first_name, date_dim.d_date  (cost=7.49..7.49 rows=0.111 height=1) (never executed)
                 -> Inner hash join (catalog_sales.cs_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=7.14..7.14 rows=0.111 height=1) (never executed)
                     -> Nested loop inner join  (cost=5.79..5.79 rows=1 height=1) (never executed)

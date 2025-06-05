@@ -1,8 +1,8 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 556 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 557 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=1.33e+6..1.33e+6 rows=1 height=1) (actual time=0.0232..0.0233 rows=1 loops=1)
+-> Limit: 100 row(s)  (cost=1.33e+6..1.33e+6 rows=1 height=1) (actual time=0.0231..0.0233 rows=1 loops=1)
     -> Aggregate: count(0)  (cost=1.33e+6..1.33e+6 rows=1 height=1) (actual time=0.0229..0.023 rows=1 loops=1)
-        -> Inner hash join (store_sales.ss_store_sk = store.s_store_sk) (fill_ratio=0)  (cost=65519..1.33e+6 rows=520 height=1) (actual time=0.0219..0.0219 rows=0 loops=1)
+        -> Inner hash join (store_sales.ss_store_sk = store.s_store_sk) (fill_ratio=0)  (cost=65519..1.33e+6 rows=520 height=1) (actual time=0.0215..0.0215 rows=0 loops=1)
             -> Inner hash join (store_sales.ss_hdemo_sk = household_demographics.hd_demo_sk) (fill_ratio=0)  (cost=63318..1.32e+6 rows=5195 height=1) (never executed)
                 -> Inner hash join (store_sales.ss_sold_time_sk = time_dim.t_time_sk) (fill_ratio=0)  (cost=63099..1.31e+6 rows=51955 height=1) (never executed)
                     -> Table scan on store_sales  (cost=0.59..919479 rows=1.56e+6 height=1) (never executed)
@@ -13,5 +13,5 @@ EXPLAIN
                     -> Filter: (household_demographics.hd_dep_count = 5)  (cost=0.565..0.565 rows=0.1 height=1) (never executed)
                         -> Table scan on household_demographics  (cost=0.507..0.507 rows=1 height=1) (never executed)
             -> Hash
-                -> Filter: (store.s_store_name = 'ese')  (cost=13.6..13.6 rows=0.2 height=1) (actual time=0.0194..0.0194 rows=0 loops=1)
-                    -> Table scan on store  (cost=6.76..13.5 rows=2 height=1) (actual time=0.0161..0.0179 rows=2 loops=1)
+                -> Filter: (store.s_store_name = 'ese')  (cost=13.6..13.6 rows=0.2 height=1) (actual time=0.0188..0.0188 rows=0 loops=1)
+                    -> Table scan on store  (cost=6.76..13.5 rows=2 height=1) (actual time=0.0155..0.0172 rows=2 loops=1)

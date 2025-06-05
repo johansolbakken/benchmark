@@ -1,13 +1,13 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 755 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 754 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=3.01e+6..4.94e+6 rows=100 height=1) (actual time=0.0331..0.0331 rows=0 loops=1)
-    -> Group (no aggregates)  (cost=3.01e+6..15.5e+6 rows=639 height=1) (actual time=0.0328..0.0328 rows=0 loops=1)
-        -> Nested loop inner join  (cost=2.99e+6..13.4e+6 rows=22.1e+6 height=1) (actual time=0.0323..0.0323 rows=0 loops=1)
-            -> Sort: i.i_item_id, i.i_item_desc, i.i_current_price  (cost=2.99e+6..2.99e+6 rows=3537 height=1) (actual time=0.0318..0.0318 rows=0 loops=1)
-                -> Inner hash join (i.i_item_sk = inv.inv_item_sk) (fill_ratio=0)  (cost=2278..2.99e+6 rows=3537 height=1) (actual time=0.0284..0.0284 rows=0 loops=1)
-                    -> Nested loop inner join  (cost=37.3..2.97e+6 rows=79590 height=1) (actual time=0.0267..0.0267 rows=0 loops=1)
-                        -> Filter: (d.d_date between <cache>(cast('2002-05-30' as date)) and <cache>((cast('2002-05-30' as date) + interval 60 day)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.0263..0.0263 rows=0 loops=1)
-                            -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0191..0.0212 rows=1 loops=1)
+-> Limit: 100 row(s)  (cost=3.01e+6..4.94e+6 rows=100 height=1) (actual time=0.028..0.028 rows=0 loops=1)
+    -> Group (no aggregates)  (cost=3.01e+6..15.5e+6 rows=639 height=1) (actual time=0.0277..0.0277 rows=0 loops=1)
+        -> Nested loop inner join  (cost=2.99e+6..13.4e+6 rows=22.1e+6 height=1) (actual time=0.0272..0.0272 rows=0 loops=1)
+            -> Sort: i.i_item_id, i.i_item_desc, i.i_current_price  (cost=2.99e+6..2.99e+6 rows=3537 height=1) (actual time=0.0268..0.0268 rows=0 loops=1)
+                -> Inner hash join (i.i_item_sk = inv.inv_item_sk) (fill_ratio=0)  (cost=2278..2.99e+6 rows=3537 height=1) (actual time=0.0236..0.0236 rows=0 loops=1)
+                    -> Nested loop inner join  (cost=37.3..2.97e+6 rows=79590 height=1) (actual time=0.0218..0.0218 rows=0 loops=1)
+                        -> Filter: (d.d_date between <cache>(cast('2002-05-30' as date)) and <cache>((cast('2002-05-30' as date) + interval 60 day)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.0215..0.0215 rows=0 loops=1)
+                            -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0147..0.0166 rows=1 loops=1)
                         -> Filter: (inv.inv_quantity_on_hand between 100 and 500)  (cost=4.14..2.97e+6 rows=716378 height=1) (never executed)
                             -> Index lookup on inv using PRIMARY (inv_date_sk = d.d_date_sk)  (cost=0.403..2.6e+6 rows=6.45e+6 height=1) (never executed)
                     -> Hash

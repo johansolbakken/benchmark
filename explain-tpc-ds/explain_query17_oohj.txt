@@ -1,8 +1,8 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1807 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1808 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=304..304 rows=0.0368 height=1) (actual time=0.0225..0.0225 rows=0 loops=1)
-    -> Group aggregate: avg(catalog_sales.cs_quantity), stddev_samp(catalog_sales.cs_quantity), avg(store_returns.sr_return_quantity), stddev_samp(store_returns.sr_return_quantity), avg(store_sales.ss_quantity), stddev_samp(store_sales.ss_quantity), count(store_sales.ss_quantity), avg(store_sales.ss_quantity), stddev_samp(store_sales.ss_quantity), count(store_returns.sr_return_quantity), avg(store_returns.sr_return_quantity), stddev_samp(store_returns.sr_return_quantity), count(catalog_sales.cs_quantity), avg(catalog_sales.cs_quantity), stddev_samp(catalog_sales.cs_quantity)  (cost=304..304 rows=0.0368 height=1) (actual time=0.0223..0.0223 rows=0 loops=1)
-        -> Inner hash join (d1.d_date_sk = store_sales.ss_sold_date_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=304..304 rows=0.0368 height=1) (actual time=0.0217..0.0217 rows=0 loops=1)
+-> Limit: 100 row(s)  (cost=304..304 rows=0.0368 height=1) (actual time=0.024..0.024 rows=0 loops=1)
+    -> Group aggregate: avg(catalog_sales.cs_quantity), stddev_samp(catalog_sales.cs_quantity), avg(store_returns.sr_return_quantity), stddev_samp(store_returns.sr_return_quantity), avg(store_sales.ss_quantity), stddev_samp(store_sales.ss_quantity), count(store_sales.ss_quantity), avg(store_sales.ss_quantity), stddev_samp(store_sales.ss_quantity), count(store_returns.sr_return_quantity), avg(store_returns.sr_return_quantity), stddev_samp(store_returns.sr_return_quantity), count(catalog_sales.cs_quantity), avg(catalog_sales.cs_quantity), stddev_samp(catalog_sales.cs_quantity)  (cost=304..304 rows=0.0368 height=1) (actual time=0.0237..0.0237 rows=0 loops=1)
+        -> Inner hash join (d1.d_date_sk = store_sales.ss_sold_date_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=304..304 rows=0.0368 height=1) (actual time=0.023..0.023 rows=0 loops=1)
             -> Sort: item.i_item_id, item.i_item_desc, store.s_state  (cost=303..303 rows=0.368 height=1) (never executed)
                 -> Nested loop inner join  (cost=303..303 rows=0.368 height=1) (never executed)
                     -> Nested loop inner join  (cost=295..295 rows=0.368 height=1) (never executed)
@@ -25,4 +25,4 @@ EXPLAIN
                     -> Single-row index lookup on store using PRIMARY (s_store_sk = store_sales.ss_store_sk)  (cost=8.06..8.06 rows=1 height=1) (never executed)
             -> Hash
                 -> Filter: (d1.d_quarter_name = '1998Q1')  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.0185..0.0185 rows=0 loops=1)
-                    -> Table scan on d1  (cost=0.857..0.857 rows=1 height=1) (actual time=0.015..0.0169 rows=1 loops=1)
+                    -> Table scan on d1  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0153..0.0172 rows=1 loops=1)

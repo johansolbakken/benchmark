@@ -1,19 +1,19 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 3677 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 3678 bytes
 EXPLAIN
--> Sort: cs1.product_name, cs1.store_name, cs2.cnt, cs1.s1, cs2.s1  (cost=32786..32786 rows=1.56 height=1) (actual time=0.0463..0.0463 rows=0 loops=1)
-    -> Inner hash join (cs1.item_sk = cs2.item_sk), (cs1.store_name = cs2.store_name), (cs1.store_zip = cs2.store_zip), extra conditions: (cs2.cnt <= cs1.cnt) (fill_ratio=0)  (cost=32725..32785 rows=1.56 height=1) (actual time=0.0438..0.0438 rows=0 loops=1)
+-> Sort: cs1.product_name, cs1.store_name, cs2.cnt, cs1.s1, cs2.s1  (cost=32786..32786 rows=1.56 height=1) (actual time=0.0446..0.0446 rows=0 loops=1)
+    -> Inner hash join (cs1.item_sk = cs2.item_sk), (cs1.store_name = cs2.store_name), (cs1.store_zip = cs2.store_zip), extra conditions: (cs2.cnt <= cs1.cnt) (fill_ratio=0)  (cost=32725..32785 rows=1.56 height=1) (actual time=0.0425..0.0425 rows=0 loops=1)
         -> Filter: (cs1.syear = 2000)  (cost=16183..16334 rows=68.5 height=1) (never executed)
             -> Table scan on cs1  (cost=16141..16295 rows=685 height=1) (never executed)
                 -> Materialize CTE cross_sales if needed (query plan printed elsewhere)  (cost=16141..16141 rows=685 height=1) (never executed)
         -> Hash
-            -> Filter: (cs2.syear = <cache>((2000 + 1)))  (cost=16183..16334 rows=68.5 height=1) (actual time=0.0419..0.0419 rows=0 loops=1)
-                -> Table scan on cs2  (cost=16141..16295 rows=685 height=1) (actual time=0.0416..0.0416 rows=0 loops=1)
-                    -> Materialize CTE cross_sales if needed  (cost=16141..16141 rows=685 height=1) (actual time=0.0409..0.0409 rows=0 loops=1)
-                        -> Group aggregate: count(0), sum(store_sales.ss_wholesale_cost), sum(store_sales.ss_list_price), sum(store_sales.ss_coupon_amt)  (cost=6806..15693 rows=685 height=1) (actual time=0.0343..0.0343 rows=0 loops=1)
-                            -> Filter: (store_sales.ss_ticket_number = store_returns.sr_ticket_number)  (cost=6798..14761 rows=1414 height=1) (actual time=0.0338..0.0338 rows=0 loops=1)
-                                -> Nested loop inner join  (cost=5979..13947 rows=14144 height=1) (actual time=0.0336..0.0336 rows=0 loops=1)
-                                    -> Sort: item.i_product_name, item.i_item_sk, store.s_store_name, store.s_zip, ad1.ca_street_number, ad1.ca_street_name, ad1.ca_city, ad1.ca_zip, ad2.ca_street_number, ad2.ca_street_name, ad2.ca_city, ad2.ca_zip, d1.d_year, d2.d_year, d3.d_year  (cost=6793..6793 rows=34.6 height=1) (actual time=0.0331..0.0331 rows=0 loops=1)
-                                        -> Inner hash join (customer.c_current_hdemo_sk = hd2.hd_demo_sk) (fill_ratio=0)  (cost=278..6775 rows=34.6 height=1) (actual time=0.0297..0.0297 rows=0 loops=1)
+            -> Filter: (cs2.syear = <cache>((2000 + 1)))  (cost=16183..16334 rows=68.5 height=1) (actual time=0.0407..0.0407 rows=0 loops=1)
+                -> Table scan on cs2  (cost=16141..16295 rows=685 height=1) (actual time=0.0404..0.0404 rows=0 loops=1)
+                    -> Materialize CTE cross_sales if needed  (cost=16141..16141 rows=685 height=1) (actual time=0.0398..0.0398 rows=0 loops=1)
+                        -> Group aggregate: count(0), sum(store_sales.ss_wholesale_cost), sum(store_sales.ss_list_price), sum(store_sales.ss_coupon_amt)  (cost=6806..15693 rows=685 height=1) (actual time=0.0326..0.0326 rows=0 loops=1)
+                            -> Filter: (store_sales.ss_ticket_number = store_returns.sr_ticket_number)  (cost=6798..14761 rows=1414 height=1) (actual time=0.0321..0.0321 rows=0 loops=1)
+                                -> Nested loop inner join  (cost=5979..13947 rows=14144 height=1) (actual time=0.0319..0.0319 rows=0 loops=1)
+                                    -> Sort: item.i_product_name, item.i_item_sk, store.s_store_name, store.s_zip, ad1.ca_street_number, ad1.ca_street_name, ad1.ca_city, ad1.ca_zip, ad2.ca_street_number, ad2.ca_street_name, ad2.ca_city, ad2.ca_zip, d1.d_year, d2.d_year, d3.d_year  (cost=6793..6793 rows=34.6 height=1) (actual time=0.0315..0.0315 rows=0 loops=1)
+                                        -> Inner hash join (customer.c_current_hdemo_sk = hd2.hd_demo_sk) (fill_ratio=0)  (cost=278..6775 rows=34.6 height=1) (actual time=0.0281..0.0281 rows=0 loops=1)
                                             -> Inner hash join (store_sales.ss_hdemo_sk = hd1.hd_demo_sk) (fill_ratio=0)  (cost=273..6759 rows=34.6 height=1) (never executed)
                                                 -> Inner hash join (store_sales.ss_store_sk = store.s_store_sk) (fill_ratio=0)  (cost=269..6743 rows=34.6 height=1) (never executed)
                                                     -> Inner hash join (store_sales.ss_promo_sk = promotion.p_promo_sk) (fill_ratio=0)  (cost=252..6714 rows=34.6 height=1) (never executed)
@@ -55,8 +55,8 @@ EXPLAIN
                                                         -> Hash
                                                             -> Table scan on hd1  (cost=0.507..0.507 rows=1 height=1) (never executed)
                                             -> Hash
-                                                -> Inner hash join (hd2.hd_income_band_sk = ib2.ib_income_band_sk) (fill_ratio=4.76837e-06)  (cost=2.66..2.66 rows=1 height=1) (actual time=0.0273..0.0273 rows=0 loops=1)
-                                                    -> Table scan on ib2  (cost=0.313..0.313 rows=1 height=1) (actual time=0.017..0.0176 rows=1 loops=1)
+                                                -> Inner hash join (hd2.hd_income_band_sk = ib2.ib_income_band_sk) (fill_ratio=4.76837e-06)  (cost=2.66..2.66 rows=1 height=1) (actual time=0.0258..0.0258 rows=0 loops=1)
+                                                    -> Table scan on ib2  (cost=0.313..0.313 rows=1 height=1) (actual time=0.0157..0.0163 rows=1 loops=1)
                                                     -> Hash
-                                                        -> Table scan on hd2  (cost=0.507..0.507 rows=1 height=1) (actual time=0.00303..0.00506 rows=1 loops=1)
+                                                        -> Table scan on hd2  (cost=0.507..0.507 rows=1 height=1) (actual time=0.0036..0.00531 rows=1 loops=1)
                                     -> Covering index lookup on store_returns using PRIMARY (sr_item_sk = item.i_item_sk)  (cost=0.506..207 rows=408 height=1) (never executed)

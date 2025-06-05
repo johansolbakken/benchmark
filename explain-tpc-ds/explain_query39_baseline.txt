@@ -1,7 +1,7 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 2270 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 2271 bytes
 EXPLAIN
--> Sort: w_warehouse_sk, i_item_sk, d_moy, mean, cov, d_moy, mean, cov  (cost=5.99e+6..5.99e+6 rows=2517 height=1) (actual time=0.124..0.124 rows=0 loops=1)
-    -> Inner hash join (foo.i_item_sk = foo.i_item_sk), (foo.w_warehouse_sk = foo.w_warehouse_sk) (fill_ratio=0)  (cost=5.99e+6..5.99e+6 rows=2517 height=1) (actual time=0.12..0.12 rows=0 loops=1)
+-> Sort: w_warehouse_sk, i_item_sk, d_moy, mean, cov, d_moy, mean, cov  (cost=5.99e+6..5.99e+6 rows=2517 height=1) (actual time=0.137..0.137 rows=0 loops=1)
+    -> Inner hash join (foo.i_item_sk = foo.i_item_sk), (foo.w_warehouse_sk = foo.w_warehouse_sk) (fill_ratio=0)  (cost=5.99e+6..5.99e+6 rows=2517 height=1) (actual time=0.134..0.134 rows=0 loops=1)
         -> Table scan on foo  (cost=2.99e+6..2.99e+6 rows=502 height=1) (never executed)
             -> Materialize  (cost=2.99e+6..2.99e+6 rows=502 height=1) (never executed)
                 -> Filter: ((case mean when 0 then 0 else (stdev / mean) end) > 1)  (cost=2.99e+6..2.99e+6 rows=502 height=1) (never executed)
@@ -18,18 +18,18 @@ EXPLAIN
                                 -> Hash
                                     -> Table scan on item  (cost=5.42..1355 rows=250 height=1) (never executed)
         -> Hash
-            -> Table scan on foo  (cost=2.99e+6..2.99e+6 rows=502 height=1) (actual time=0.118..0.118 rows=0 loops=1)
-                -> Materialize  (cost=2.99e+6..2.99e+6 rows=502 height=1) (actual time=0.118..0.118 rows=0 loops=1)
-                    -> Filter: ((case mean when 0 then 0 else (stdev / mean) end) > 1)  (cost=2.99e+6..2.99e+6 rows=502 height=1) (actual time=0.115..0.115 rows=0 loops=1)
-                        -> Table scan on <temporary>  (cost=2.99e+6..2.99e+6 rows=502 height=1) (actual time=0.115..0.115 rows=0 loops=1)
-                            -> Aggregate using temporary table  (cost=2.99e+6..2.99e+6 rows=502 height=1) (actual time=0.114..0.114 rows=0 loops=1)
-                                -> Inner hash join (inventory.inv_item_sk = item.i_item_sk) (fill_ratio=0.000596046)  (cost=1783..2.93e+6 rows=64481 height=1) (actual time=0.114..0.114 rows=0 loops=1)
-                                    -> Inner hash join (inventory.inv_warehouse_sk = warehouse.w_warehouse_sk) (fill_ratio=2.6226e-05)  (cost=53.4..2.9e+6 rows=64481 height=1) (actual time=0.0115..0.0115 rows=0 loops=1)
-                                        -> Nested loop inner join  (cost=44.7..2.88e+6 rows=64481 height=1) (actual time=0.00504..0.00504 rows=0 loops=1)
-                                            -> Filter: ((date_dim.d_year = 1998) and (date_dim.d_moy = <cache>((4 + 1))))  (cost=0.967..0.967 rows=0.01 height=1) (actual time=0.00466..0.00466 rows=0 loops=1)
-                                                -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (actual time=0.00308..0.00371 rows=1 loops=1)
+            -> Table scan on foo  (cost=2.99e+6..2.99e+6 rows=502 height=1) (actual time=0.132..0.132 rows=0 loops=1)
+                -> Materialize  (cost=2.99e+6..2.99e+6 rows=502 height=1) (actual time=0.131..0.131 rows=0 loops=1)
+                    -> Filter: ((case mean when 0 then 0 else (stdev / mean) end) > 1)  (cost=2.99e+6..2.99e+6 rows=502 height=1) (actual time=0.128..0.128 rows=0 loops=1)
+                        -> Table scan on <temporary>  (cost=2.99e+6..2.99e+6 rows=502 height=1) (actual time=0.128..0.128 rows=0 loops=1)
+                            -> Aggregate using temporary table  (cost=2.99e+6..2.99e+6 rows=502 height=1) (actual time=0.128..0.128 rows=0 loops=1)
+                                -> Inner hash join (inventory.inv_item_sk = item.i_item_sk) (fill_ratio=0.000596046)  (cost=1783..2.93e+6 rows=64481 height=1) (actual time=0.127..0.127 rows=0 loops=1)
+                                    -> Inner hash join (inventory.inv_warehouse_sk = warehouse.w_warehouse_sk) (fill_ratio=2.6226e-05)  (cost=53.4..2.9e+6 rows=64481 height=1) (actual time=0.0127..0.0127 rows=0 loops=1)
+                                        -> Nested loop inner join  (cost=44.7..2.88e+6 rows=64481 height=1) (actual time=0.0052..0.0052 rows=0 loops=1)
+                                            -> Filter: ((date_dim.d_year = 1998) and (date_dim.d_moy = <cache>((4 + 1))))  (cost=0.967..0.967 rows=0.01 height=1) (actual time=0.00486..0.00486 rows=0 loops=1)
+                                                -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (actual time=0.00335..0.00393 rows=1 loops=1)
                                             -> Index lookup on inventory using PRIMARY (inv_date_sk = date_dim.d_date_sk)  (cost=0.447..2.88e+6 rows=6.45e+6 height=1) (never executed)
                                         -> Hash
-                                            -> Table scan on warehouse  (cost=2.7..5.4 rows=2 height=1) (actual time=0.00369..0.00437 rows=2 loops=1)
+                                            -> Table scan on warehouse  (cost=2.7..5.4 rows=2 height=1) (actual time=0.00446..0.00515 rows=2 loops=1)
                                     -> Hash
-                                        -> Table scan on item  (cost=5.42..1355 rows=250 height=1) (actual time=0.0602..0.0747 rows=250 loops=1)
+                                        -> Table scan on item  (cost=5.42..1355 rows=250 height=1) (actual time=0.0723..0.0864 rows=250 loops=1)

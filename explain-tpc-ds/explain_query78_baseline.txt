@@ -1,20 +1,20 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 2279 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 2280 bytes
 EXPLAIN
--> Sort: ss.ss_sold_year, ss.ss_item_sk, ss.ss_customer_sk, ss.ss_qty DESC, ss.ss_wc DESC, ss.ss_sp DESC, other_chan_qty, other_chan_wholesale_cost, other_chan_sales_price, ratio, limit input to 100 row(s) per chunk  (cost=1.85e+6..1.85e+6 rows=100 height=1) (actual time=0.713..0.713 rows=0 loops=1)
-    -> Filter: ((coalesce(ws.ws_qty,0) > 0) or (coalesce(cs.cs_qty,0) > 0))  (cost=1.84e+6..1.85e+6 rows=5936 height=1) (actual time=0.709..0.709 rows=0 loops=1)
-        -> Left hash join (cs.cs_sold_year = ss.ss_sold_year), (cs.cs_item_sk = ss.ss_item_sk), (cs.cs_customer_sk = ss.ss_customer_sk) (fill_ratio=0)  (cost=1.84e+6..1.85e+6 rows=5936 height=1) (actual time=0.709..0.709 rows=0 loops=1)
-            -> Left hash join (ws.ws_sold_year = ss.ss_sold_year), (ws.ws_item_sk = ss.ss_item_sk), (ws.ws_customer_sk = ss.ss_customer_sk) (fill_ratio=0)  (cost=1.84e+6..1.84e+6 rows=5936 height=1) (actual time=0.707..0.707 rows=0 loops=1)
-                -> Table scan on ss  (cost=1.84e+6..1.84e+6 rows=5936 height=1) (actual time=0.707..0.707 rows=0 loops=1)
-                    -> Materialize CTE ss  (cost=1.84e+6..1.84e+6 rows=5936 height=1) (actual time=0.706..0.706 rows=0 loops=1)
-                        -> Group aggregate: sum(store_sales.ss_quantity), sum(store_sales.ss_wholesale_cost), sum(store_sales.ss_sales_price)  (cost=1.83e+6..1.84e+6 rows=5936 height=1) (actual time=0.701..0.701 rows=0 loops=1)
-                            -> Sort: store_sales.ss_item_sk, store_sales.ss_customer_sk  (cost=1.83e+6..1.83e+6 rows=15588 height=1) (actual time=0.7..0.7 rows=0 loops=1)
-                                -> Filter: (store_returns.sr_ticket_number is null)  (cost=206659..1.82e+6 rows=15588 height=1) (actual time=0.698..0.698 rows=0 loops=1)
-                                    -> Left hash join (store_returns.sr_ticket_number = store_sales.ss_ticket_number), (store_sales.ss_item_sk = store_returns.sr_item_sk) (fill_ratio=0)  (cost=197587..1.81e+6 rows=155880 height=1) (actual time=0.698..0.698 rows=0 loops=1)
-                                        -> Inner hash join (store_sales.ss_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=11..1.55e+6 rows=155880 height=1) (actual time=0.698..0.698 rows=0 loops=1)
-                                            -> Table scan on store_sales  (cost=0.774..1.21e+6 rows=1.56e+6 height=1) (actual time=0.69..0.69 rows=1 loops=1)
+-> Sort: ss.ss_sold_year, ss.ss_item_sk, ss.ss_customer_sk, ss.ss_qty DESC, ss.ss_wc DESC, ss.ss_sp DESC, other_chan_qty, other_chan_wholesale_cost, other_chan_sales_price, ratio, limit input to 100 row(s) per chunk  (cost=1.85e+6..1.85e+6 rows=100 height=1) (actual time=0.698..0.698 rows=0 loops=1)
+    -> Filter: ((coalesce(ws.ws_qty,0) > 0) or (coalesce(cs.cs_qty,0) > 0))  (cost=1.84e+6..1.85e+6 rows=5936 height=1) (actual time=0.694..0.694 rows=0 loops=1)
+        -> Left hash join (cs.cs_sold_year = ss.ss_sold_year), (cs.cs_item_sk = ss.ss_item_sk), (cs.cs_customer_sk = ss.ss_customer_sk) (fill_ratio=0)  (cost=1.84e+6..1.85e+6 rows=5936 height=1) (actual time=0.694..0.694 rows=0 loops=1)
+            -> Left hash join (ws.ws_sold_year = ss.ss_sold_year), (ws.ws_item_sk = ss.ss_item_sk), (ws.ws_customer_sk = ss.ss_customer_sk) (fill_ratio=0)  (cost=1.84e+6..1.84e+6 rows=5936 height=1) (actual time=0.692..0.692 rows=0 loops=1)
+                -> Table scan on ss  (cost=1.84e+6..1.84e+6 rows=5936 height=1) (actual time=0.692..0.692 rows=0 loops=1)
+                    -> Materialize CTE ss  (cost=1.84e+6..1.84e+6 rows=5936 height=1) (actual time=0.691..0.691 rows=0 loops=1)
+                        -> Group aggregate: sum(store_sales.ss_quantity), sum(store_sales.ss_wholesale_cost), sum(store_sales.ss_sales_price)  (cost=1.83e+6..1.84e+6 rows=5936 height=1) (actual time=0.686..0.686 rows=0 loops=1)
+                            -> Sort: store_sales.ss_item_sk, store_sales.ss_customer_sk  (cost=1.83e+6..1.83e+6 rows=15588 height=1) (actual time=0.685..0.685 rows=0 loops=1)
+                                -> Filter: (store_returns.sr_ticket_number is null)  (cost=206659..1.82e+6 rows=15588 height=1) (actual time=0.683..0.683 rows=0 loops=1)
+                                    -> Left hash join (store_returns.sr_ticket_number = store_sales.ss_ticket_number), (store_sales.ss_item_sk = store_returns.sr_item_sk) (fill_ratio=0)  (cost=197587..1.81e+6 rows=155880 height=1) (actual time=0.683..0.683 rows=0 loops=1)
+                                        -> Inner hash join (store_sales.ss_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=11..1.55e+6 rows=155880 height=1) (actual time=0.682..0.682 rows=0 loops=1)
+                                            -> Table scan on store_sales  (cost=0.774..1.21e+6 rows=1.56e+6 height=1) (actual time=0.673..0.673 rows=1 loops=1)
                                             -> Hash
-                                                -> Filter: (date_dim.d_year = 2000)  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.00602..0.00602 rows=0 loops=1)
-                                                    -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00353..0.00514 rows=1 loops=1)
+                                                -> Filter: (date_dim.d_year = 2000)  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.00687..0.00687 rows=0 loops=1)
+                                                    -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00405..0.00597 rows=1 loops=1)
                                         -> Hash
                                             -> Table scan on store_returns  (cost=0.525..53638 rows=102101 height=1) (never executed)
                 -> Hash

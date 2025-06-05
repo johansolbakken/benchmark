@@ -1,12 +1,12 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1353 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1354 bytes
 EXPLAIN
--> Sort: dj.cnt DESC, customer.c_last_name  (cost=1.41e+6..1.41e+6 rows=642 height=1) (actual time=0.0324..0.0324 rows=0 loops=1)
-    -> Nested loop inner join  (cost=1.41e+6..1.41e+6 rows=642 height=1) (actual time=0.0291..0.0291 rows=0 loops=1)
-        -> Table scan on dj  (cost=1.41e+6..1.41e+6 rows=642 height=1) (actual time=0.0286..0.0286 rows=0 loops=1)
-            -> Materialize  (cost=1.41e+6..1.41e+6 rows=642 height=1) (actual time=0.0281..0.0281 rows=0 loops=1)
-                -> Filter: (count(0) between 1 and 5)  (cost=1.41e+6..1.41e+6 rows=642 height=1) (actual time=0.023..0.023 rows=0 loops=1)
-                    -> Group aggregate: count(0)  (cost=1.41e+6..1.41e+6 rows=642 height=1) (actual time=0.0224..0.0224 rows=0 loops=1)
-                        -> Inner hash join (store_sales.ss_store_sk = store.s_store_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=1.41e+6..1.41e+6 rows=1316 height=1) (actual time=0.0219..0.0219 rows=0 loops=1)
+-> Sort: dj.cnt DESC, customer.c_last_name  (cost=1.41e+6..1.41e+6 rows=642 height=1) (actual time=0.0308..0.0308 rows=0 loops=1)
+    -> Nested loop inner join  (cost=1.41e+6..1.41e+6 rows=642 height=1) (actual time=0.0277..0.0277 rows=0 loops=1)
+        -> Table scan on dj  (cost=1.41e+6..1.41e+6 rows=642 height=1) (actual time=0.027..0.027 rows=0 loops=1)
+            -> Materialize  (cost=1.41e+6..1.41e+6 rows=642 height=1) (actual time=0.0264..0.0264 rows=0 loops=1)
+                -> Filter: (count(0) between 1 and 5)  (cost=1.41e+6..1.41e+6 rows=642 height=1) (actual time=0.0221..0.0221 rows=0 loops=1)
+                    -> Group aggregate: count(0)  (cost=1.41e+6..1.41e+6 rows=642 height=1) (actual time=0.0218..0.0218 rows=0 loops=1)
+                        -> Inner hash join (store_sales.ss_store_sk = store.s_store_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=1.41e+6..1.41e+6 rows=1316 height=1) (actual time=0.0213..0.0213 rows=0 loops=1)
                             -> Sort: store_sales.ss_ticket_number, store_sales.ss_customer_sk  (cost=1.41e+6..1.41e+6 rows=3290 height=1) (never executed)
                                 -> Inner hash join (store_sales.ss_hdemo_sk = household_demographics.hd_demo_sk) (fill_ratio=0)  (cost=429..1.4e+6 rows=3290 height=1) (never executed)
                                     -> Inner hash join (store_sales.ss_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=27.8..1.39e+6 rows=51955 height=1) (never executed)
@@ -18,6 +18,6 @@ EXPLAIN
                                         -> Filter: ((household_demographics.hd_vehicle_count > 0) and ((household_demographics.hd_buy_potential = '>10000') or (household_demographics.hd_buy_potential = 'Unknown')) and ((case when (household_demographics.hd_vehicle_count > 0) then (household_demographics.hd_dep_count / household_demographics.hd_vehicle_count) else NULL end) > 1))  (cost=0.68..0.68 rows=0.0633 height=1) (never executed)
                                             -> Table scan on household_demographics  (cost=0.599..0.599 rows=1 height=1) (never executed)
                             -> Hash
-                                -> Filter: (store.s_county in ('Williamson County','Williamson County','Williamson County','Williamson County'))  (cost=13.6..13.6 rows=0.8 height=1) (actual time=0.0192..0.0192 rows=0 loops=1)
-                                    -> Table scan on store  (cost=6.76..13.5 rows=2 height=1) (actual time=0.0157..0.0177 rows=2 loops=1)
+                                -> Filter: (store.s_county in ('Williamson County','Williamson County','Williamson County','Williamson County'))  (cost=13.6..13.6 rows=0.8 height=1) (actual time=0.0186..0.0186 rows=0 loops=1)
+                                    -> Table scan on store  (cost=6.76..13.5 rows=2 height=1) (actual time=0.0155..0.017 rows=2 loops=1)
         -> Single-row index lookup on customer using PRIMARY (c_customer_sk = dj.ss_customer_sk)  (cost=5.23..5.23 rows=1 height=1) (never executed)

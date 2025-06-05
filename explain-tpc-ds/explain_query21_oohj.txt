@@ -1,19 +1,19 @@
-Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1163 bytes
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1162 bytes
 EXPLAIN
--> Sort: x.w_warehouse_name, x.i_item_id, limit input to 100 row(s) per chunk  (cost=3.14e+6..3.14e+6 rows=19.9 height=1) (actual time=0.0386..0.0386 rows=0 loops=1)
-    -> Table scan on x  (cost=3.14e+6..3.14e+6 rows=19.9 height=1) (actual time=0.0351..0.0351 rows=0 loops=1)
-        -> Materialize  (cost=3.14e+6..3.14e+6 rows=19.9 height=1) (actual time=0.0349..0.0349 rows=0 loops=1)
-            -> Filter: ((case when (inv_before > 0) then (inv_after / inv_before) else NULL end) between <cache>((2.0 / 3.0)) and <cache>((3.0 / 2.0)))  (cost=3.14e+6..3.14e+6 rows=19.9 height=1) (actual time=0.0319..0.0319 rows=0 loops=1)
-                -> Table scan on <temporary>  (cost=3.14e+6..3.14e+6 rows=19.9 height=1) (actual time=0.0316..0.0316 rows=0 loops=1)
-                    -> Aggregate using temporary table  (cost=3.14e+6..3.14e+6 rows=19.9 height=1) (actual time=0.0311..0.0311 rows=0 loops=1)
-                        -> Inner hash join (inv.inv_warehouse_sk = w.w_warehouse_sk) (fill_ratio=2.6226e-05)  (cost=1481..3.07e+6 rows=79590 height=1) (actual time=0.0304..0.0304 rows=0 loops=1)
-                            -> Inner hash join (inv.inv_item_sk = i.i_item_sk) (fill_ratio=0)  (cost=1472..3.04e+6 rows=79590 height=1) (actual time=0.00686..0.00686 rows=0 loops=1)
-                                -> Nested loop inner join  (cost=4.02..2.88e+6 rows=716378 height=1) (actual time=0.0061..0.0061 rows=0 loops=1)
-                                    -> Filter: (d.d_date between '1998-03-09' and '1998-05-08')  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.00577..0.00577 rows=0 loops=1)
-                                        -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00337..0.00397 rows=1 loops=1)
+-> Sort: x.w_warehouse_name, x.i_item_id, limit input to 100 row(s) per chunk  (cost=3.14e+6..3.14e+6 rows=19.9 height=1) (actual time=0.038..0.038 rows=0 loops=1)
+    -> Table scan on x  (cost=3.14e+6..3.14e+6 rows=19.9 height=1) (actual time=0.0344..0.0344 rows=0 loops=1)
+        -> Materialize  (cost=3.14e+6..3.14e+6 rows=19.9 height=1) (actual time=0.0342..0.0342 rows=0 loops=1)
+            -> Filter: ((case when (inv_before > 0) then (inv_after / inv_before) else NULL end) between <cache>((2.0 / 3.0)) and <cache>((3.0 / 2.0)))  (cost=3.14e+6..3.14e+6 rows=19.9 height=1) (actual time=0.0311..0.0311 rows=0 loops=1)
+                -> Table scan on <temporary>  (cost=3.14e+6..3.14e+6 rows=19.9 height=1) (actual time=0.0307..0.0307 rows=0 loops=1)
+                    -> Aggregate using temporary table  (cost=3.14e+6..3.14e+6 rows=19.9 height=1) (actual time=0.0303..0.0303 rows=0 loops=1)
+                        -> Inner hash join (inv.inv_warehouse_sk = w.w_warehouse_sk) (fill_ratio=2.6226e-05)  (cost=1481..3.07e+6 rows=79590 height=1) (actual time=0.0293..0.0293 rows=0 loops=1)
+                            -> Inner hash join (inv.inv_item_sk = i.i_item_sk) (fill_ratio=0)  (cost=1472..3.04e+6 rows=79590 height=1) (actual time=0.00692..0.00692 rows=0 loops=1)
+                                -> Nested loop inner join  (cost=4.02..2.88e+6 rows=716378 height=1) (actual time=0.00611..0.00611 rows=0 loops=1)
+                                    -> Filter: (d.d_date between '1998-03-09' and '1998-05-08')  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.00578..0.00578 rows=0 loops=1)
+                                        -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00328..0.00395 rows=1 loops=1)
                                     -> Index lookup on inv using PRIMARY (inv_date_sk = d.d_date_sk)  (cost=0.447..2.88e+6 rows=6.45e+6 height=1) (never executed)
                                 -> Hash
                                     -> Filter: (i.i_current_price between 0.99 and 1.49)  (cost=50.1..1392 rows=27.8 height=1) (never executed)
                                         -> Table scan on i  (cost=5.51..1378 rows=250 height=1) (never executed)
                             -> Hash
-                                -> Table scan on w  (cost=2.7..5.4 rows=2 height=1) (actual time=0.015..0.0169 rows=2 loops=1)
+                                -> Table scan on w  (cost=2.7..5.4 rows=2 height=1) (actual time=0.0151..0.0169 rows=2 loops=1)
