@@ -1,143 +1,116 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'optparse'
-require 'open3'
 require 'yaml'
 
 require_relative '../lib/sql_table_topological_sort'
 require_relative '../lib/color'
 require_relative '../lib/mysql'
 
-##
-# Configuration
-#
-CONFIG = YAML.load_file('config.yaml')
-MYSQL_CONFIG = CONFIG['mysql']
-MYSQL_CLIENT_PATH = MYSQL_CONFIG['path']
-DB_USER  = MYSQL_CONFIG['user']
-DB_PORT  = MYSQL_CONFIG['port']
-DB_HOST  = MYSQL_CONFIG['host']
-DB_NAME  = MYSQL_CONFIG['name']
-JOB_PATH = './job'
-SQL_PATH = './sql'
-DATASET_PATH = './dataset'
+# ──────────────────────────  configuration  ────────────────────────────────
+CFG           = YAML.load_file('config.yaml')['mysql']
+CLIENT        = MySQL::Client.new(CFG['user'], CFG['port'], CFG['host'], CFG['name'], CFG['path'])
 
-CLIENT = MySQL::Client.new(DB_USER, DB_PORT, DB_HOST, DB_NAME, MYSQL_CLIENT_PATH)
-
-##
-# Determine the EXPLAIN mode (if any)
-#
-def build_explain_prefix(options)
-  # Only allow one of --analyze, --tree, --json
-  explain_options = [:explain, :tree, :json]
-  active_explains = explain_options.select { |opt| options[opt] }
-
-  if active_explains.size > 1
-    puts Color.red("Error: cannot use more than one EXPLAIN option at a time.")
-    exit 1
+# ──────────────────────  helpers: hint injection  ──────────────────────────
+def inject_hint(sql, hint)
+  depth = 0
+  i     = 0
+  while i < sql.length
+    c = sql[i]
+    depth += 1 if c == '('
+    depth -= 1 if c == ')'
+    if depth.zero? && sql[i, 6].casecmp('select').zero?
+      return sql[0, i] + "SELECT #{hint} " + sql[i + 6..]
+    end
+    i += 1
   end
-
-  return "" if active_explains.empty?
-
-  return "EXPLAIN ANALYZE "      if options[:explain]
-  return "EXPLAIN FORMAT=TREE "  if options[:tree]
-  return "EXPLAIN FORMAT=JSON "  if options[:json]
-  ""
+  sql.sub(/\bSELECT\b/i, "SELECT #{hint}") # fallback
 end
 
-##
-# Subcommand: Run query from file (with optional EXPLAIN)
-#
-def run_query_file(query_file, options)
-  unless File.exist?(query_file)
-    puts Color.red("Query file not found: #{query_file}")
+# ─────────────────────  helpers: EXPLAIN prefix  ───────────────────────────
+def build_explain_prefix(opts)
+  modes = [:explain, :tree, :json]
+  active = modes.select { |m| opts[m] }
+  if active.size > 1
+    puts Color.red('Error: choose only one EXPLAIN variant.')
     exit 1
   end
 
-  explain_prefix = build_explain_prefix(options)
-  query_contents = File.read(query_file)
+  return '' if active.empty?
+  return 'EXPLAIN ANALYZE '     if opts[:explain]
+  return 'EXPLAIN FORMAT=TREE ' if opts[:tree]
+  return 'EXPLAIN FORMAT=JSON ' if opts[:json]
+  ''
+end
 
-  if options[:hint]
-    user_hint = options[:hint]
-    query_contents.sub!(/\bSELECT\b/i, "SELECT #{user_hint}")
+# ───────────────────────  sub-command: run file  ───────────────────────────
+def run_query_file(file, opts)
+  unless File.exist?(file)
+    puts Color.red("Query file not found: #{file}")
+    exit 1
   end
 
-  CLIENT.run_query("#{explain_prefix}#{query_contents}")
+  sql = File.read(file)
+  sql.gsub!(/\s+/, ' ')   # compress whitespace
+  sql.sub!(/;\s*\z/, '')  # strip trailing semicolon
+  sql = inject_hint(sql, opts[:hint]) if opts[:hint]
+
+  final_sql = "#{build_explain_prefix(opts)}#{sql}"
+  CLIENT.run_query(final_sql)
 rescue StandardError => e
-  puts Color.red("An error occurred while running the query: #{e.message}")
+  puts Color.red("Error while running query: #{e.message}")
   exit 1
 end
 
-##
-# Subcommand: Prepare MySQL environment (analyze tables, etc.)
-#
+# ──────────────────────  other helper actions  ─────────────────────────────
 def prepare_mysql
-  CLIENT.run_file(File.join(SQL_PATH, "experimental_setup.sql"))
-  CLIENT.run_file(File.join(SQL_PATH, "analyze_tables.sql"))
+  CLIENT.run_file('./sql/experimental_setup.sql')
+  CLIENT.run_file('./sql/analyze_tables.sql')
   puts Color.green("\nPrepared MySQL environment")
 end
 
-##
-# Parse command line options
-#
+def setup_database     = puts Color.yellow('setup_database not implemented')
+def feed_data          = puts Color.yellow('feed_data not implemented')
+
+# ───────────────────────────  CLI parsing  ─────────────────────────────────
 def parse_options
-  options = {}
-  OptionParser.new do |opts|
-    opts.banner = "Usage: run_queries.rb [options]"
+  opts = {}
+  OptionParser.new do |o|
+    o.banner = 'Usage: run_queries.rb [options]'
 
-    opts.on("--run FILE", "Run a specific SQL file") do |file|
-      options[:query] = file
-    end
+    o.on('--run FILE',           'Run a SQL file')                      { |f| opts[:query]   = f }
+    o.on('--prepare-mysql',      'Analyze & set costs')                 { opts[:prepare]     = true }
 
-    opts.on("--prepare-mysql", "Sets costs and hypergraph optimizer use and analyzes tables") do
-      options[:prepare] = true
-    end
+    o.on('--analyze',            'EXPLAIN ANALYZE')                     { opts[:explain]     = true }
+    o.on('--tree',               'EXPLAIN FORMAT=TREE')                 { opts[:tree]        = true }
+    o.on('--json',               'EXPLAIN FORMAT=JSON')                 { opts[:json]        = true }
 
-    opts.on("--analyze", "Use EXPLAIN ANALYZE") do
-      options[:explain] = true
-    end
+    o.on('--hint HINT',          'SQL hint to inject')                  { |h| opts[:hint]    = h }
+    o.on('--database DB',        'Override database')                   { |db| opts[:database] = db }
 
-    opts.on("--tree", "Use EXPLAIN FORMAT=TREE") do
-      options[:tree] = true
-    end
-
-    opts.on("--json", "Use EXPLAIN FORMAT=JSON") do
-      options[:json] = true
-    end
-
-    opts.on("--hint HINT", "Set SQL hint") do |hint|
-      options[:hint] = hint
-    end
-
-    opts.on("--database DB", "Override the database name") do |db|
-      options[:database] = db
-    end
+    o.on('--setup',              'Create schema (if implemented)')      { opts[:setup]       = true }
+    o.on('--feed',               'Load CSV data (if implemented)')      { opts[:feed]        = true }
   end.parse!
-  options
+  opts
 end
 
-##
-# Main entry point
-#
-def run
-  options = parse_options
+# ────────────────────────────  dispatcher  ────────────────────────────────
+def main
+  opts = parse_options
+  CLIENT.use_database(opts[:database]) if opts[:database]
 
-  # Override database if specified
-  CLIENT.use_database(options[:database]) if options[:database]
-
-  if options[:setup]
+  if opts[:setup]
     setup_database
-  elsif options[:query]
-    run_query_file(options[:query], options)
-  elsif options[:feed]
+  elsif opts[:query]
+    run_query_file(opts[:query], opts)
+  elsif opts[:feed]
     feed_data
-  elsif options[:prepare]
+  elsif opts[:prepare]
     prepare_mysql
   else
-    puts Color.red("No valid option provided.")
-    puts "Use #{Color.bold('--setup')} to create schema, #{Color.bold('--run FILE')} to run a file, or #{Color.bold('--feed')} to load CSV data."
+    puts Color.red('No valid action. Use --run, --prepare-mysql, etc.')
   end
 end
 
-# Execute if called directly
-run if __FILE__ == $PROGRAM_NAME
+main if __FILE__ == $PROGRAM_NAME
