@@ -19,31 +19,29 @@ def inject_hint(sql, hint)
   (0...sql.length).each do |i|
     depth += 1 if sql[i] == '('
     depth -= 1 if sql[i] == ')'
-    if depth.zero? && sql[i, 6].casecmp('select').zero?
-      return sql[0, i] + "SELECT #{hint} " + sql[i + 6..]
-    end
+    return sql[0, i] + "SELECT #{hint} " + sql[i + 6..] if depth.zero? && sql[i, 6].casecmp('select').zero?
   end
   sql.sub(/\bSELECT\b/i, "SELECT #{hint}") # fallback
 end
 
 # ─────────────  helper: JSON plan  →  GraphViz  ────────────
 def json_to_dot(data, truncate)
-  dot =  ["digraph QueryPlan {",
-          "  node [fontname=\"Helvetica\" shape=none]",
-          "  edge [arrowhead=none]"]
+  dot = ['digraph QueryPlan {',
+         '  node [fontname="Helvetica" shape=none]',
+         '  edge [arrowhead=none]']
 
   @node = 0
   short_map = {
-    'Nested loop inner join'     => 'NLJ',
-    'Nested loop left join'      => 'Outer NLJ',
-    'Optimistic Hash Join'       => 'OOHJ',
+    'Nested loop inner join' => 'NLJ',
+    'Nested loop left join' => 'Outer NLJ',
+    'Optimistic Hash Join' => 'OOHJ',
     'Optimistic Outer Hash Join' => 'Outer OOHJ',
-    'Index lookup'               => 'IDX',
-    'Single-row index lookup'    => '1IDX',
-    'PRIMARY'                    => 'PRI',
-    'Table scan'                 => 'TS',
-    'Inner hash join'            => 'HJ',
-    'Left hash join'             => 'Outer HJ'
+    'Index lookup' => 'IDX',
+    'Single-row index lookup' => '1IDX',
+    'PRIMARY' => 'PRI',
+    'Table scan' => 'TS',
+    'Inner hash join' => 'HJ',
+    'Left hash join' => 'Outer HJ'
   }
 
   walk = lambda do |node|
@@ -70,7 +68,7 @@ def json_to_dot(data, truncate)
       short_map.each { |k, v| label.gsub!(k, v) }
     end
 
-    dot << %Q(  node#{cur} [label="#{label}"];)
+    dot << %(  node#{cur} [label="#{label}"];)
     @node += 1
 
     if node['inputs'].is_a?(Array)
@@ -110,7 +108,7 @@ end
 
 # ──────────────────────────  CLI  ─────────────────────────
 opts = { show_json: false, keep_dot: false, truncate: false,
-         mode: nil, output: nil, database: nil }
+         mode: nil, output: nil, database: nil, func: 'LINEAR' }
 OptionParser.new do |o|
   o.banner = "Usage: #{File.basename($PROGRAM_NAME)} [options] input.sql"
   o.on('--baseline')          { opts[:mode] = :baseline }
@@ -120,14 +118,20 @@ OptionParser.new do |o|
   o.on('--show-json')         { opts[:show_json] = true }
   o.on('-c', '--keep-dot')    { opts[:keep_dot] = true }
   o.on('--truncate')          { opts[:truncate] = true }
+  o.on('--func FUNC', 'Optimism function name (used with --oohj)') do |v|
+    opts[:func] = v
+  end
 end.order!
 abort('input file missing')          if ARGV.empty?
 abort('choose --baseline or --oohj') if opts[:mode].nil?
 abort('use -o to name output')       if opts[:output].nil?
 
-hint = opts[:mode] == :baseline ?
-         '/*+ DISABLE_OPTIMISTIC_HASH_JOIN */' :
-         '/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(0.8) */'
+hint = case opts[:mode]
+       when :baseline
+         '/*+ DISABLE_OPTIMISTIC_HASH_JOIN */'
+       when :oohj
+         "/*+ SET_OPTIMISM_FUNC(#{opts[:func]}) SET_OPTIMISM_LEVEL(0.8) */"
+       end
 
 run(ARGV[0], opts[:output], hint, opts[:show_json],
     opts[:keep_dot], opts[:truncate], opts[:database])

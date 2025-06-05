@@ -134,8 +134,8 @@ stq-plans:
 	mkdir -p stq-plans && \
 	for f in stress-test-queries/*.sql; do \
 	  base=$$(basename $$f .sql); \
-	  ruby bin/print-plan-as-graphwiz.rb --baseline --truncate --database imdbload -o stq-plans/$${base}_baseline.pdf $$f; \
-	  ruby bin/print-plan-as-graphwiz.rb --oohj     --truncate --database imdbload -o stq-plans/$${base}_oohj.pdf     $$f; \
+	  ruby bin/print-plan-as-graphwiz.rb --baseline --func ALWAYS --truncate --database imdbload -o stq-plans/$${base}_baseline.pdf $$f; \
+	  ruby bin/print-plan-as-graphwiz.rb --oohj     --func ALWAYS --truncate --database imdbload -o stq-plans/$${base}_oohj.pdf     $$f; \
 	done
 
 tpc-ds-plans:
@@ -176,7 +176,7 @@ explain-stq:
 	  echo "Processing file $$i of $$total: $$f"; \
 	  base=$$(basename $$f .sql); \
 	  ruby bin/benchmark.rb --run $$f --analyze --hint "/*+ DISABLE_OPTIMISTIC_HASH_JOIN */" --database imdbload > explain-stq/explain_$${base}_baseline.txt; \
-	  ruby bin/benchmark.rb --run $$f --analyze --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(0.8) */" --database imdbload > explain-stq/explain_$${base}_oohj.txt; \
+	  ruby bin/benchmark.rb --run $$f --analyze --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(1.0) */" --database imdbload > explain-stq/explain_$${base}_oohj.txt; \
 	  i=$$((i+1)); \
 	done
 
