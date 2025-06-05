@@ -1,14 +1,14 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 6265 bytes
 EXPLAIN
--> Sort: store.s_store_name, limit input to 100 row(s) per chunk  (cost=2.32e+6..2.32e+6 rows=1.41 height=1) (actual time=0.33..0.33 rows=0 loops=1)
-    -> Table scan on <temporary>  (cost=2.32e+6..2.32e+6 rows=1.41 height=1) (actual time=0.327..0.327 rows=0 loops=1)
-        -> Aggregate using temporary table  (cost=2.32e+6..2.32e+6 rows=1.41 height=1) (actual time=0.326..0.326 rows=0 loops=1)
-            -> Inner hash join (store_sales.ss_store_sk = store.s_store_sk) (fill_ratio=0)  (cost=67066..1.5e+6 rows=1.36e+6 height=1) (actual time=0.325..0.325 rows=0 loops=1)
-                -> Inner hash join (store_sales.ss_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=80.8..1.24e+6 rows=15588 height=1) (actual time=0.324..0.324 rows=0 loops=1)
-                    -> Table scan on store_sales  (cost=0.59..919479 rows=1.56e+6 height=1) (actual time=0.314..0.314 rows=1 loops=1)
+-> Sort: store.s_store_name, limit input to 100 row(s) per chunk  (cost=2.32e+6..2.32e+6 rows=1.41 height=1) (actual time=0.319..0.319 rows=0 loops=1)
+    -> Table scan on <temporary>  (cost=2.32e+6..2.32e+6 rows=1.41 height=1) (actual time=0.315..0.315 rows=0 loops=1)
+        -> Aggregate using temporary table  (cost=2.32e+6..2.32e+6 rows=1.41 height=1) (actual time=0.314..0.314 rows=0 loops=1)
+            -> Inner hash join (store_sales.ss_store_sk = store.s_store_sk) (fill_ratio=0)  (cost=67066..1.5e+6 rows=1.36e+6 height=1) (actual time=0.313..0.313 rows=0 loops=1)
+                -> Inner hash join (store_sales.ss_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=80.8..1.24e+6 rows=15588 height=1) (actual time=0.311..0.311 rows=0 loops=1)
+                    -> Table scan on store_sales  (cost=0.59..919479 rows=1.56e+6 height=1) (actual time=0.303..0.303 rows=1 loops=1)
                     -> Hash
-                        -> Filter: ((date_dim.d_qoy = 1) and (date_dim.d_year = 2002))  (cost=0.967..0.967 rows=0.01 height=1) (actual time=0.00731..0.00731 rows=0 loops=1)
-                            -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (actual time=0.00418..0.00607 rows=1 loops=1)
+                        -> Filter: ((date_dim.d_qoy = 1) and (date_dim.d_year = 2002))  (cost=0.967..0.967 rows=0.01 height=1) (actual time=0.00662..0.00662 rows=0 loops=1)
+                            -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (actual time=0.00381..0.00543 rows=1 loops=1)
                 -> Hash
                     -> Inner hash join (substr(store.s_zip,1,2) = substr(A2.ca_zip,1,2)) (fill_ratio=0)  (cost=66747..66804 rows=174 height=1) (never executed)
                         -> Table scan on A2  (cost=66730..66745 rows=87.1 height=1) (never executed)

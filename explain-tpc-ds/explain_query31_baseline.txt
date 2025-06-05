@@ -1,17 +1,17 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1841 bytes
 EXPLAIN
--> Inner hash join (ss1.ca_county = ws3.ca_county), extra conditions: ((case when (ws2.web_sales > 0.00) then (ws3.web_sales / ws2.web_sales) else NULL end) > (case when (ss2.store_sales > 0.00) then (ss3.store_sales / ss2.store_sales) else NULL end)) (fill_ratio=0)  (cost=10.3e+6..10.3e+6 rows=6.6e-12 height=1) (actual time=0.0433..0.0433 rows=0 loops=1)
-    -> Filter: ((ws3.d_qoy = 3) and (ws3.d_year = 2000))  (cost=13.6..13.6 rows=0.01 height=1) (actual time=0.0413..0.0413 rows=0 loops=1)
-        -> Table scan on ws3  (cost=13.5..13.5 rows=1 height=1) (actual time=0.041..0.041 rows=0 loops=1)
-            -> Materialize CTE ws if needed  (cost=13.3..13.3 rows=1 height=1) (actual time=0.0405..0.0405 rows=0 loops=1)
-                -> Group aggregate: sum(web_sales.ws_ext_sales_price)  (cost=10.1..10.1 rows=1 height=1) (actual time=0.0369..0.0369 rows=0 loops=1)
-                    -> Sort: customer_address.ca_county, date_dim.d_qoy, date_dim.d_year  (cost=9.64..9.64 rows=1 height=1) (actual time=0.0363..0.0363 rows=0 loops=1)
-                        -> Inner hash join (web_sales.ws_sold_date_sk = date_dim.d_date_sk) (fill_ratio=8.10623e-06)  (cost=9.3..9.3 rows=1 height=1) (actual time=0.0327..0.0327 rows=0 loops=1)
-                            -> Nested loop inner join  (cost=6.55..6.55 rows=1 height=1) (actual time=0.0124..0.0124 rows=0 loops=1)
-                                -> Table scan on web_sales  (cost=0.7..0.7 rows=1 height=1) (actual time=0.00373..0.00441 rows=1 loops=1)
-                                -> Single-row index lookup on customer_address using PRIMARY (ca_address_sk = web_sales.ws_bill_addr_sk)  (cost=5.85..5.85 rows=1 height=1) (actual time=0.0075..0.0075 rows=0 loops=1)
+-> Inner hash join (ss1.ca_county = ws3.ca_county), extra conditions: ((case when (ws2.web_sales > 0.00) then (ws3.web_sales / ws2.web_sales) else NULL end) > (case when (ss2.store_sales > 0.00) then (ss3.store_sales / ss2.store_sales) else NULL end)) (fill_ratio=0)  (cost=10.3e+6..10.3e+6 rows=6.6e-12 height=1) (actual time=0.0459..0.0459 rows=0 loops=1)
+    -> Filter: ((ws3.d_qoy = 3) and (ws3.d_year = 2000))  (cost=13.6..13.6 rows=0.01 height=1) (actual time=0.0439..0.0439 rows=0 loops=1)
+        -> Table scan on ws3  (cost=13.5..13.5 rows=1 height=1) (actual time=0.0436..0.0436 rows=0 loops=1)
+            -> Materialize CTE ws if needed  (cost=13.3..13.3 rows=1 height=1) (actual time=0.0431..0.0431 rows=0 loops=1)
+                -> Group aggregate: sum(web_sales.ws_ext_sales_price)  (cost=10.1..10.1 rows=1 height=1) (actual time=0.0394..0.0394 rows=0 loops=1)
+                    -> Sort: customer_address.ca_county, date_dim.d_qoy, date_dim.d_year  (cost=9.64..9.64 rows=1 height=1) (actual time=0.0388..0.0388 rows=0 loops=1)
+                        -> Inner hash join (web_sales.ws_sold_date_sk = date_dim.d_date_sk) (fill_ratio=8.10623e-06)  (cost=9.3..9.3 rows=1 height=1) (actual time=0.0354..0.0354 rows=0 loops=1)
+                            -> Nested loop inner join  (cost=6.55..6.55 rows=1 height=1) (actual time=0.0138..0.0138 rows=0 loops=1)
+                                -> Table scan on web_sales  (cost=0.7..0.7 rows=1 height=1) (actual time=0.00404..0.00472 rows=1 loops=1)
+                                -> Single-row index lookup on customer_address using PRIMARY (ca_address_sk = web_sales.ws_bill_addr_sk)  (cost=5.85..5.85 rows=1 height=1) (actual time=0.00855..0.00855 rows=0 loops=1)
                             -> Hash
-                                -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (actual time=0.0141..0.016 rows=1 loops=1)
+                                -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (actual time=0.0152..0.0171 rows=1 loops=1)
     -> Hash
         -> Inner hash join (ss1.ca_county = ws2.ca_county), extra conditions: ((case when (ws1.web_sales > 0.00) then (ws2.web_sales / ws1.web_sales) else NULL end) > (case when (ss1.store_sales > 0.00) then (ss2.store_sales / ss1.store_sales) else NULL end)) (fill_ratio=0)  (cost=10.3e+6..10.3e+6 rows=6.6e-9 height=1) (never executed)
             -> Filter: ((ws2.d_qoy = 2) and (ws2.d_year = 2000))  (cost=13.6..13.6 rows=0.01 height=1) (never executed)

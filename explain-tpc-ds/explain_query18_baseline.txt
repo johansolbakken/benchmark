@@ -1,15 +1,15 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1390 bytes
 EXPLAIN
--> Sort: ca_country, ca_state, ca_county, i_item_id, limit input to 100 row(s) per chunk  (cost=23.5..23.5 rows=250e-6 height=1) (actual time=0.0349..0.0349 rows=1 loops=1)
-    -> Stream results  (cost=23.2..23.2 rows=250e-6 height=1) (actual time=0.0309..0.031 rows=1 loops=1)
-        -> Group aggregate with rollup: avg(cast(catalog_sales.cs_quantity as decimal(12,2))), avg(cast(catalog_sales.cs_list_price as decimal(12,2))), avg(cast(catalog_sales.cs_coupon_amt as decimal(12,2))), avg(cast(catalog_sales.cs_sales_price as decimal(12,2))), avg(cast(catalog_sales.cs_net_profit as decimal(12,2))), avg(cast(customer.c_birth_year as decimal(12,2))), avg(cast(cd1.cd_dep_count as decimal(12,2)))  (cost=23.2..23.2 rows=250e-6 height=1) (actual time=0.0287..0.0288 rows=1 loops=1)
-            -> Sort: item.i_item_id, customer_address.ca_country, customer_address.ca_state, customer_address.ca_county  (cost=23.2..23.2 rows=250e-6 height=1) (actual time=0.0281..0.0281 rows=0 loops=1)
-                -> Inner hash join (customer.c_current_cdemo_sk = cd2.cd_demo_sk) (fill_ratio=0)  (cost=22.9..22.9 rows=250e-6 height=1) (actual time=0.0255..0.0255 rows=0 loops=1)
-                    -> Table scan on cd2  (cost=0.627..0.627 rows=1 height=1) (actual time=0.0141..0.0141 rows=1 loops=1)
+-> Sort: ca_country, ca_state, ca_county, i_item_id, limit input to 100 row(s) per chunk  (cost=23.5..23.5 rows=250e-6 height=1) (actual time=0.0372..0.0372 rows=1 loops=1)
+    -> Stream results  (cost=23.2..23.2 rows=250e-6 height=1) (actual time=0.0336..0.0337 rows=1 loops=1)
+        -> Group aggregate with rollup: avg(cast(catalog_sales.cs_quantity as decimal(12,2))), avg(cast(catalog_sales.cs_list_price as decimal(12,2))), avg(cast(catalog_sales.cs_coupon_amt as decimal(12,2))), avg(cast(catalog_sales.cs_sales_price as decimal(12,2))), avg(cast(catalog_sales.cs_net_profit as decimal(12,2))), avg(cast(customer.c_birth_year as decimal(12,2))), avg(cast(cd1.cd_dep_count as decimal(12,2)))  (cost=23.2..23.2 rows=250e-6 height=1) (actual time=0.0313..0.0314 rows=1 loops=1)
+            -> Sort: item.i_item_id, customer_address.ca_country, customer_address.ca_state, customer_address.ca_county  (cost=23.2..23.2 rows=250e-6 height=1) (actual time=0.0307..0.0307 rows=0 loops=1)
+                -> Inner hash join (customer.c_current_cdemo_sk = cd2.cd_demo_sk) (fill_ratio=0)  (cost=22.9..22.9 rows=250e-6 height=1) (actual time=0.0277..0.0277 rows=0 loops=1)
+                    -> Table scan on cd2  (cost=0.627..0.627 rows=1 height=1) (actual time=0.0169..0.0169 rows=1 loops=1)
                     -> Hash
-                        -> Inner hash join (catalog_sales.cs_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=22..22 rows=250e-6 height=1) (actual time=0.00778..0.00778 rows=0 loops=1)
-                            -> Filter: (date_dim.d_year = 2001)  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.00602..0.00602 rows=0 loops=1)
-                                -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00333..0.00516 rows=1 loops=1)
+                        -> Inner hash join (catalog_sales.cs_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=22..22 rows=250e-6 height=1) (actual time=0.00771..0.00771 rows=0 loops=1)
+                            -> Filter: (date_dim.d_year = 2001)  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.00626..0.00626 rows=0 loops=1)
+                                -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00352..0.00541 rows=1 loops=1)
                             -> Hash
                                 -> Inner hash join (catalog_sales.cs_bill_cdemo_sk = cd1.cd_demo_sk) (fill_ratio=0)  (cost=21.1..21.1 rows=0.0025 height=1) (never executed)
                                     -> Nested loop inner join  (cost=20.2..20.2 rows=0.25 height=1) (never executed)

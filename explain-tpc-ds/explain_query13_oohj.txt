@@ -1,10 +1,10 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1633 bytes
 EXPLAIN
--> Aggregate: avg(store_sales.ss_quantity), avg(store_sales.ss_ext_sales_price), avg(store_sales.ss_ext_wholesale_cost), sum(store_sales.ss_ext_wholesale_cost)  (cost=1.57e+6..1.57e+6 rows=1 height=1) (actual time=0.0267..0.0268 rows=1 loops=1)
-    -> Inner hash join (store.s_store_sk = store_sales.ss_store_sk) (fill_ratio=0)  (cost=1.57e+6..1.57e+6 rows=0.193 height=1) (actual time=0.0257..0.0257 rows=0 loops=1)
-        -> Table scan on store  (cost=6.71..13.4 rows=2 height=1) (actual time=0.0152..0.0152 rows=1 loops=1)
+-> Aggregate: avg(store_sales.ss_quantity), avg(store_sales.ss_ext_sales_price), avg(store_sales.ss_ext_wholesale_cost), sum(store_sales.ss_ext_wholesale_cost)  (cost=1.57e+6..1.57e+6 rows=1 height=1) (actual time=0.0264..0.0265 rows=1 loops=1)
+    -> Inner hash join (store.s_store_sk = store_sales.ss_store_sk) (fill_ratio=0)  (cost=1.57e+6..1.57e+6 rows=0.193 height=1) (actual time=0.0252..0.0252 rows=0 loops=1)
+        -> Table scan on store  (cost=6.71..13.4 rows=2 height=1) (actual time=0.0148..0.0148 rows=1 loops=1)
         -> Hash
-            -> Inner hash join (store_sales.ss_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=1.57e+6..1.57e+6 rows=0.193 height=1) (actual time=0.00789..0.00789 rows=0 loops=1)
+            -> Inner hash join (store_sales.ss_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=1.57e+6..1.57e+6 rows=0.193 height=1) (actual time=0.00791..0.00791 rows=0 loops=1)
                 -> Nested loop inner join  (cost=816668..1.57e+6 rows=1.93 height=1) (never executed)
                     -> Inner hash join (customer_demographics.cd_demo_sk = store_sales.ss_cdemo_sk), extra conditions: (((store_sales.ss_sales_price between 100.00 and 150.00) and (customer_demographics.cd_marital_status = 'D') and (customer_demographics.cd_education_status = '2 yr Degree') and (household_demographics.hd_dep_count = 3)) or ((store_sales.ss_sales_price between 50.00 and 100.00) and (customer_demographics.cd_marital_status = 'S') and (customer_demographics.cd_education_status = 'Secondary') and (household_demographics.hd_dep_count = 1)) or ((store_sales.ss_sales_price between 150.00 and 200.00) and (customer_demographics.cd_marital_status = 'W') and (customer_demographics.cd_education_status = 'Advanced Degree') and (household_demographics.hd_dep_count = 1))) (fill_ratio=0)  (cost=15966..1.57e+6 rows=98.5 height=1) (never executed)
                         -> Inner hash join (store_sales.ss_hdemo_sk = household_demographics.hd_demo_sk), extra conditions: (((store_sales.ss_sales_price between 100.00 and 150.00) and (household_demographics.hd_dep_count = 3)) or ((store_sales.ss_sales_price between 50.00 and 100.00) and (household_demographics.hd_dep_count = 1)) or ((store_sales.ss_sales_price between 150.00 and 200.00) and (household_demographics.hd_dep_count = 1))) (fill_ratio=0)  (cost=142..1.57e+6 rows=11139 height=1) (never executed)
@@ -19,5 +19,5 @@ EXPLAIN
                     -> Filter: (((customer_address.ca_country = 'United States') and ((customer_address.ca_state in ('CO','IL','MN')) or (customer_address.ca_state in ('OH','MT','NM')) or (customer_address.ca_state in ('TX','MO','MI')))) and (((customer_address.ca_state in ('CO','IL','MN')) and (store_sales.ss_net_profit between 100 and 200)) or ((customer_address.ca_state in ('OH','MT','NM')) and (store_sales.ss_net_profit between 150 and 300)) or ((customer_address.ca_state in ('TX','MO','MI')) and (store_sales.ss_net_profit between 50 and 250))))  (cost=5.96..5.96 rows=0.0196 height=1) (never executed)
                         -> Single-row index lookup on customer_address using PRIMARY (ca_address_sk = store_sales.ss_addr_sk)  (cost=5.89..5.89 rows=1 height=1) (never executed)
                 -> Hash
-                    -> Filter: (date_dim.d_year = 2001)  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.00592..0.00592 rows=0 loops=1)
-                        -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0034..0.0048 rows=1 loops=1)
+                    -> Filter: (date_dim.d_year = 2001)  (cost=0.915..0.915 rows=0.1 height=1) (actual time=0.00571..0.00571 rows=0 loops=1)
+                        -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00327..0.00494 rows=1 loops=1)

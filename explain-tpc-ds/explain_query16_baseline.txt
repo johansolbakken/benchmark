@@ -1,10 +1,10 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1178 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=57223..57223 rows=1 height=1) (actual time=0.0253..0.0255 rows=1 loops=1)
-    -> Aggregate: count(distinct cs1.cs_order_number), sum(cs1.cs_ext_ship_cost), sum(cs1.cs_net_profit)  (cost=57223..57223 rows=1 height=1) (actual time=0.025..0.0251 rows=1 loops=1)
-        -> Inner hash join (cs1.cs_ship_date_sk = d.d_date_sk) (fill_ratio=0)  (cost=57223..57223 rows=50e-6 height=1) (actual time=0.0239..0.0239 rows=0 loops=1)
-            -> Filter: (d.d_date between <cache>(cast('1999-02-01' as date)) and <cache>((cast('1999-02-01' as date) + interval 60 day)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.0216..0.0216 rows=0 loops=1)
-                -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0144..0.0165 rows=1 loops=1)
+-> Limit: 100 row(s)  (cost=57223..57223 rows=1 height=1) (actual time=0.0262..0.0263 rows=1 loops=1)
+    -> Aggregate: count(distinct cs1.cs_order_number), sum(cs1.cs_ext_ship_cost), sum(cs1.cs_net_profit)  (cost=57223..57223 rows=1 height=1) (actual time=0.0259..0.026 rows=1 loops=1)
+        -> Inner hash join (cs1.cs_ship_date_sk = d.d_date_sk) (fill_ratio=0)  (cost=57223..57223 rows=50e-6 height=1) (actual time=0.0243..0.0243 rows=0 loops=1)
+            -> Filter: (d.d_date between <cache>(cast('1999-02-01' as date)) and <cache>((cast('1999-02-01' as date) + interval 60 day)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.022..0.022 rows=0 loops=1)
+                -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0147..0.0169 rows=1 loops=1)
             -> Hash
                 -> Inner hash join (cs1.cs_call_center_sk = cc.cc_call_center_sk) (fill_ratio=0)  (cost=57222..57222 rows=450e-6 height=1) (never executed)
                     -> Filter: (cc.cc_county in ('Williamson County','Williamson County','Williamson County','Williamson County','Williamson County'))  (cost=6.81..6.81 rows=0.5 height=1) (never executed)

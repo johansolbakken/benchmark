@@ -1,7 +1,7 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 1942 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=130206..130223 rows=39.5 height=1) (actual time=0.508..0.508 rows=0 loops=1)
-    -> Inner hash join (sr_items.item_id = wr_items.item_id)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=130206..130223 rows=39.5 height=1) (actual time=0.508..0.508 rows=0 loops=1)
+-> Limit: 100 row(s)  (cost=130206..130223 rows=39.5 height=1) (actual time=0.472..0.472 rows=0 loops=1)
+    -> Inner hash join (sr_items.item_id = wr_items.item_id)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=130206..130223 rows=39.5 height=1) (actual time=0.472..0.472 rows=0 loops=1)
         -> Inner hash join (sr_items.item_id = cr_items.item_id)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=103465..103472 rows=25 height=1) (never executed)
             -> Sort: sr_items.item_id, sr_items.sr_item_qty  (cost=78910..78910 rows=15.8 height=1) (never executed)
                 -> Table scan on sr_items  (cost=78900..78902 rows=15.8 height=1) (never executed)
@@ -40,20 +40,20 @@ EXPLAIN
                                                                 -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (never executed)
                                     -> Single-row index lookup on item using PRIMARY (i_item_sk = catalog_returns.cr_item_sk)  (cost=7.93..7.93 rows=1 height=1) (never executed)
         -> Hash
-            -> Table scan on wr_items  (cost=26714..26717 rows=15.8 height=1) (actual time=0.506..0.506 rows=0 loops=1)
-                -> Materialize CTE wr_items  (cost=26714..26714 rows=15.8 height=1) (actual time=0.505..0.505 rows=0 loops=1)
-                    -> Group aggregate: sum(web_returns.wr_return_quantity)  (cost=26692..26708 rows=15.8 height=1) (actual time=0.5..0.5 rows=0 loops=1)
-                        -> Sort: item.i_item_id  (cost=26690..26690 rows=95.1 height=1) (actual time=0.5..0.5 rows=0 loops=1)
-                            -> Nested loop inner join  (cost=284..26637 rows=95.1 height=1) (actual time=0.497..0.497 rows=0 loops=1)
-                                -> Inner hash join (web_returns.wr_returned_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=276..25883 rows=95.1 height=1) (actual time=0.496..0.496 rows=0 loops=1)
-                                    -> Table scan on web_returns  (cost=0.608..19290 rows=31712 height=1) (actual time=0.481..0.481 rows=1 loops=1)
+            -> Table scan on wr_items  (cost=26714..26717 rows=15.8 height=1) (actual time=0.47..0.47 rows=0 loops=1)
+                -> Materialize CTE wr_items  (cost=26714..26714 rows=15.8 height=1) (actual time=0.469..0.469 rows=0 loops=1)
+                    -> Group aggregate: sum(web_returns.wr_return_quantity)  (cost=26692..26708 rows=15.8 height=1) (actual time=0.464..0.464 rows=0 loops=1)
+                        -> Sort: item.i_item_id  (cost=26690..26690 rows=95.1 height=1) (actual time=0.463..0.463 rows=0 loops=1)
+                            -> Nested loop inner join  (cost=284..26637 rows=95.1 height=1) (actual time=0.46..0.46 rows=0 loops=1)
+                                -> Inner hash join (web_returns.wr_returned_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=276..25883 rows=95.1 height=1) (actual time=0.46..0.46 rows=0 loops=1)
+                                    -> Table scan on web_returns  (cost=0.608..19290 rows=31712 height=1) (actual time=0.444..0.444 rows=1 loops=1)
                                     -> Hash
-                                        -> Hash semijoin (FirstMatch) (date_dim.d_date = date_dim.d_date) (fill_ratio=0)  (cost=3.54..3.54 rows=0.003 height=1) (actual time=0.0141..0.0141 rows=0 loops=1)
-                                            -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00355..0.00355 rows=1 loops=1)
+                                        -> Hash semijoin (FirstMatch) (date_dim.d_date = date_dim.d_date) (fill_ratio=0)  (cost=3.54..3.54 rows=0.003 height=1) (actual time=0.0149..0.0149 rows=0 loops=1)
+                                            -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00374..0.00374 rows=1 loops=1)
                                             -> Hash
-                                                -> Inner hash join (date_dim.d_week_seq = date_dim.d_week_seq) (fill_ratio=0)  (cost=2.43..2.43 rows=0.03 height=1) (actual time=0.00949..0.00949 rows=0 loops=1)
-                                                    -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00185..0.00185 rows=1 loops=1)
+                                                -> Inner hash join (date_dim.d_week_seq = date_dim.d_week_seq) (fill_ratio=0)  (cost=2.43..2.43 rows=0.03 height=1) (actual time=0.00988..0.00988 rows=0 loops=1)
+                                                    -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.0024..0.0024 rows=1 loops=1)
                                                     -> Hash
-                                                        -> Filter: (date_dim.d_date in ('1998-01-02','1998-10-15','1998-11-10'))  (cost=0.915..0.915 rows=0.3 height=1) (actual time=0.00618..0.00618 rows=0 loops=1)
-                                                            -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00318..0.005 rows=1 loops=1)
+                                                        -> Filter: (date_dim.d_date in ('1998-01-02','1998-10-15','1998-11-10'))  (cost=0.915..0.915 rows=0.3 height=1) (actual time=0.00604..0.00604 rows=0 loops=1)
+                                                            -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00302..0.00472 rows=1 loops=1)
                                 -> Single-row index lookup on item using PRIMARY (i_item_sk = web_returns.wr_item_sk)  (cost=7.93..7.93 rows=1 height=1) (never executed)

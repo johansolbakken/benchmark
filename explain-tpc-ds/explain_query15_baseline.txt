@@ -1,9 +1,9 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 694 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=13.3..13.3 rows=0.01 height=1) (actual time=0.0236..0.0236 rows=0 loops=1)
-    -> Group aggregate: sum(catalog_sales.cs_sales_price)  (cost=13.3..13.3 rows=0.01 height=1) (actual time=0.0233..0.0233 rows=0 loops=1)
-        -> Sort: customer_address.ca_zip  (cost=13.3..13.3 rows=0.01 height=1) (actual time=0.0225..0.0225 rows=0 loops=1)
-            -> Inner hash join (catalog_sales.cs_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=12.9..12.9 rows=0.01 height=1) (actual time=0.0196..0.0196 rows=0 loops=1)
+-> Limit: 100 row(s)  (cost=13.3..13.3 rows=0.01 height=1) (actual time=0.0247..0.0247 rows=0 loops=1)
+    -> Group aggregate: sum(catalog_sales.cs_sales_price)  (cost=13.3..13.3 rows=0.01 height=1) (actual time=0.0245..0.0245 rows=0 loops=1)
+        -> Sort: customer_address.ca_zip  (cost=13.3..13.3 rows=0.01 height=1) (actual time=0.0238..0.0238 rows=0 loops=1)
+            -> Inner hash join (catalog_sales.cs_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=12.9..12.9 rows=0.01 height=1) (actual time=0.0204..0.0204 rows=0 loops=1)
                 -> Nested loop inner join  (cost=11.7..11.7 rows=1 height=1) (never executed)
                     -> Nested loop inner join  (cost=5.8..5.8 rows=1 height=1) (never executed)
                         -> Table scan on catalog_sales  (cost=0.7..0.7 rows=1 height=1) (never executed)
@@ -11,5 +11,5 @@ EXPLAIN
                     -> Filter: ((substr(customer_address.ca_zip,1,5) in ('85669','86197','88274','83405','86475','85392','85460','80348','81792')) or (customer_address.ca_state in ('CA','WA','GA')) or (catalog_sales.cs_sales_price > 500.00))  (cost=5.95..5.95 rows=1 height=1) (never executed)
                         -> Single-row index lookup on customer_address using PRIMARY (ca_address_sk = customer.c_current_addr_sk)  (cost=5.89..5.89 rows=1 height=1) (never executed)
                 -> Hash
-                    -> Filter: ((date_dim.d_qoy = 2) and (date_dim.d_year = 2000))  (cost=0.967..0.967 rows=0.01 height=1) (actual time=0.0168..0.0168 rows=0 loops=1)
-                        -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (actual time=0.0137..0.0156 rows=1 loops=1)
+                    -> Filter: ((date_dim.d_qoy = 2) and (date_dim.d_year = 2000))  (cost=0.967..0.967 rows=0.01 height=1) (actual time=0.0176..0.0176 rows=0 loops=1)
+                        -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (actual time=0.0146..0.0164 rows=1 loops=1)

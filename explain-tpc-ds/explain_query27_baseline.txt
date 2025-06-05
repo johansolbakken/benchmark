@@ -1,10 +1,10 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 837 bytes
 EXPLAIN
--> Sort: i_item_id, s_state, limit input to 100 row(s) per chunk  (cost=1.54e+6..1.54e+6 rows=25.4 height=1) (actual time=0.0311..0.0311 rows=1 loops=1)
-    -> Stream results  (cost=1.54e+6..1.54e+6 rows=25.4 height=1) (actual time=0.0274..0.0275 rows=1 loops=1)
-        -> Group aggregate with rollup: avg(store_sales.ss_quantity), avg(store_sales.ss_list_price), avg(store_sales.ss_coupon_amt), avg(store_sales.ss_sales_price)  (cost=1.54e+6..1.54e+6 rows=25.4 height=1) (actual time=0.025..0.0251 rows=1 loops=1)
-            -> Sort: item.i_item_id, store.s_state  (cost=1.54e+6..1.54e+6 rows=77.9 height=1) (actual time=0.0245..0.0245 rows=0 loops=1)
-                -> Inner hash join (store_sales.ss_store_sk = store.s_store_sk) (fill_ratio=0)  (cost=19784..1.54e+6 rows=77.9 height=1) (actual time=0.0221..0.0221 rows=0 loops=1)
+-> Sort: i_item_id, s_state, limit input to 100 row(s) per chunk  (cost=1.54e+6..1.54e+6 rows=25.4 height=1) (actual time=0.032..0.0321 rows=1 loops=1)
+    -> Stream results  (cost=1.54e+6..1.54e+6 rows=25.4 height=1) (actual time=0.028..0.0281 rows=1 loops=1)
+        -> Group aggregate with rollup: avg(store_sales.ss_quantity), avg(store_sales.ss_list_price), avg(store_sales.ss_coupon_amt), avg(store_sales.ss_sales_price)  (cost=1.54e+6..1.54e+6 rows=25.4 height=1) (actual time=0.0256..0.0257 rows=1 loops=1)
+            -> Sort: item.i_item_id, store.s_state  (cost=1.54e+6..1.54e+6 rows=77.9 height=1) (actual time=0.0251..0.0251 rows=0 loops=1)
+                -> Inner hash join (store_sales.ss_store_sk = store.s_store_sk) (fill_ratio=0)  (cost=19784..1.54e+6 rows=77.9 height=1) (actual time=0.0226..0.0226 rows=0 loops=1)
                     -> Inner hash join (store_sales.ss_sold_date_sk = date_dim.d_date_sk) (fill_ratio=0)  (cost=9885..1.54e+6 rows=156 height=1) (never executed)
                         -> Inner hash join (store_sales.ss_cdemo_sk = customer_demographics.cd_demo_sk) (fill_ratio=0)  (cost=989..1.54e+6 rows=1559 height=1) (never executed)
                             -> Nested loop inner join  (cost=0.781..1.22e+6 rows=1.56e+6 height=1) (never executed)
@@ -17,5 +17,5 @@ EXPLAIN
                             -> Filter: (date_dim.d_year = 1998)  (cost=0.915..0.915 rows=0.1 height=1) (never executed)
                                 -> Table scan on date_dim  (cost=0.857..0.857 rows=1 height=1) (never executed)
                     -> Hash
-                        -> Filter: (store.s_state in ('TN','TN','TN','TN','TN','TN'))  (cost=13.6..13.6 rows=1 height=1) (actual time=0.0193..0.0193 rows=0 loops=1)
-                            -> Table scan on store  (cost=6.76..13.5 rows=2 height=1) (actual time=0.0158..0.0175 rows=2 loops=1)
+                        -> Filter: (store.s_state in ('TN','TN','TN','TN','TN','TN'))  (cost=13.6..13.6 rows=1 height=1) (actual time=0.0198..0.0198 rows=0 loops=1)
+                            -> Table scan on store  (cost=6.76..13.5 rows=2 height=1) (actual time=0.0161..0.0177 rows=2 loops=1)

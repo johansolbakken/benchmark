@@ -1,7 +1,7 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 2190 bytes
 EXPLAIN
--> Limit: 100 row(s)  (cost=7.9e+6..7.9e+6 rows=1.92 height=1) (actual time=0.0321..0.0321 rows=0 loops=1)
-    -> Inner hash join (store.s_store_id = store.s_store_id), (wss.d_week_seq = (wss.d_week_seq - 52))  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=7.9e+6..7.9e+6 rows=1.92 height=1) (actual time=0.0317..0.0317 rows=0 loops=1)
+-> Limit: 100 row(s)  (cost=7.9e+6..7.9e+6 rows=1.92 height=1) (actual time=0.0355..0.0355 rows=0 loops=1)
+    -> Inner hash join (store.s_store_id = store.s_store_id), (wss.d_week_seq = (wss.d_week_seq - 52))  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=7.9e+6..7.9e+6 rows=1.92 height=1) (actual time=0.0351..0.0351 rows=0 loops=1)
         -> Sort: s_store_name1, s_store_id1, d_week_seq1  (cost=3.95e+6..3.95e+6 rows=13.9 height=1) (never executed)
             -> Inner hash join (wss.ss_store_sk = store.s_store_sk) (fill_ratio=0)  (cost=3.95e+6..3.95e+6 rows=13.9 height=1) (never executed)
                 -> Inner hash join (d.d_week_seq = wss.d_week_seq) (fill_ratio=0)  (cost=3.95e+6..3.95e+6 rows=13.9 height=1) (never executed)
@@ -19,12 +19,12 @@ EXPLAIN
                 -> Hash
                     -> Table scan on store  (cost=6.8..13.6 rows=2 height=1) (never executed)
         -> Hash
-            -> Inner hash join (wss.ss_store_sk = store.s_store_sk) (fill_ratio=2.09808e-05)  (cost=3.95e+6..3.95e+6 rows=13.9 height=1) (actual time=0.0295..0.0295 rows=0 loops=1)
-                -> Inner hash join (d.d_week_seq = wss.d_week_seq) (fill_ratio=0)  (cost=3.95e+6..3.95e+6 rows=13.9 height=1) (actual time=0.00658..0.00658 rows=0 loops=1)
+            -> Inner hash join (wss.ss_store_sk = store.s_store_sk) (fill_ratio=2.09808e-05)  (cost=3.95e+6..3.95e+6 rows=13.9 height=1) (actual time=0.0318..0.0318 rows=0 loops=1)
+                -> Inner hash join (d.d_week_seq = wss.d_week_seq) (fill_ratio=0)  (cost=3.95e+6..3.95e+6 rows=13.9 height=1) (actual time=0.00808..0.00808 rows=0 loops=1)
                     -> Table scan on wss  (cost=3.95e+6..3.95e+6 rows=1249 height=1) (never executed)
                         -> Materialize CTE wss if needed (query plan printed elsewhere)  (cost=3.95e+6..3.95e+6 rows=1249 height=1) (never executed)
                     -> Hash
-                        -> Filter: (d.d_month_seq between <cache>((1185 + 12)) and <cache>((1185 + 23)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.00562..0.00562 rows=0 loops=1)
-                            -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00356..0.00419 rows=1 loops=1)
+                        -> Filter: (d.d_month_seq between <cache>((1185 + 12)) and <cache>((1185 + 23)))  (cost=0.915..0.915 rows=0.111 height=1) (actual time=0.00662..0.00662 rows=0 loops=1)
+                            -> Table scan on d  (cost=0.857..0.857 rows=1 height=1) (actual time=0.00404..0.00478 rows=1 loops=1)
                 -> Hash
-                    -> Table scan on store  (cost=6.76..13.5 rows=2 height=1) (actual time=0.0162..0.0179 rows=2 loops=1)
+                    -> Table scan on store  (cost=6.76..13.5 rows=2 height=1) (actual time=0.0159..0.0177 rows=2 loops=1)

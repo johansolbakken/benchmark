@@ -1,14 +1,14 @@
 Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 tpcds_s10 with input size: 496 bytes
 EXPLAIN
--> Sort: ext_price DESC, item.brand_id, limit input to 100 row(s) per chunk  (cost=121727..121727 rows=100 height=1) (actual time=0.0263..0.0263 rows=0 loops=1)
-    -> Stream results  (cost=2613..121671 rows=101 height=1) (actual time=0.0229..0.0229 rows=0 loops=1)
-        -> Group aggregate: sum(store_sales.ss_ext_sales_price)  (cost=2613..121642 rows=101 height=1) (actual time=0.0223..0.0223 rows=0 loops=1)
-            -> Inner hash join (date_dim.d_date_sk = store_sales.ss_sold_date_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=1494..121377 rows=1559 height=1) (actual time=0.0218..0.0218 rows=0 loops=1)
+-> Sort: ext_price DESC, item.brand_id, limit input to 100 row(s) per chunk  (cost=121727..121727 rows=100 height=1) (actual time=0.0248..0.0248 rows=0 loops=1)
+    -> Stream results  (cost=2613..121671 rows=101 height=1) (actual time=0.0215..0.0215 rows=0 loops=1)
+        -> Group aggregate: sum(store_sales.ss_ext_sales_price)  (cost=2613..121642 rows=101 height=1) (actual time=0.0207..0.0207 rows=0 loops=1)
+            -> Inner hash join (date_dim.d_date_sk = store_sales.ss_sold_date_sk)  (optimistic hash join, o_level=0.8, o_func=LINEAR, went_on_disk=false) (fill_ratio=0)  (cost=1494..121377 rows=1559 height=1) (actual time=0.0202..0.0202 rows=0 loops=1)
                 -> Nested loop inner join  (cost=1417..88835 rows=155880 height=1) (never executed)
                     -> Sort: item.i_brand_id, item.i_brand  (cost=1416..1416 rows=25 height=1) (never executed)
                         -> Filter: (item.i_manager_id = 36)  (cost=56.2..1404 rows=25 height=1) (never executed)
                             -> Table scan on item  (cost=5.56..1389 rows=250 height=1) (never executed)
                     -> Index lookup on store_sales using PRIMARY (ss_item_sk = item.i_item_sk)  (cost=0.561..3497 rows=6235 height=1) (never executed)
                 -> Hash
-                    -> Filter: ((date_dim.d_moy = 12) and (date_dim.d_year = 2001))  (cost=0.967..0.967 rows=0.01 height=1) (actual time=0.0185..0.0185 rows=0 loops=1)
-                        -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (actual time=0.0142..0.0169 rows=1 loops=1)
+                    -> Filter: ((date_dim.d_moy = 12) and (date_dim.d_year = 2001))  (cost=0.967..0.967 rows=0.01 height=1) (actual time=0.0172..0.0172 rows=0 loops=1)
+                        -> Table scan on date_dim  (cost=0.903..0.903 rows=1 height=1) (actual time=0.0139..0.0157 rows=1 loops=1)
