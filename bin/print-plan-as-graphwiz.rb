@@ -33,7 +33,7 @@ def json_to_dot(data, truncate)
           "  edge [arrowhead=none]"]
 
   @node = 0
-  map   = {
+  short_map = {
     'Nested loop inner join'     => 'NLJ',
     'Nested loop left join'      => 'Outer NLJ',
     'Optimistic Hash Join'       => 'OOHJ',
@@ -54,10 +54,22 @@ def json_to_dot(data, truncate)
                    .gsub('Left hash join',   'Optimistic Outer Hash Join')
     end
     label = label.gsub('"', '\"')
+
+    # ── NEW: shorten long filter predicates ───────────────────────────
+    if label =~ /Filter:\s*(.+)\z/i
+      cond = Regexp.last_match(1).strip
+      if cond.length > 20
+        cond = cond[0, 20] + '…'
+        label = label.sub(/Filter:\s*.+\z/i, "Filter: #{cond}")
+      end
+    end
+
+    # ── optional global truncation mode ───────────────────────────────
     if truncate
       label = label.gsub(/\(cost=[^)]+\)/, '').strip
-      map.each { |k, v| label.gsub!(k, v) }
+      short_map.each { |k, v| label.gsub!(k, v) }
     end
+
     dot << %Q(  node#{cur} [label="#{label}"];)
     @node += 1
 
@@ -79,7 +91,7 @@ end
 # ─────────────────────────  main  ──────────────────────────
 def run(sql_file, pdf_out, hint, show_json, keep_dot, trunc, db)
   sql = File.read(sql_file)
-  sql.sub!(/;\s*\z/, '')               # drop ONE trailing “;”
+  sql.sub!(/;\s*\z/, '')
   sql = inject_hint(sql, hint) unless hint.empty?
   CLIENT.use_database(db) if db
 
@@ -109,9 +121,9 @@ OptionParser.new do |o|
   o.on('-c', '--keep-dot')    { opts[:keep_dot] = true }
   o.on('--truncate')          { opts[:truncate] = true }
 end.order!
-abort('input file missing')    if ARGV.empty?
+abort('input file missing')          if ARGV.empty?
 abort('choose --baseline or --oohj') if opts[:mode].nil?
-abort('use -o to name output') if opts[:output].nil?
+abort('use -o to name output')       if opts[:output].nil?
 
 hint = opts[:mode] == :baseline ?
          '/*+ DISABLE_OPTIMISTIC_HASH_JOIN */' :
