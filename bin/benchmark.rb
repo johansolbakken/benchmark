@@ -3,114 +3,96 @@
 
 require 'optparse'
 require 'yaml'
-
 require_relative '../lib/sql_table_topological_sort'
 require_relative '../lib/color'
 require_relative '../lib/mysql'
 
-# ──────────────────────────  configuration  ────────────────────────────────
-CFG           = YAML.load_file('config.yaml')['mysql']
-CLIENT        = MySQL::Client.new(CFG['user'], CFG['port'], CFG['host'], CFG['name'], CFG['path'])
+CFG    = YAML.load_file('config.yaml')['mysql']
+CLIENT = MySQL::Client.new(CFG['user'], CFG['port'],
+                           CFG['host'], CFG['name'], CFG['path'])
 
-# ──────────────────────  helpers: hint injection  ──────────────────────────
+# ─────────  helper: inject hint into outer-most SELECT  ────
 def inject_hint(sql, hint)
   depth = 0
-  i     = 0
-  while i < sql.length
-    c = sql[i]
-    depth += 1 if c == '('
-    depth -= 1 if c == ')'
+  (0...sql.length).each do |i|
+    depth += 1 if sql[i] == '('
+    depth -= 1 if sql[i] == ')'
     if depth.zero? && sql[i, 6].casecmp('select').zero?
       return sql[0, i] + "SELECT #{hint} " + sql[i + 6..]
     end
-    i += 1
   end
-  sql.sub(/\bSELECT\b/i, "SELECT #{hint}") # fallback
+  sql.sub(/\bSELECT\b/i, "SELECT #{hint}")
 end
 
-# ─────────────────────  helpers: EXPLAIN prefix  ───────────────────────────
-def build_explain_prefix(opts)
-  modes = [:explain, :tree, :json]
-  active = modes.select { |m| opts[m] }
-  if active.size > 1
-    puts Color.red('Error: choose only one EXPLAIN variant.')
+# ───────────  helper: build EXPLAIN prefix safely  ─────────
+def explain_prefix(o)
+  flags = [:analyze, :tree, :json].select { |k| o[k] }
+  if flags.length > 1
+    puts Color.red('Choose only one of --analyze, --tree, --json')
     exit 1
   end
-
-  return '' if active.empty?
-  return 'EXPLAIN ANALYZE '     if opts[:explain]
-  return 'EXPLAIN FORMAT=TREE ' if opts[:tree]
-  return 'EXPLAIN FORMAT=JSON ' if opts[:json]
+  return ''                     if flags.empty?
+  return 'EXPLAIN ANALYZE '     if o[:analyze]
+  return 'EXPLAIN FORMAT=TREE ' if o[:tree]
+  return 'EXPLAIN FORMAT=JSON ' if o[:json]
   ''
 end
 
-# ───────────────────────  sub-command: run file  ───────────────────────────
-def run_query_file(file, opts)
+# ────────────────  run a single SQL file  ─────────────────
+def run_query_file(file, opt)
   unless File.exist?(file)
-    puts Color.red("Query file not found: #{file}")
+    puts Color.red("No such file: #{file}")
     exit 1
   end
 
   sql = File.read(file)
-  sql.gsub!(/\s+/, ' ')   # compress whitespace
-  sql.sub!(/;\s*\z/, '')  # strip trailing semicolon
-  sql = inject_hint(sql, opts[:hint]) if opts[:hint]
+  sql.sub!(/;\s*\z/, '')        # strip ONE trailing semicolon
+  sql = inject_hint(sql, opt[:hint]) if opt[:hint]
 
-  final_sql = "#{build_explain_prefix(opts)}#{sql}"
-  CLIENT.run_query(final_sql)
+  CLIENT.run_query("#{explain_prefix(opt)}#{sql}")
 rescue StandardError => e
-  puts Color.red("Error while running query: #{e.message}")
+  puts Color.red("Error: #{e.message}")
   exit 1
 end
 
-# ──────────────────────  other helper actions  ─────────────────────────────
+# ────────────────  misc helper actions  ───────────────────
 def prepare_mysql
   CLIENT.run_file('./sql/experimental_setup.sql')
   CLIENT.run_file('./sql/analyze_tables.sql')
-  puts Color.green("\nPrepared MySQL environment")
+  puts Color.green('Prepared MySQL environment')
 end
+def setup_database = puts Color.yellow('--setup not implemented')
+def feed_data      = puts Color.yellow('--feed  not implemented')
 
-def setup_database     = puts Color.yellow('setup_database not implemented')
-def feed_data          = puts Color.yellow('feed_data not implemented')
-
-# ───────────────────────────  CLI parsing  ─────────────────────────────────
-def parse_options
-  opts = {}
+# ────────────────────────  CLI  ───────────────────────────
+def parse_cli
+  h = {}
   OptionParser.new do |o|
     o.banner = 'Usage: run_queries.rb [options]'
-
-    o.on('--run FILE',           'Run a SQL file')                      { |f| opts[:query]   = f }
-    o.on('--prepare-mysql',      'Analyze & set costs')                 { opts[:prepare]     = true }
-
-    o.on('--analyze',            'EXPLAIN ANALYZE')                     { opts[:explain]     = true }
-    o.on('--tree',               'EXPLAIN FORMAT=TREE')                 { opts[:tree]        = true }
-    o.on('--json',               'EXPLAIN FORMAT=JSON')                 { opts[:json]        = true }
-
-    o.on('--hint HINT',          'SQL hint to inject')                  { |h| opts[:hint]    = h }
-    o.on('--database DB',        'Override database')                   { |db| opts[:database] = db }
-
-    o.on('--setup',              'Create schema (if implemented)')      { opts[:setup]       = true }
-    o.on('--feed',               'Load CSV data (if implemented)')      { opts[:feed]        = true }
+    o.on('--run FILE')          { |v| h[:query] = v }
+    o.on('--prepare-mysql')     { h[:prepare] = true }
+    o.on('--analyze')           { h[:analyze] = true }
+    o.on('--tree')              { h[:tree] = true }
+    o.on('--json')              { h[:json] = true }
+    o.on('--hint HINT')         { |v| h[:hint] = v }
+    o.on('--database DB')       { |v| h[:database] = v }
+    o.on('--setup')             { h[:setup] = true }
+    o.on('--feed')              { h[:feed] = true }
   end.parse!
-  opts
+  h
 end
 
-# ────────────────────────────  dispatcher  ────────────────────────────────
+# ───────────────────────  dispatcher  ─────────────────────
 def main
-  opts = parse_options
-  CLIENT.use_database(opts[:database]) if opts[:database]
+  o = parse_cli
+  CLIENT.use_database(o[:database]) if o[:database]
 
-  if opts[:setup]
-    setup_database
-  elsif opts[:query]
-    run_query_file(opts[:query], opts)
-  elsif opts[:feed]
-    feed_data
-  elsif opts[:prepare]
-    prepare_mysql
+  if    o[:setup]   then setup_database
+  elsif o[:query]   then run_query_file(o[:query], o)
+  elsif o[:feed]    then feed_data
+  elsif o[:prepare] then prepare_mysql
   else
-    puts Color.red('No valid action. Use --run, --prepare-mysql, etc.')
+    puts Color.red('Nothing to do. Use --run, --prepare-mysql, etc.')
   end
 end
-
 main if __FILE__ == $PROGRAM_NAME
