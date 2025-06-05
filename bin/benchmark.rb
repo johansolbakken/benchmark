@@ -61,8 +61,12 @@ def prepare_mysql
   CLIENT.run_file('./sql/analyze_tables.sql')
   puts Color.green('Prepared MySQL environment')
 end
-def setup_database = puts Color.yellow('--setup not implemented')
-def feed_data      = puts Color.yellow('--feed  not implemented')
+def setup_database
+puts Color.yellow('--setup not implemented')
+end
+def feed_data
+puts Color.yellow('--feed  not implemented')
+end
 
 # ────────────────────────  CLI  ───────────────────────────
 def parse_cli
