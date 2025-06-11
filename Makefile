@@ -180,6 +180,24 @@ explain-stq:
 	  i=$$((i+1)); \
 	done
 
+
+EXPLAIN_STQ_FILES = \
+  explain-stq/explain_stq1_oohj_1.0_256KB.txt \
+
+explain-stq/singles: $(EXPLAIN_STQ_FILES)
+
+explain-stq/explain_%_oohj_%_%.txt:
+	mkdir -p explain-stq
+	query=$(word 1,$(subst _, ,$*)) && \
+	level=$(word 2,$(subst _, ,$*)) && \
+	bufsize=$(word 3,$(subst _, ,$*)) && \
+	ruby bin/set-join-buffer-size.rb $$bufsize && \
+	ruby bin/benchmark.rb \
+	  --run stress-test-queries/$$query.sql \
+	  --analyze \
+	  --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL($$level) */" \
+	  --database imdbload > $@
+
 explain-tpc-ds:
 	mkdir -p explain-tpc-ds && \
 	total=$$(ls tpc-ds-queries/*.sql | wc -l); \
