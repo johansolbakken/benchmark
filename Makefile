@@ -180,23 +180,34 @@ explain-stq:
 	  i=$$((i+1)); \
 	done
 
-
-EXPLAIN_STQ_FILES = \
-  explain-stq/explain_stq1_oohj_1.0_256KB.txt \
-
-explain-stq/singles: $(EXPLAIN_STQ_FILES)
-
-explain-stq/explain_%_oohj_%_%.txt:
+explain-stq/explain_stq1_oohj_1.0_256KB.txt:
 	mkdir -p explain-stq
-	query=$(word 1,$(subst _, ,$*)) && \
-	level=$(word 2,$(subst _, ,$*)) && \
-	bufsize=$(word 3,$(subst _, ,$*)) && \
-	ruby bin/set-join-buffer-size.rb $$bufsize && \
+	ruby bin/set-join-buffer-size.rb 256KB
 	ruby bin/benchmark.rb \
-	  --run stress-test-queries/$$query.sql \
+	  --run stress-test-queries/stq1.sql \
 	  --analyze \
-	  --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL($$level) */" \
+	  --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(1.0) */" \
 	  --database imdbload > $@
+
+explain-stq/explain_stq1_oohj_1.0_4MB.txt:
+	mkdir -p explain-stq
+	ruby bin/set-join-buffer-size.rb 4MB
+	ruby bin/benchmark.rb \
+	  --run stress-test-queries/stq1.sql \
+	  --analyze \
+	  --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(1.0) */" \
+	  --database imdbload > $@
+
+explain-stq/explain_stq1_oohj_1.0_6MB.txt:
+	mkdir -p explain-stq
+	ruby bin/set-join-buffer-size.rb 6MB
+	ruby bin/benchmark.rb \
+	  --run stress-test-queries/stq1.sql \
+	  --analyze \
+	  --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(1.0) */" \
+	  --database imdbload > $@
+
+
 
 explain-tpc-ds:
 	mkdir -p explain-tpc-ds && \
