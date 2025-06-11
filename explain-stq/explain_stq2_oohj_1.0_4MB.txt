@@ -1,0 +1,45 @@
+Executing: ../mysql-server-build/build-release/bin/mysql -uroot --local-infile=1 --port=13000 --host=127.0.0.1 imdbload with input size: 2287 bytes
+EXPLAIN
+-> Nested loop left join  (cost=523801..878068 rows=12420 height=1) (actual time=127..574 rows=100010 loops=1)
+    -> Nested loop left join  (cost=523798..848686 rows=12420 height=1) (actual time=127..430 rows=100010 loops=1)
+        -> Nested loop left join  (cost=523796..821019 rows=12420 height=1) (actual time=127..255 rows=30140 loops=1)
+            -> Left hash join (movie_info.movie_id = t.id)  (optimistic hash join, o_level=1, o_func=LINEAR, went_on_disk=false) (fill_ratio=0.176953)  (cost=523792..766844 rows=12420 height=1) (actual time=127..183 rows=17944 loops=1)
+                -> Left hash join (`name`.id = cast_info.person_id)  (optimistic hash join, o_level=1, o_func=LINEAR, went_on_disk=false) (fill_ratio=0.0680137)  (cost=506216..744977 rows=12420 height=1) (actual time=123..176 rows=17944 loops=1)
+                    -> Left hash join (company_name.id = movie_companies.company_id)  (optimistic hash join, o_level=1, o_func=LINEAR, went_on_disk=false) (fill_ratio=0.0944183)  (cost=495403..729871 rows=12420 height=1) (actual time=114..162 rows=12066 loops=1)
+                        -> Nested loop left join  (cost=472934..703109 rows=12420 height=1) (actual time=110..154 rows=12066 loops=1)
+                            -> Left hash join (char_name.id = cast_info.role_id)  (optimistic hash join, o_level=1, o_func=LINEAR, went_on_disk=false) (fill_ratio=0.0160844)  (cost=472927..624466 rows=12420 height=1) (actual time=110..114 rows=8240 loops=1)
+                                -> Left hash join (cast_info.movie_id = t.id)  (optimistic hash join, o_level=1, o_func=LINEAR, went_on_disk=true) (fill_ratio=0.757918)  (cost=470550..617797 rows=12420 height=1) (actual time=109..112 rows=8240 loops=1)
+                                    -> Left hash join (keyword.id = movie_keyword.keyword_id)  (optimistic hash join, o_level=1, o_func=LINEAR, went_on_disk=false) (fill_ratio=0.00588179)  (cost=14481..157435 rows=12420 height=1) (actual time=2.81..27.3 rows=8186 loops=1)
+                                        -> Left hash join (aka_title.movie_id = t.id)  (optimistic hash join, o_level=1, o_func=LINEAR, went_on_disk=false) (fill_ratio=0.0622871)  (cost=12431..151093 rows=12420 height=1) (actual time=2.05..25.3 rows=8186 loops=1)
+                                            -> Nested loop left join  (cost=10.8..134380 rows=12420 height=1) (actual time=0.0245..22.1 rows=7969 loops=1)
+                                                -> Index range scan on t using PRIMARY over (id < 6000)  (cost=1.24..15428 rows=12420 height=1) (actual time=0.0164..6.63 rows=5999 loops=1)
+                                                -> Filter: (movie_keyword.id < 40000)  (cost=9.58..9.58 rows=0.0346 height=1) (actual time=0.0019..0.00242 rows=0.427 loops=5999)
+                                                    -> Index lookup on movie_keyword using movie_id_movie_keyword (movie_id = t.id)  (cost=4.85..9.46 rows=1.95 height=1) (actual time=0.00183..0.00233 rows=0.427 loops=5999)
+                                            -> Hash
+                                                -> Index range scan on aka_title using PRIMARY over (id < 2500)  (cost=1.32..5815 rows=4410 height=1) (actual time=0.00523..1.55 rows=2236 loops=1)
+                                        -> Hash
+                                            -> Index range scan on keyword using PRIMARY over (id < 1000)  (cost=0.554..553 rows=999 height=1) (actual time=0.00387..0.616 rows=999 loops=1)
+                                    -> Hash
+                                        -> Index range scan on cast_info using PRIMARY over (id < 100000)  (cost=0.699..145076 rows=207648 height=1) (actual time=0.00466..52.3 rows=99999 loops=1)
+                                -> Hash
+                                    -> Index range scan on char_name using PRIMARY over (id < 1000)  (cost=0.881..880 rows=999 height=1) (actual time=0.0134..0.732 rows=999 loops=1)
+                            -> Filter: (movie_companies.id < 50000)  (cost=6.33..6.33 rows=0.0425 height=1) (actual time=0.00234..0.00465 rows=0.818 loops=8240)
+                                -> Index lookup on movie_companies using movie_id_movie_companies (movie_id = t.id)  (cost=5.57..6.27 rows=1.12 height=1) (actual time=0.00218..0.00446 rows=1.39 loops=8240)
+                        -> Hash
+                            -> Index range scan on company_name using PRIMARY over (id < 5000)  (cost=0.98..8885 rows=9070 height=1) (actual time=0.00562..3.65 rows=4999 loops=1)
+                    -> Hash
+                        -> Nested loop left join  (cost=9.33..9317 rows=999 height=1) (actual time=0.0195..8.02 rows=2318 loops=1)
+                            -> Nested loop left join  (cost=4.01..4002 rows=999 height=1) (actual time=0.0138..3.2 rows=1033 loops=1)
+                                -> Index range scan on name using PRIMARY over (id < 1000)  (cost=0.925..924 rows=999 height=1) (actual time=0.00665..1.02 rows=999 loops=1)
+                                -> Filter: (aka_name.id < 10000)  (cost=3.08..3.08 rows=0.00493 height=1) (actual time=0.00186..0.00205 rows=0.134 loops=999)
+                                    -> Index lookup on aka_name using person_id_aka_name (person_id = `name`.id)  (cost=3.07..3.07 rows=0.231 height=1) (actual time=0.00177..0.00197 rows=0.203 loops=999)
+                            -> Filter: (person_info.id < 10000)  (cost=5.32..5.32 rows=0.00573 height=1) (actual time=0.0017..0.0045 rows=1.4 loops=1033)
+                                -> Index lookup on person_info using person_id_person_info (person_id = `name`.id)  (cost=5.28..5.28 rows=0.708 height=1) (actual time=0.00163..0.00433 rows=1.4 loops=1033)
+                -> Hash
+                    -> Index range scan on movie_info using PRIMARY over (id < 4000)  (cost=0.65..5321 rows=8182 height=1) (actual time=0.00611..2.83 rows=3999 loops=1)
+            -> Filter: (movie_info_idx.id < 200000)  (cost=4.36..4.36 rows=0.168 height=1) (actual time=0.00208..0.00384 rows=1.02 loops=17944)
+                -> Index lookup on movie_info_idx using movie_id_movie_info_idx (movie_id = t.id)  (cost=4.33..4.33 rows=0.596 height=1) (actual time=0.002..0.00368 rows=1.02 loops=17944)
+        -> Filter: (movie_link.id < 10000000)  (cost=2.23..2.23 rows=0.00641 height=1) (actual time=0.00319..0.00559 rows=2.65 loops=30140)
+            -> Index lookup on movie_link using movie_id_movie_link (movie_id = t.id)  (cost=2.23..2.23 rows=0.0128 height=1) (actual time=0.00312..0.00534 rows=2.65 loops=30140)
+    -> Filter: (complete_cast.id < 50000)  (cost=2.37..2.37 rows=0.0293 height=1) (actual time=0.00128..0.0013 rows=0.0193 loops=100010)
+        -> Index lookup on complete_cast using movie_id_complete_cast (movie_id = t.id)  (cost=2.36..2.36 rows=0.0585 height=1) (actual time=0.00122..0.00123 rows=0.0303 loops=100010)
