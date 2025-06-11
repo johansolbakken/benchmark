@@ -207,7 +207,79 @@ explain-stq/explain_stq2_oohj_1.0_6MB.txt:
 	  --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(1.0) */" \
 	  --database imdbload > $@
 
+explain-stq/explain_stq3_oohj_1.0_256MB.txt:
+	mkdir -p explain-stq
+	ruby bin/set-join-buffer-size.rb 256KB
+	ruby bin/benchmark.rb \
+	  --run stress-test-queries/stq3.sql \
+	  --analyze \
+	  --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(1.0) */" \
+	  --database imdbload > $@
 
+explain-stq/explain_stq3_oohj_1.0_2MB.txt:
+	mkdir -p explain-stq
+	ruby bin/set-join-buffer-size.rb 2MB
+	ruby bin/benchmark.rb \
+	  --run stress-test-queries/stq3.sql \
+	  --analyze \
+	  --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(1.0) */" \
+	  --database imdbload > $@
+
+explain-stq/explain_stq3_oohj_1.0_4MB.txt:
+	mkdir -p explain-stq
+	ruby bin/set-join-buffer-size.rb 4MB
+	ruby bin/benchmark.rb \
+	  --run stress-test-queries/stq3.sql \
+	  --analyze \
+	  --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(1.0) */" \
+	  --database imdbload > $@
+
+explain-stq/explain_stq3_oohj_1.0_6MB.txt:
+	mkdir -p explain-stq
+	ruby bin/set-join-buffer-size.rb 6MB
+	ruby bin/benchmark.rb \
+	  --run stress-test-queries/stq3.sql \
+	  --analyze \
+	  --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(1.0) */" \
+	  --database imdbload > $@
+
+explain-stq/explain_stq3_oohj_0.6_2MB.txt:
+	mkdir -p explain-stq
+	ruby bin/set-join-buffer-size.rb 2MB
+	ruby bin/benchmark.rb \
+	  --run stress-test-queries/stq3.sql \
+	  --analyze \
+	  --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(0.6) */" \
+	  --database imdbload > $@
+
+explain-stq/explain_stq3_oohj_0.6_4MB.txt:
+	mkdir -p explain-stq
+	ruby bin/set-join-buffer-size.rb 4MB
+	ruby bin/benchmark.rb \
+	  --run stress-test-queries/stq3.sql \
+	  --analyze \
+	  --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(0.6) */" \
+	  --database imdbload > $@
+
+explain-stq/explain_stq3_oohj_0.6_6MB.txt:
+	mkdir -p explain-stq
+	ruby bin/set-join-buffer-size.rb 6MB
+	ruby bin/benchmark.rb \
+	  --run stress-test-queries/stq3.sql \
+	  --analyze \
+	  --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(0.6) */" \
+	  --database imdbload > $@
+
+
+hello-stq3: \
+  explain-stq/explain_stq3_oohj_1.0_256MB.txt \
+  explain-stq/explain_stq3_oohj_1.0_2MB.txt \
+  explain-stq/explain_stq3_oohj_1.0_4MB.txt \
+  explain-stq/explain_stq3_oohj_1.0_6MB.txt \
+  explain-stq/explain_stq3_oohj_0.6_2MB.txt \
+  explain-stq/explain_stq3_oohj_0.6_4MB.txt \
+  explain-stq/explain_stq3_oohj_0.6_6MB.txt
+	@echo "All explain outputs for STQ3 are generated."
 
 explain-tpc-ds:
 	mkdir -p explain-tpc-ds && \
