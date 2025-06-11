@@ -207,7 +207,7 @@ explain-stq/explain_stq2_oohj_1.0_6MB.txt:
 	  --hint "/*+ SET_OPTIMISM_FUNC(LINEAR) SET_OPTIMISM_LEVEL(1.0) */" \
 	  --database imdbload > $@
 
-explain-stq/explain_stq3_oohj_1.0_256MB.txt:
+explain-stq/explain_stq3_oohj_1.0_256KB.txt:
 	mkdir -p explain-stq
 	ruby bin/set-join-buffer-size.rb 256KB
 	ruby bin/benchmark.rb \
